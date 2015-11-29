@@ -28,7 +28,9 @@ Speculation:
 It's possible that when trying to place a circle in a mount-point an overlap with already packed circled occurs. To solve this it suffices to only look at the 'next' mount-points, to see if the placed circle doesn't overlap with any of the mount-point's circles. The 'next' mount-point are the mount-points that have a circle in common with the current one. If a collision happens there are (as I currently see it) two solution:
 
 * Try to place a smaller circle so no collision occurs anymore. This however doesn't solve the problem in the long-run.
-* Place the circle a little further from the center so no more collision occurs. This however creates an n-hole, a hole with more than 3 circles as boundries and not all of them touching.
+* Place the circle a little further from the center so no more collision occurs. This however creates an n-hole, a hole with more than 3 circles as boundaries and not all of them touching.
+
+A way to solve mount-points: instead of having them, remember a 'shell' (list of circles) on the outside on the packing (keep them clock-wise). When placing a circle on the outside just use any two circles in this shell as the mount-point, then insert the new circle in between those two in the shell. Check for collisions only with the next and previous circle on the shell. If there is a collision with either use that one and the opposite of the original circles as the mount-point. This however will create holes of more than 3 circles (N-Hole).
 
 ## N-Holes
 
