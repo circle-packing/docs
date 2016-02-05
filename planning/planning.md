@@ -18,7 +18,7 @@ December 2015
 January 2016
 
 * Exams, break period from thesis.
-* Literature study for 'smallest enclosing circle of circles' (boundings-sphere) algorithms.
+* Literature study for 'smallest enclosing circle of circles' (bounding-sphere) algorithms.
 
 February 2016
 
