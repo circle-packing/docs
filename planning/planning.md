@@ -38,10 +38,10 @@ April 2016
 
 May 2016
 
+* Final version of the best-fit implementation.
 * Initial version of my thesis.
 * Exploring possible improvement steps for the best-fit algorithm, try implementing some if time permits this.
 
 June 2016
 
-* Final version of the best-fit implementation.
 * Final version of my thesis.
