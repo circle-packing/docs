@@ -51,6 +51,7 @@
 \renewcommand{\chaptername}{Hoofdstuk}
 \renewcommand{\chapterautorefname}{hoofdstuk}
 \renewcommand{\sectionautorefname}{sectie}
+\renewcommand{\subsectionautorefname}{sectie}
 \renewcommand{\figureautorefname}{figuur}
 
 \lstset{frame=tb,
@@ -105,8 +106,8 @@
 \textblockcolour{}
 \vspace{-\parskip}
 \flushleft
-\fontsize{40}{42}\selectfont \textcolor{bluetitle}{Circle packing}\\[1.5mm]
-\fontsize{20}{22}\selectfont Een constructieve oplossing voor cirkels in een cirkel
+\fontsize{40}{42}\selectfont \textcolor{bluetitle}{A new \textit{best-fit} heuristic for circle packing}\\[1.5mm]
+\fontsize{20}{22}\selectfont Een constructieve oplossing voor het plaatsen van cirkels in een cirkel
 \end{textblock}
 %
 \begin{textblock}{160}(8,153)
@@ -179,12 +180,15 @@ Voorafgaande schriftelijke toestemming van de promotor(en) is eveneens vereist v
 
 Het Circle-Packing probleem bestaat er uit om een aantal cirkels, met gekende radii, in een zo klein mogelijke container te plaatsen.
 De vorm van deze container kan verschillen, meestal is het een driehoek, rechthoek of cirkel.
-In deze thesis bekijken we het packings van cirkels in een cirkel.
+In deze thesis stel ik een nieuwe best-fit heuristiek voor voor het plaatsen van cirkels in een cirkel.
+Het is een constructieve heuristiek waarin stapsgewijs telkens de best-passende cirkel geplaatst zal worden.
 
-Wiskunde is dit een relatief eenvoudig probleem om voor te stellen, maar computationeel is het zeer zwaar om exact op te lossen.
-Bestaande pogingen om dit probleem op te lossen geven zeer dichte packings, maar vragen zeer veel tijd. In deze thesis stel ik een nieuwe constructieve heuristiek voor om deze packings te maken, die het mogelijk maakt zeer snel oplossingen te genereren.
+Wiskundig is dit een relatief eenvoudig probleem om voor te stellen, maar computationeel is het zeer zwaar om exact op te lossen.
+Bestaande pogingen om dit probleem op te lossen vragen zeer veel tijd om het te berekenen.
+In deze thesis stel ik een nieuwe heuristiek voor die het mogelijk maakt zéér snel oplossingen te genereren.
 
-Ik wil hierbij Patrick De Causmaeker bedanken voor alle hulp en ondersteuning tijdens het verwezenlijken van dit werk.
+Ik wil hierbij Patrick De Causmaeker bedanken voor alle hulp en ondersteuning bij het ontwerpen van deze heuristiek en verwezenlijken van dit werk.
+Ook wil ik Jim Bollansée en Marie Julia Bollansée bedanken voor hun hulp bij het schrijven van deze tekst.
 
 %  In het voorwoord wordt de algemene doelstelling van het werk samengevat
 %  in enkele regels en worden personen, diensten of firma’s bedankt voor hun
@@ -261,7 +265,7 @@ Hierin plaatsen ze één voor één elke cirkel en laat de non-linear optimizer 
 Ze zoeken van met de taboo-search naar de beste volgorde om de cirkels te plaatsen.
 Hoewel deze oplossingen zeer goede packings maken, regelmatig tot op heden de best gekende oplossingen \cite{packomania}, vragen ze zeer veel reken tijd.
 Constructieve algoritmen voor het oplossen van circle-packings zijn veel minder onderzocht.
-De enige voor mij bekende is \cite{akeb2006basic}, waarin ze een alternatieve vorm van circle-packings oplossen: de omtrek van de container ligt vast, en je moet zo veel mogelijk cirkels van gelijke grootte er in plaatsen.
+Eén van de weinig constructieve methoden word beschreven in \cite{akeb2006basic}, waar ze een alternatieve vorm van circle-packings oplossen: de grootte van de container ligt vast, en je moet zo veel mogelijk cirkels van gelijke grootte er in plaatsen.
 
 In deze thesis stel ik een nieuw constructieve heuristiek voor om het circle-packing probleem op te lossen.
 Het is een best-fit heuristiek gebaseerd op een oplossing voor het Orthogonal Stock-Cutting Problem voorgesteld in \cite{burke2004new}.
@@ -322,8 +326,9 @@ De volledige implementatie is beschikbaar op GitHub \cite{circle-packing-github}
 
 \section{Basis idee}
 
-Het basis idee van de heuristiek is om stelselmatig een packing op te bouwen.
-Er is één grote lus waarin telkens eerst een plek gekozen wordt om een cirkel te plaatsen (in een hole, of op de shell, later hier meer over).
+Het basis idee van de heuristiek is om stelselmatig een packing op te bouwen, door telkens cirkels te zoeken die het best passen.
+Bij elke stap wordt telkens eerst een plek gekozen wordt om een cirkel te plaatsen (in een hole, of op de shell, later hier meer over).
+Hier wordt dan de best-passende cirkel geplaatst.
 Eenmaal een cirkel geplaatst is wordt deze nooit meer verplaatst.
 Dit laat toe om intelligente structuren op te bouwen en deze op een zeer efficiënte manier te gebruiken.
 
@@ -382,7 +387,7 @@ De best-fit solver uit deze thesis kan stap voor stap de oplossing genereren.
 Dit zorgt er voor dat tussentijdse stappen gevisualiseerd kunnen worden.
 Het is dus niet nodig een packing volledig te maken, het kan zeer nuttig zijn tussentijdse packings te zien, zeker bij het debuggen of implementeren van nieuwe functionaliteit.
 
-// TODO Voeg code toe?
+//TODO Code best-fit-step?
 
 \section{Initialisatie}
 
@@ -442,11 +447,113 @@ Meer uitleg over hoe u deze figuur kan interpreteren kan u vinden in \autoref{ch
 
 \section{Holes} \label{sec:holes}
 
-Het eerste van de twee belangrijkste concepten van het algoritme is \textit{holes}.
-Dit zijn plaatsen tussen andere, reeds geplaatste, cirkels, maar potentieel nog een cirkel tussen kan passen.
-De heuristiek zal telkens deze gaten proberen op te vullen.
+Het eerste van de twee belangrijkste concepten van de heuristiek is \textit{holes} of \textit{gaten}.
+Dit zijn plaatsen tussen andere, reeds geplaatste, cirkels waar potentieel nog een cirkel tussen kan passen.
+De heuristiek zal telkens eerst deze gaten proberen op te vullen, alvorens cirkels op de shell te plaatsen.
 
-In de initiële packing, zoals getoond in \autoref{fig:initialisatie},
+Gaten worden gedefinieerd door exact drie cirkels in de huidige packing.
+De solver houdt informatie bij voor elk gat waar mogelijk nog een cirkel in kan passen.
+Bij elke stap van de solver zal er eerst gekeken worden of er nog gaten in de oplossing zijn.
+Indien er nog gaten zijn zal hij deze dus eerst hier een cirkel in proberen plaatsen.
+Indien het gat te klein is voor alle nog-te-plaatsen cirkels wordt dit gat simpelweg verwijderd uit de lijst van gaten in de solver.
+Op deze manier weet de solver in de volgende stap dat hij daar niet meer moet proberen om een cirkel te plaatsen, en zal hij een ander gat uitproberen.
+Indien er wel een cirkel in het gat past wordt deze daar in geplaatst.
+Dit zal leiden tot het creëren van drie nieuwe gaten, zoals getoond in ... en ....
+
+// TODO Voeg twee afbeeldingen toe, eerste van een gat, tweede waarin het gat opgevuld is en aanleiding geeft tot 3 nieuwe gaten.
+
+\subsection{Grootste cirkel zoeken die past een \textit{hole}}
+
+Bij het plaatsen van een cirkel in een gat wordt een zo groot mogelijke cirkel gezocht die in dit gat past.
+Dit is bij wijze van spreken de best-passende cirkel, vandaar \textit{best-fit}.
+Meer uitleg over hoe bepaald wordt of een cirkel past vind je in \autoref{subsec:bepalen-of-een-cirkel-past-in-hole}.
+Er wordt logaritmisch gezocht door de lijst van cirkels om te bepalen welke cirkel de grootste is die past.
+De solver houdt de lijst van cirkels bij gesorteerd op grootte, dat is cruciaal om snel de beste-passende cirkel te vinden.
+Eerst worden de grootste en kleinste cirkel uitgeprobeerd.
+Indien de kleinste niet past zal het algoritme direct rapporteren dat dit gat te klein is.
+Het gat zal dan, zoals vermeld in \autoref{sec:holes}, verwijderd worden uit de lijst van mogelijk holes.
+Indien de grootste past zal het algoritme onmiddellijk deze cirkel plaatsen in het gat.
+Er zijn immers geen grotere cirkels, dus deze is de cirkel die verondersteld wordt best te passen.
+Vervolgens word er een gebied bepaald in de overblijvende cirkels, waarin de best-passende cirkel zich bevind.
+Initieel ligt de boven-en ondergrens van dit gebied op de uiteinden van de overblijvende cirkels.
+De cirkel in de midden van dit gebied wordt dan uitgeprobeerd.
+Afhangende of deze wel of niet past zal de boven-of ondergrens aangepast worden.
+Dit wordt telkens herhaald tot er nog maar één cirkel over blijft.
+Dit is dan de grootste cirkel die past in het gat.
+
+// TODO Add code
+
+\subsection{Bepalen of een cirkel past in een \textit{hole}} \label{subsec:bepalen-of-een-cirkel-past-in-hole}
+
+Er is geen exact definitie van de grootte van een gat.
+Dit is niet mogelijk omdat de cirkels die het gat bepalen niet altijd aan elkaar raken.
+Het is echter wel mogelijk om te bepalen of een cirkel past.
+Dit gebeurt door de cirkel $c_i$, met radius $r_i$, die je wilt testen te plaatsen zodat hij twee van de drie cirkels $c_g1, c_g2$, met radii $r_g1, r_g2$, van het gat raakt.
+Het punt vinden waarop deze cirkel moet staan om beide andere cirkels te raken wordt bepaald door een eenvoudige cirkel-cirkel intersectie, tussen twee cirkels met hun middelpunt gelijk aan het middelpunt van de cirkels $c_g1$ en $c_g2$ en als radii $r_g1+r_i$ en $r_g2+r_i$:
+
+\begin{lstlisting}
+	Vector2 getMountPositionFor(Circle cir, Location first, Location second) {
+		double x0 = first.getPosition().getX();
+		double y0 = first.getPosition().getY();
+		double r0 = first.getCircle().getRadius() + cir.getRadius();
+
+		double x1 = second.getPosition().getX();
+		double y1 = second.getPosition().getY();
+		double r1 = second.getCircle().getRadius() + cir.getRadius();
+
+		/* dx and dy are the vertical and horizontal distances between
+		 * the circle centers.
+		 */
+		double dx = x1 - x0;
+		double dy = y1 - y0;
+
+		/* Determine the straight-line distance between the centers. */
+		//d = sqrt((dy*dy) + (dx*dx));
+		double d = Math.hypot(dx, dy);
+
+		/* 'point 2' is the point where the line through the circle
+		 * intersection points crosses the line between the circle
+		 * centers.
+		 */
+
+		/* Determine the distance from point 0 to point 2. */
+		double a = ((r0*r0) - (r1*r1) + (d*d)) / (2.0 * d) ;
+
+		/* Determine the coordinates of point 2. */
+		double x2 = x0 + (dx * a/d);
+		double y2 = y0 + (dy * a/d);
+
+		/* Determine the distance from point 2 to either of the
+		 * intersection points.
+		 */
+		double h = Math.sqrt((r0*r0) - (a*a));
+
+		/* Now determine the offsets of the intersection points from
+		 * point 2.
+		 */
+		double rx = -dy * (h/d);
+		double ry = dx * (h/d);
+
+		/* Determine the absolute intersection points. */
+		return new Vector2(x2 - rx, y2 - ry);
+	}
+\end{lstlisting}
+// TODO Is deze code interessant?
+
+Een cirkel-cirkel intersectie heeft natuurlijk altijd twee punten.
+Hiervan moet er één gekozen worden.
+Door systematisch de gaten op te bouwen, wordt verzekerd dat telkens het punt in het gat gekozen wordt.
+//TODO verder uitweiden over clockwise/counterclockwise en dat hier tussen gewisseld wordt voor een stabielere fout?
+
+Eenmaal dit punt bepaald is word de cirkel op deze plek gezet.
+Dan wordt gekeken of deze cirkel wel effectief in het gat geplaatst is, en of deze niet overlapt met de derde cirkel die het gat definieert.
+
+//TODO Add code "tryFit" van Hole.java
+// TODO explain code
+
+Het is niet nodig om na te gaan of er overlap is met andere cirkels in de oplossing.
+Als er met een andere overlap zou zijn, moet dit zijn omdat de cirkel buiten het gat geplaatst is, of er is ook overlap met één van de cirkels in het gat zelf.
+Dit zorgt er voor dat er zeer weinig overlap-checks gedaan moeten worden, wat het algoritme zeer snel maakt.
 
 \section{Shell} \label{sec:shell}
 
