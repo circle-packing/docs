@@ -1,0 +1,318 @@
+% ---------- Titelblad Masterproef Faculteit Wetenschappen -----------
+% Dit document is opgesteld voor compilatie met pdflatex.  Indien je
+% wilt compileren met latex naar dvi/ps, dien je de figuren naar
+% (e)ps-formaat om te zetten.
+%                           -- december 2012
+% -------------------------------------------------------------------
+\RequirePackage{fix-cm}
+\documentclass[12pt,a4paper,oneside]{book}
+
+% --------------------- In te laden pakketten -----------------------
+% Deze kan je eventueel toevoegen aan de pakketten die je al inlaadt
+% als je dit titelblad integreert met de rest van thesis.
+% -------------------------------------------------------------------
+\usepackage{graphicx,xcolor,textpos}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{helvet}
+\usepackage{amsmath}
+\usepackage{hyperref}
+
+% -------------------- Pagina-instellingen --------------------------
+% Indien je deze wijzigt, zal het titelblad ook wijzigen.  Dit dien je
+% dan manueel aan te passen.
+% --------------------------------------------------------------------
+\topmargin -10mm
+\textwidth 160truemm
+\textheight 240truemm
+\oddsidemargin 0mm
+\evensidemargin 0mm
+
+% ------------------- textpos-instellingen ---------------------------
+% Enkele andere instellingen voor het voorblad.
+% --------------------------------------------------------------------
+\definecolor{green}{RGB}{172,196,0}
+\definecolor{bluetitle}{RGB}{29,141,176}
+\definecolor{blueaff}{RGB}{0,0,128}
+\definecolor{blueline}{RGB}{82,189,236}
+\setlength{\TPHorizModule}{1mm}
+\setlength{\TPVertModule}{1mm}
+
+% Eigen instellingen
+\renewcommand{\contentsname}{Inhoud}
+\renewcommand{\listfigurename}{Lijst van figuren}
+\renewcommand{\listtablename}{Lijst van tabellen}
+\renewcommand{\chaptername}{Hoofdstuk}
+\renewcommand{\chapterautorefname}{hoofdstuk}
+
+\begin{document}
+
+% ---------------------- Voorblad ------------------------------------
+% Vergeet niet de tekst aan te passen:
+% - Titel en, indien van toepassing, ondertitel
+%          voor eventuele formules in de titel of ondertitel
+%          gebruik je  \form{$...$}
+% - Je naam
+% - Je (co)promotor, begeleider (indien van toepassing)
+% - Je opleiding
+% - Het academiejaar
+% --------------------------------------------------------------------
+\thispagestyle{empty}
+\newcommand{\form}[1]{\scalebox{1.087}{\boldmath{#1}}}
+\sffamily
+%
+\begin{textblock}{191}(-24,-11)
+\colorbox{green}{\hspace{123mm}\ \parbox[c][18truemm]{68mm}{\textcolor{white}{FACULTEIT WETENSCHAPPEN}}}
+\end{textblock}
+%
+\begin{textblock}{70}(-18,-19)
+\textblockcolour{}
+\includegraphics*[height=19.8truemm]{LogoKULeuven.png}
+\end{textblock}
+%
+\begin{textblock}{79}(50,50)
+\centerline{\includegraphics*[height=10.0truecm]{voorbladpacking.png}}
+%De achtergrond kan wit blijven of je kan een afbeelding invoegen (maximum hoogte 10 cm, breedte variabel, denk aan auteursrechten\ldots). GEEN logo's (je kan binnenin de masterproef logo's gebruiken, maar niet op de voor- of achterpagina).
+\end{textblock}
+%
+\begin{textblock}{160}(-6,63)
+\textblockcolour{}
+\vspace{-\parskip}
+\flushleft
+\fontsize{40}{42}\selectfont \textcolor{bluetitle}{Circle packing}\\[1.5mm]
+\fontsize{20}{22}\selectfont Een constructieve oplossing voor cirkels in een cirkel
+\end{textblock}
+%
+\begin{textblock}{160}(8,153)
+\textblockcolour{}
+\vspace{-\parskip}
+\flushright
+\fontsize{14}{16}\selectfont \textbf{Pablo BOLLANSÉE}
+\end{textblock}
+%
+\begin{textblock}{70}(-6,191)
+\textblockcolour{}
+\vspace{-\parskip}
+\flushleft
+Promotor: Prof. P. De Causmaecker \\[-2pt]
+\textcolor{blueaff}{Affiliatie \textsl{(facultatief)}}\\[5pt]
+Co-promotor: \textsl{(facultatief)}\\[-2pt]
+\textcolor{blueaff}{Affiliatie \textsl{(facultatief)}}\\[5pt]
+Begeleider: \textsl{(facultatief)}\\[-2pt]
+\textcolor{blueaff}{Affiliatie \textsl{(facultatief)}}\\
+\end{textblock}
+%
+\begin{textblock}{160}(8,191)
+\textblockcolour{}
+\vspace{-\parskip}
+\flushright
+Proefschrift ingediend tot het\\[4.5pt]
+behalen van de graad van\\[4.5pt]
+Master of Science in de\\[4.5pt]
+toegepaste informatica\\
+\end{textblock}
+%
+\begin{textblock}{160}(8,232)
+\textblockcolour{}
+\vspace{-\parskip}
+\flushright
+Academiejaar 2015-2016
+\end{textblock}
+%
+\begin{textblock}{191}(-24,248)
+{\color{blueline}\rule{550pt}{5.5pt}}
+\end{textblock}
+%
+\vfill
+
+\newpage
+\thispagestyle{empty}
+\begin{textblock}{160}(0,185)
+© Copyright by KU Leuven
+
+Zonder voorafgaande schriftelijke toestemming van zowel de promotor(en) als de auteur(s) is overnemen, kopiëren, gebruiken of realiseren van deze uitgave of gedeelten ervan verboden. Voor aanvragen tot of informatie i.v.m. het overnemen en/of gebruik en/of realisatie van gedeelten uit deze publicatie, wendt u tot de KU Leuven, Faculteit Wetenschappen, Geel Huis, Kasteelpark Arenberg 11 bus 2100, 3001 Leuven (Heverlee), Telefoon +32 16 32 14 01.
+
+Voorafgaande schriftelijke toestemming van de promotor(en) is eveneens vereist voor het aanwenden van de in dit afstudeerwerk beschreven (originele) methoden, producten, schakelingen en programma’s voor industrieel of commercieel nut en voor de inzending van deze publicatie ter deelname aan wetenschappelijke prijzen of wedstrijden.
+\end{textblock}
+
+\newpage
+
+% Als je het titelblad wil integreren met de rest van je thesis,
+% kan je hieronder verder.
+% ----------------------- Eerste pagina's -------------------------
+% Hier kan je inhoudsopgave, voorwoord en dergelijke kwijt.
+% -----------------------------------------------------------------
+\rmfamily
+\setcounter{page}{0}
+\pagenumbering{roman}
+
+\newpage
+
+\chapter*{Voorwoord}
+\addcontentsline{toc}{chapter}{Voorwoord}
+
+Het Circle-Packing probleem bestaat er uit om een aantal cirkels, met gekende radii, in een zo klein mogelijke container te plaatsen.
+De vorm van deze container kan verschillen, meestal is het een driehoek, rechthoek of cirkel.
+In deze thesis bekijken we het packings van cirkels in een cirkel.
+
+Wiskunde is dit een relatief eenvoudig probleem om voor te stellen, maar computationeel is het zeer zwaar om exact op te lossen.
+Bestaande pogingen om dit probleem op te lossen geven zeer dichte packings, maar vragen zeer veel tijd. In deze thesis stel ik een nieuwe constructieve heuristiek voor om deze packings te maken, die het mogelijk maakt zeer snel oplossingen te genereren.
+
+Ik wil hierbij Patrick De Causmaeker bedanken voor alle hulp en ondersteuning tijdens het verwezenlijken van dit werk.
+
+%  In het voorwoord wordt de algemene doelstelling van het werk samengevat
+%  in enkele regels en worden personen, diensten of firma’s bedankt voor hun
+%  medewerking bij het tot stand komen van het werk.
+%  De naam van firma’s en personen uit deze firma’s mogen slechts worden vermeld
+%  mits hun uitdrukkelijke toelating én na overleg met de supervisor(en)! Steeds
+%  wordt de supervisor(en) vermeld, de verantwoordelijke en eventueel de personen
+%  die rechtstreeks geholpen hebben bv. door het ter beschikking stelling van
+%  meetresultaten, faciliteiten. Ook de instantie die eventueel een doctoraatsbeurs
+%  heeft toegekend wordt bedankt (bv. FWO, IWT, . . . ).
+
+\newpage
+
+\chapter*{Abstract}
+\addcontentsline{toc}{chapter}{Abstract}
+
+TODO
+
+%  In een beknopte tekst van maximum 2 pagina’s worden de belangrijkste
+%  doelstellingen en besluiten geformuleerd, zowel in het Nederlands als in het
+%  Engels. Zulke samenvattingen kunnen worden gebruikt in wetenschappelijke
+%  verslagen van het departement of de faculteit. Het Engels moet vlekkeloos zijn.
+
+\newpage
+
+\tableofcontents
+\listoffigures
+\addcontentsline{toc}{chapter}{Lijst van figuren}
+\listoftables
+\addcontentsline{toc}{chapter}{Lijst van tabellen}
+
+\newpage
+
+% ----------------------- Eigenlijke thesis -----------------------
+% Vanaf de inleiding/het eerste hoofdstuk.
+% -----------------------------------------------------------------
+\setcounter{page}{0}
+\pagenumbering{arabic}
+
+\chapter{Inleiding}
+
+Het Circle-Packing probleem (CPP), voor cirkels in een cirkel, bestaat uit het plaatsen van $n$ cirkels in een zo klein mogelijke cirkelvormige container.
+Het is de bedoeling om voor de gegeven cirkels de coordinaten van de middelpunten te vinden zodat deze niet overlappen en de radius van de omcirkel zo klein mogelijk is.
+
+Circle-Packing is zowel theoretisch als practisch een zeer interessant probleem.
+Het kan gebruikt worden om verschillende real-world problemen op te lossen, zoals het plaatsen van zendmasten, stokage van cilindrische voorwerpen, en het combineren van verschillende kabels.
+
+Mathematisch is het redelijk eenvoudig als een optimalisatie probleem te omschrijven:
+
+\begin{equation*}
+\begin{aligned}
+& \text{minimaliseer}
+& & r \\
+& \text{onderhevig aan}
+& & x_i^2 + y_i^2 \leq (r-r_i)^2, 
+& & &i = {1,...,n}\\
+&&& (x_i - x_j)^2 + (y_i + y_j)^2 \geq (r_i + r_j)^2,
+& & &i \neq j
+\end{aligned}
+\end{equation*}
+
+Hierin is $r_i$ de radius, en $(x_i,y_i)$ de coördinaten van het centrum van cirkel $i$.
+Hierbij wordt verondersteld dat de omcirkel het nulpunt als middelpunt heeft.
+De eerste formule verzekerd dat de cirkels in de omcirkel liggen, en de tweede dat ze elkaar niet overlappen.
+In het geval dat alle cirkels de zelfde grootte hebben wordt meestal $r_i$ altijd gelijk aan $1$ genomen.
+
+Hoewel dit wiskundig zeer eenvoudig te omschrijven is, blijft het toch een zeer moeilijk probleem om exact op te lossen.
+Het is een NP-hard probleem.
+Daarom zoekt men naar andere technieken om het toch op te kunnen lossen.
+In \cite{grosso2010} stellen ze een Monotonic Basin Hopping algoritme voor.
+Hierin beschrijven ze dat er teveel lokale optima zijn voor een eenvoudige multi-start behandeling, en stellen een variant voor waarin ze op een slimme manier de begin punten proberen genereren.
+In \cite{jors2011} wordt gebruik gemaakt van de combinatorische eigenschappen van circle-packing in combinatie met een taboo-search en een off-the-shelf non-linear optimizer.
+Hierin plaatsen ze één voor één elke cirkel en laat de non-linear optimizer hiervoor telkens een lokaal extremum berekenen.
+Ze zoeken van met de taboo-search naar de beste volgorde om de cirkels te plaatsen.
+Hoewel deze oplossingen zeer goede packings maken, regelmatig tot op heden de best gekende oplossingen \cite{packomania}, vragen ze zeer veel reken tijd.
+Constructieve algoritmen voor het oplossen van circle-packings zijn veel minder onderzocht.
+De enige voor mij bekende is \cite{akeb2006basic}, waarin ze een alternatieve vorm van circle-packings oplossen: de omtrek van de container ligt vast, en je moet zo veel mogelijk cirkels van gelijke grootte er in plaatsen.
+
+In deze thesis stel ik een nieuw constructieve heuristiek voor om het circle-packing probleem op te lossen.
+Het is een best-fit heuristiek gebaseerd op een oplossing voor het Orthogonal Stock-Cutting Problem voorgesteld in \cite{burke2004new}.
+Zij stellen een heuristiek voor die de volgende balk om te plaatsen kiest uit een lijst, en deze plaatst op de \textit{beste} positie.
+Dit in tegenstelling tot cirkels plaatsen in een vooraf bepaalde volgorde zoals in \cite{grosso2010} en \cite{jors2011}.
+Op een gelijkaardige manier kiest mijn algoritme de volgende cirkel die best past in de huidige packing.
+
+In \autoref{chap:algoritme} bespreek ik hoe de heuristiek opgebouwd is.
+Ik bespreek de twee basis concepten voor mijn best-fit heuristiek: \textit{holes} en de \textit{shell}.
+Ik bespreek hoe deze werken, en op welke manier gekozen wordt welke cirkel best past in de packing.
+Hierbij bespreek ik ook de implementatie. In \autoref{chap:resultaten} worden de verkregen resultaten besproken.
+Hier vergelijk ik de packings met de best gekende resultaten zoals gerapporteerd op de Packomania website (\cite{packomania}).
+Ik doe hier een vergelijking zowel op omtrek van de verkregen omcirkel, als op nodige tijd om deze packing te berekenen tegenover de best gekende oplossingen.
+Ook toon ik resultaten voor packings voor veel meer cirkels dan getoond op de Packomania website.
+In \autoref{chap:opmerkingen-en-verder-werk} bespreek ik mogelijke verbeteringen, de \textit{losse eindjes} en ideeën voor verdere uitbreidingen en onderzoek.
+
+\chapter{Algoritme} \label{chap:algoritme}
+
+
+
+\section{Begin}
+
+\section{Shell}
+
+
+
+\chapter{Resultaten} \label{chap:resultaten}
+
+
+\chapter{Opmerkingen en verder werk} \label{chap:opmerkingen-en-verder-werk}
+
+
+\chapter{Conclusie} \label{chap:conclusie}
+
+
+\newpage
+
+\bibliography{thesis}
+\bibliographystyle{plain}
+
+\newpage
+
+% ----------------------- Achterblad ------------------------------
+% Vergeet niet de tekst aan te passen:
+% - Afdeling
+% - Adres van de afdeling
+% - Telefoon en faxnummer
+% -----------------------------------------------------------------
+\thispagestyle{empty}
+\sffamily
+%
+\begin{textblock}{191}(113,-11)
+{\color{blueline}\rule{160pt}{5.5pt}}
+\end{textblock}
+%
+\begin{textblock}{191}(168,-11)
+{\color{blueline}\rule{5.5pt}{59pt}}
+\end{textblock}
+%
+\begin{textblock}{183}(-24,-11)
+\textblockcolour{}
+\flushright
+\fontsize{7}{7.5}\selectfont
+\textbf{AFDELING}\\
+Straat nr bus 0000\\
+3000 LEUVEN, BELGI\"{E}\\
+tel. + 32 16 00 00 00\\
+fax + 32 16 00 00 00\\
+www.kuleuven.be\\
+\end{textblock}
+%
+\begin{textblock}{191}(154,-7)
+\textblockcolour{}
+\includegraphics*[height=16.5truemm]{sedes.png}
+\end{textblock}
+%
+\begin{textblock}{191}(-20,235)
+{\color{bluetitle}\rule{544pt}{55pt}}
+\end{textblock}
+\end{document}
