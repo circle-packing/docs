@@ -17,6 +17,9 @@
 \usepackage{helvet}
 \usepackage{amsmath}
 \usepackage{hyperref}
+\usepackage[hypcap]{caption}
+\usepackage{listings}
+\usepackage{color}
 
 % -------------------- Pagina-instellingen --------------------------
 % Indien je deze wijzigt, zal het titelblad ook wijzigen.  Dit dien je
@@ -35,6 +38,9 @@
 \definecolor{bluetitle}{RGB}{29,141,176}
 \definecolor{blueaff}{RGB}{0,0,128}
 \definecolor{blueline}{RGB}{82,189,236}
+\definecolor{dkgreen}{rgb}{0,0.6,0}
+\definecolor{gray}{rgb}{0.5,0.5,0.5}
+\definecolor{mauve}{rgb}{0.58,0,0.82}
 \setlength{\TPHorizModule}{1mm}
 \setlength{\TPVertModule}{1mm}
 
@@ -44,6 +50,26 @@
 \renewcommand{\listtablename}{Lijst van tabellen}
 \renewcommand{\chaptername}{Hoofdstuk}
 \renewcommand{\chapterautorefname}{hoofdstuk}
+\renewcommand{\sectionautorefname}{sectie}
+\renewcommand{\figureautorefname}{figuur}
+
+\lstset{frame=tb,
+  language=Java,
+  aboveskip=3mm,
+  belowskip=3mm,
+  showstringspaces=false,
+  columns=flexible,
+  basicstyle={\small\ttfamily},
+  numbers=left,
+  numberstyle=\tiny\color{gray},
+  keywordstyle=\color{blue},
+  commentstyle=\color{dkgreen},
+  stringstyle=\color{mauve},
+  breaklines=true,
+  breakatwhitespace=true,
+  tabsize=4,
+  escapechar=|
+}
 
 \begin{document}
 
@@ -251,16 +277,178 @@ Hier vergelijk ik de packings met de best gekende resultaten zoals gerapporteerd
 Ik doe hier een vergelijking zowel op omtrek van de verkregen omcirkel, als op nodige tijd om deze packing te berekenen tegenover de best gekende oplossingen.
 Ook toon ik resultaten voor packings voor veel meer cirkels dan getoond op de Packomania website.
 In \autoref{chap:opmerkingen-en-verder-werk} bespreek ik mogelijke verbeteringen, de \textit{losse eindjes} en ideeën voor verdere uitbreidingen en onderzoek.
+In \autoref{chap:handleiding-visualisaties} wordt kort verduidelijkt hoe u de visualisaties gebruikt doorheen deze thesis kan interpreteren.
+
+\chapter{Handleiding voor het lezen van de visualisaties} \label{chap:handleiding-visualisaties}
+
+Doorheen deze thesis zal ik gebruik maken visualisaties gegenereerd door de java implementatie van het algoritme.
+Dit om de concepten grafisch te verduidelijken.
+Twee voorbeelden van zulke visualisaties zijn \autoref{fig:handleiding-visualisatie-1} en \autoref{fig:handleiding-visualisatie-2}.
+
+\begin{figure}
+  \centering
+  \includegraphics[width=0.65\textwidth]{handleiding-visualisatie-1.png}
+  \caption{Voorbeeld visualisatie met drie duidelijke holes} \label{fig:handleiding-visualisatie-1}
+\end{figure}
+
+\begin{figure}
+  \centering
+  \includegraphics[width=0.65\textwidth]{handleiding-visualisatie-2.png}
+  \caption{Voorbeeld visualisatie met grote shell} \label{fig:handleiding-visualisatie-2}
+\end{figure}
+
+Deze figuren kan u op de volgende manier interpreteren:
+
+\begin{itemize}  
+\item De \textbf{reeds geplaatste cirkels} worden getoond als \textbf{licht blauwe cirkels}.
+\item De \textbf{shell} is een \textbf{gele lijn} aan de buitenste rand van de packing.
+\item De kleine \textbf{groene bolletjes} op de shell geven de posities aan waarop mogelijk een cirkel geplaatst zal worden.
+\item \textbf{Holes} worden getoond als \textbf{rode driehoeken}.
+\item De \textbf{omcirkel} van de huidige packing wordt getoond als een \textbf{groene cirkel}.
+\end{itemize}
+
+Op \autoref{fig:handleiding-visualisatie-1} is zijn er duidelijk drie holes te zien.
+Elk van de drie holes word gedefinieerd door de centrale cirkel en twee van de buitenste cirkels.
+Ook is er een kleine shell te zien, die bestaat uit de buitenste drie cirkels.
+In \autoref{fig:handleiding-visualisatie-2} wordt een verder gevorderde packing getoond waarop één hole te zien is, en een veel grotere shell.
+Op beide figuren kan je ook de omcirkel zien.
 
 \chapter{Algoritme} \label{chap:algoritme}
 
+In dit hoofdstuk bespreek ik de werking van de heuristiek.
+Eerst geef ik een korte beschrijving van het basis idee van het algoritme, gevolgd door de structuur van de code.
+Vervolgens leg ik stelselmatig de volledige werking uit, alle veronderstellingen die gemaakt worden en implementatie details waar nodig.
+De volledige implementatie is beschikbaar op GitHub \cite{circle-packing-github} en in gebeurt in Java.
+
+\section{Basis idee}
+
+Het basis idee van de heuristiek is om stelselmatig een packing op te bouwen.
+Er is één grote lus waarin telkens eerst een plek gekozen wordt om een cirkel te plaatsen (in een hole, of op de shell, later hier meer over).
+Eenmaal een cirkel geplaatst is wordt deze nooit meer verplaatst.
+Dit laat toe om intelligente structuren op te bouwen en deze op een zeer efficiënte manier te gebruiken.
+
+Het algoritme bouwt dus cirkel per cirkel een packing op.
+Dit door in elke stap een positie te kiezen, en hierin een cirkel te proberen plaatsen.
+Indien er geen cirkel geplaatst kan worden wordt de interne structuur van het probleem vernieuwd om deze nieuwe informatie te reflecteren.
+Dit gebeurt op verschillende manieren voor de holes en de shell.
+Meer hierover vindt u terug in \autoref{sec:holes} en \autoref{sec:shell}.
+Als er wel een cirkel geplaatst kan worden dan wordt deze uit de lijst van nog-te-plaatsen cirkels verwijderd, en krijgt deze een permanente positie daar.
+Dit geeft ook aanleiding tot aanpassen van de holes en/of shell.
+Hierdoor wordt er een nieuwe tussentijdse packing gemaakt.
+Deze wordt dan door gegeven naar de volgende stap, waarin het algoritme opnieuw zal proberen een cirkel te plaatsen.
+Op deze manier word een volledige packing opgebouwd voor alle cirkels.
+
+\section{Structuur}
+
+De implementatie van het algoritme is op te delen in drie belangrijke delen.
+
+\begin{itemize}  
+\item Problem of probleem
+\item Solution of oplossing
+\item Solver of oplosser
+\end{itemize}
+
+Bovenop deze delen komen dan ook nog enkele voor de hand liggende hulp klassen, zoals $circle$ en $vector2$.
+Ook zijn er klassen voorzien om de uiteindelijke oplossing te visualiseren, tussen stappen te visualiseren en automatisch verschillende tests uit te voeren.
+
+Een $problem$ of probleem is een lijst van cirkels.
+Deze hebben nog geen positie, en worden gesorteerd van groot naar klein.
+Dit is wat de $solver$ als input krijgt.
+
+Een $solution$ of oplossing is een lijst van cirkels met hun positie.
+Dit kan een tussen oplossing zijn, waar nog niet voor alle cirkels uit een probleem een positie gevonden is.
+Ook geeft dit geen garanties van correctheid, er kan dus bijvoorbeeld overlap zijn, maar voorziet functionaliteit om dit na te gaan.
+Dit is wat de solver als output geeft.
+Een correcte solver geeft natuurlijk wel altijd goede oplossingen.
+
+Een $solver$ of oplosser is het object dat een packing zoekt voor een gegeven probleem.
+Dit is dus het belangrijkste deel van de code, en hier is de nieuwe heuristiek geïmplementeerd.
+De best-fit solver, zoals beschreven in deze thesis, doet dit stap voor stap.
+In elke stap wordt er één cirkel geplaats op zijn finale positie, dit aan de hand van enkele keuzes die verder in dit hoofdstuk toegelicht zullen worden.
 
 
-\section{Begin}
+\section{Structuur van de solver}
 
-\section{Shell}
+Zoals hierboven gezegd is de solver het hart van de implementatie.
+Deze maakt effectief een packing voor een gegeven probleem.
+De solver bevat een lijst van \textit{holes} en de \textit{shell}.
+Het bevat ook een lijst van de nog te plaatsen cirkels, en een tussen-oplossing met de cirkels die reeds een plaats gekregen hebben.
+Ook heeft hij interne omcirkel voor deze oplossing.
+Een oplossing kan zelf ook een omcirkel berekenen, maar de solver gebruikt een interne omcirkel die enkel vernieuwd wordt als het nodig is.
+Bovendien heeft de solver extra informatie die de oplossing niet heeft, waardoor deze omcirkel efficiënter berekend kan worden.
+Zie \autoref{chap:shell} voor meer uitleg hierover.
 
+De best-fit solver uit deze thesis kan stap voor stap de oplossing genereren.
+Dit zorgt er voor dat tussentijdse stappen gevisualiseerd kunnen worden.
+Het is dus niet nodig een packing volledig te maken, het kan zeer nuttig zijn tussentijdse packings te zien, zeker bij het debuggen of implementeren van nieuwe functionaliteit.
 
+// TODO Voeg code toe?
+
+\section{Initialisatie}
+
+Zoals eerder gezegd bouwt het algoritme steeds verder op een packing uit de vorige stap.
+Hierdoor is het dus nodig om een initiële packing te maken van een aantal cirkels waarop de volgende stappen kunnen verder bouwen.
+Deze initiële packing is eenvoudigweg een packing van de drie grootste cirkels in het probleem.
+Deze drie cirkels worden zo geplaatst dat ze alle drie aan elkaar raken, zoals getoond in \autoref{fig:initialisatie}.
+De licht blauwe cirkels tonen de drie eerste-geplaatste cirkels.
+Meer uitleg over hoe u deze figuur kan interpreteren kan u vinden in \autoref{chap:handleiding-visualisaties}
+
+\begin{figure}
+  \centering
+  \includegraphics[width=0.65\textwidth]{initialisatie.png}
+  \caption{Voorbeeld van initiële packing} \label{fig:initialisatie} 
+\end{figure}
+
+// TODO Interessant om deze code toe te voegen?
+
+\begin{lstlisting}
+	private void packFirstThree() {
+		//Initially place the two biggest circles next to eachother
+		Circle first = circlesToPack.get(0);
+		Circle second = circlesToPack.get(1);
+
+		Vector2 firstPos = new Vector2(0, 0);
+		Vector2 secondPos = new Vector2(first.getRadius() + second.getRadius(), 0);
+
+		Location firstLoc = new Location(firstPos, first);
+		Location secondLoc = new Location(secondPos, second);
+
+		getSolution().add(firstLoc);
+		getSolution().add(secondLoc);
+
+		// Place the third biggest circle on top of the first two (assuming they are positioned clockwise)
+		Circle third = circlesToPack.get(2);
+		Vector2 thirdPos = Helpers.getMountPositionFor(third, firstLoc, secondLoc);
+		Location thirdLoc = new Location(thirdPos, third);
+		getSolution().add(thirdLoc);
+
+		circlesToPack.remove(first);
+		circlesToPack.remove(second);
+		circlesToPack.remove(third);
+
+		// Create first hole
+		holes.add(new NHole(firstLoc, secondLoc, thirdLoc));
+		// Create the initial shell
+		// IMPORTANT: must be clock-wise
+		shell.add(firstLoc);
+		shell.add(thirdLoc);
+		shell.add(secondLoc);
+
+		enclosingCircle = Location.calculateEnclosingCircle(Arrays.asList(firstLoc, secondLoc, thirdLoc));
+	}
+\end{lstlisting}
+
+// TODO Licht de code toe
+
+\section{Holes} \label{sec:holes}
+
+Het eerste van de twee belangrijkste concepten van het algoritme is \textit{holes}.
+Dit zijn plaatsen tussen andere, reeds geplaatste, cirkels, maar potentieel nog een cirkel tussen kan passen.
+De heuristiek zal telkens deze gaten proberen op te vullen.
+
+In de initiële packing, zoals getoond in \autoref{fig:initialisatie},
+
+\section{Shell} \label{sec:shell}
 
 \chapter{Resultaten} \label{chap:resultaten}
 
