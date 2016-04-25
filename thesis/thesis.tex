@@ -257,21 +257,36 @@ Hierin is $r_i$ de radius, en $(x_i,y_i)$ de coördinaten van het centrum van ci
 Hierbij wordt verondersteld dat de omcirkel het nulpunt als middelpunt heeft.
 De eerste formule verzekerd dat de cirkels in de omcirkel liggen, en de tweede dat ze elkaar niet overlappen.
 In het geval dat alle cirkels de zelfde grootte hebben wordt meestal $r_i$ altijd gelijk aan $1$ genomen.
+Het circle-packing probleem voor andere containers heeft gelijkaardige, relatief eenvoudige, wiskundige omschrijvingen.
 
 Hoewel dit wiskundig zeer eenvoudig te omschrijven is, blijft het toch een zeer moeilijk probleem om exact op te lossen.
 Het is een NP-hard probleem.
 Daarom zoekt men naar andere technieken om het toch op te kunnen lossen.
-In \cite{grosso2010} stellen ze een Monotonic Basin Hopping algoritme voor.
+Er is reeds veel onderzoek gebeurt naar het oplossen van het circle-packing probleem voor zowel cirkels van gelijke gootte, als voor cirkels van verschillende grootte.
+In \cite{graham1996repeated} en \cite{lubachevsky1997curved} probeert men vaste patronen te vinden die een optimale packing van cirkels met gelijke grootte geeft.
+In \cite{graham1998dense}, \cite{lubachevsky1991simulate} en \cite{wang2002improved} worden fysisch geïnspireerde simulaties gebruikt om packing te bekomen.
+Ook worden zijn er pogingen om meta-heuristieken te gebruiken om packings te bekomen.
+In \cite{george1995packing} worden verschillende meta-heuristieken, waaronder een genetisch algoritme, uitgeprobeerd en vergeleken.
+Zij ondervinden dat dit genetisch algoritme en een quasi-random techniek, in vergelijking met de andere uitgeprobeerde meta-heuristieken, de beste resultaten geven.
+In \cite{hifi2004approximate} en \cite{hifi2004simulated} worden respectievelijk een genetisch en een simulated-annealing algoritme voorgesteld.
+Een recentere poging is het Monotonic Basin Hopping algoritme voorgesteld in \cite{grosso2010}.
 Hierin beschrijven ze dat er teveel lokale optima zijn voor een eenvoudige multi-start behandeling, en stellen een variant voor waarin ze op een slimme manier de begin punten proberen genereren.
-In \cite{jors2011} wordt gebruik gemaakt van de combinatorische eigenschappen van circle-packing in combinatie met een taboo-search en een off-the-shelf non-linear optimizer.
+Ook relatief recent is \cite{jors2011}, waarin gebruik wordt gemaakt van de combinatorische eigenschappen van circle-packing in combinatie met een taboo-search en een off-the-shelf non-linear optimizer.
 Hierin plaatsen ze één voor één elke cirkel en laat de non-linear optimizer hiervoor telkens een lokaal extremum berekenen.
 Ze zoeken van met de taboo-search naar de beste volgorde om de cirkels te plaatsen.
-Hoewel deze oplossingen zeer goede packings maken, regelmatig tot op heden de best gekende oplossingen \cite{packomania}, vragen ze zeer veel reken tijd.
+
 Constructieve algoritmen voor het oplossen van circle-packings zijn veel minder onderzocht.
 Eén van de weinig constructieve methoden word beschreven in \cite{akeb2006basic}, waar ze een alternatieve vorm van circle-packings oplossen: de grootte van de container ligt vast, en je moet zo veel mogelijk cirkels van gelijke grootte er in plaatsen.
+In \cite{hifi2004approximate} wordt er dan weer een aanpassing gedaan op de klassieke bottom-left-first heuristiek, voor het plaatsen van rechthoeken, om gebruikt te maken van de cirkelvormigheid van de objecten.
 
+Hoewel veel van deze oplossingen zeer goede packings maken, regelmatig verbeteren ze hun voorganger, vragen ze zeer veel reken tijd en beperken ze zich tot een klein aantal cirkels.
 In deze thesis stel ik een nieuw constructieve heuristiek voor om het circle-packing probleem op te lossen.
-Het is een best-fit heuristiek gebaseerd op een oplossing voor het Orthogonal Stock-Cutting Problem voorgesteld in \cite{burke2004new}.
+Deze laat toe in een fractie van de tijd nodig voor andere algoritmen packings te maken.
+Ook is het mogelijk om veel grotere aantallen cirkels te plaatsen.
+De packings zijn echter minder dicht dan deze verkregen in voorgenoemd onderzoek.
+Deze \textit{verslechtering} blijft echter beperkt en laat toe de packings in slecht enkele ogenblikken te maken, waar anderen uren rekentijd vragen.
+
+De heuristiek voorgesteld in deze thesis is een best-fit heuristiek gebaseerd op een oplossing voor het Orthogonal Stock-Cutting Problem voorgesteld in \cite{burke2004new}.
 Zij stellen een heuristiek voor die de volgende balk om te plaatsen kiest uit een lijst, en deze plaatst op de \textit{beste} positie.
 Dit in tegenstelling tot cirkels plaatsen in een vooraf bepaalde volgorde zoals in \cite{grosso2010} en \cite{jors2011}.
 Op een gelijkaardige manier kiest mijn algoritme de volgende cirkel die best past in de huidige packing.
