@@ -182,6 +182,7 @@ Het circle-packing probleem bestaat er uit om een aantal cirkels, met gekende ra
 De vorm van deze container kan verschillen, meestal is het een driehoek, rechthoek of cirkel.
 In deze thesis stel ik een nieuwe \textit{best-fit} gebaseerde heuristiek voor voor het plaatsen van cirkels in een cirkel.
 Het is een constructieve heuristiek waarin stapsgewijs telkens de best-passende cirkel geplaatst zal worden.
+Alle code is beschikbaar op GitHub \cite{circle-packing-github}
 
 Wiskundig is dit een relatief eenvoudig probleem om voor te stellen, maar computationeel is het zeer zwaar om exact op te lossen.
 Bestaande pogingen om dit probleem op te lossen vragen zeer veel tijd om het te berekenen.
@@ -340,7 +341,7 @@ Op beide figuren kan je ook de omcirkel zien.
 In dit hoofdstuk bespreek ik de werking van de heuristiek.
 Eerst geef ik een korte beschrijving van het basis idee van het algoritme, gevolgd door de structuur van de code.
 Vervolgens leg ik stelselmatig de volledige werking uit, alle veronderstellingen die gemaakt worden en implementatie details waar nodig.
-De volledige implementatie is beschikbaar op GitHub \cite{circle-packing-github} en in gebeurt in Java.
+De volledige implementatie is beschikbaar op GitHub \cite{circle-packing-github} en is gebeurt in Java.
 
 \section{Basis idee}
 
@@ -399,7 +400,7 @@ Het bevat ook een lijst van de nog te plaatsen cirkels, en een tussen-oplossing 
 Ook heeft hij interne omcirkel voor deze oplossing.
 Een oplossing kan zelf ook een omcirkel berekenen, maar de solver gebruikt een interne omcirkel die enkel vernieuwd wordt als het nodig is.
 Bovendien heeft de solver extra informatie die de oplossing niet heeft, waardoor deze omcirkel efficiënter berekend kan worden.
-Zie \autoref{chap:shell} voor meer uitleg hierover.
+Zie \autoref{sec:shell} voor meer uitleg hierover.
 
 De best-fit solver uit deze thesis kan stap voor stap de oplossing genereren.
 Dit zorgt er voor dat tussentijdse stappen gevisualiseerd kunnen worden.
@@ -574,6 +575,8 @@ Als er met een andere overlap zou zijn, moet dit zijn omdat de cirkel buiten het
 Dit zorgt er voor dat er zeer weinig overlap-checks gedaan moeten worden, wat het algoritme zeer snel maakt.
 
 \section{Shell} \label{sec:shell}
+
+// TODO Uitleg over intelligent de omcirkel berekenen niet vergeten
 
 \chapter{Resultaten} \label{chap:resultaten}
 
