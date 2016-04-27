@@ -191,7 +191,7 @@ Bestaande pogingen om dit probleem op te lossen vragen zeer veel tijd om het te 
 In deze thesis stel ik een nieuwe heuristiek voor die het mogelijk maakt zéér snel oplossingen te genereren.
 
 Ik wil hierbij Patrick De Causmaeker bedanken voor alle hulp en ondersteuning bij het ontwerpen van deze heuristiek en verwezenlijken van dit werk.
-Ook wil ik Jim Bollansée en Marie Julia Bollansée bedanken voor hun hulp bij het schrijven van deze tekst.
+Ook wil ik Jim Bollansée, Marie Julia Bollansée en Pieter Van de Walle bedanken voor hun hulp bij het schrijven van deze tekst.
 
 %  In het voorwoord wordt de algemene doelstelling van het werk samengevat
 %  in enkele regels en worden personen, diensten of firma’s bedankt voor hun
@@ -233,16 +233,15 @@ TODO
 
 \chapter{Inleiding}
 
-In deze thesis stel ik een nieuwe \textit{best-fit} gebaseerde heuristiek voor voor het cirkle-packing probleem.
-De heuristiek is specifiek voor sub-probleem van het plaatsen van cirkels in een cirkel.
-Ook bespreek ik de implementatie die gemaakt is naast de ontwikkeling van de heuristiek.
-Dit circle-packing probleem bestaat uit het plaatsen van $n$ cirkels in een zo klein mogelijke cirkelvormige container.
-Het is de bedoeling om voor de gegeven cirkels de coordinaten van de middelpunten te vinden zodat deze niet overlappen en de radius van de omcirkel zo klein mogelijk is.
+In deze thesis stel ik een nieuwe \textit{best-fit} gebaseerde heuristiek voor om het \textit{circle-packing} probleem.
+De heuristiek is specifiek ontworpen voor het sub-probleem van het plaatsen van cirkels in een cirkel.
+Het \textit{circle-packing} probleem bestaat uit het plaatsen van $n$ cirkels in een zo klein mogelijke cirkelvormige \textit{container}.
+Het is de bedoeling om voor de gegeven cirkels de coordinaten van de middelpunten te vinden zodat de cirkels niet overlappen en de radius van de omcirkel zo klein mogelijk is.
 
-Circle-Packing is zowel theoretisch als practisch een zeer interessant probleem.
-Het kan gebruikt worden om verschillende real-world problemen op te lossen, zoals het plaatsen van zendmasten, stokage van cilindrische voorwerpen, en het combineren van verschillende kabels.
+Circle-packing is zowel theoretisch als praktisch een zeer interessant probleem.
+Het kan gebruikt worden om verschillende \textit{real-world} problemen op te lossen, zoals het plaatsen van zendmasten, stokage van cilindrische voorwerpen, en het combineren van verschillende kabels. //TODO voeg referenties toe voor deze gebruiken
 
-Mathematisch is het redelijk eenvoudig als een optimalisatie probleem te omschrijven:
+Mathematisch is het probleem redelijk eenvoudig als een optimalisatieprobleem te omschrijven:
 
 \begin{equation*}
 \begin{aligned}
@@ -258,51 +257,59 @@ Mathematisch is het redelijk eenvoudig als een optimalisatie probleem te omschri
 
 Hierin is $r_i$ de radius, en $(x_i,y_i)$ de coördinaten van het centrum van cirkel $i$.
 Hierbij wordt verondersteld dat de omcirkel het nulpunt als middelpunt heeft.
-De eerste formule verzekerd dat de cirkels in de omcirkel liggen, en de tweede dat ze elkaar niet overlappen.
-In het geval dat alle cirkels de zelfde grootte hebben wordt meestal $r_i$ altijd gelijk aan $1$ genomen.
+De eerste formule verzekert dat de cirkels in de omcirkel liggen, en de tweede dat ze elkaar niet overlappen.
+Wanneer alle cirkels dezelfde grootte hebben, wordt meestal $r_i$ gelijk aan $1$ genomen.
 Het circle-packing probleem voor andere containers heeft gelijkaardige, relatief eenvoudige, wiskundige omschrijvingen.
 
-Hoewel dit wiskundig zeer eenvoudig te omschrijven is, blijft het toch een zeer moeilijk probleem om exact op te lossen.
-Het is een NP-hard probleem.
-Daarom zoekt men naar andere technieken om het toch op te kunnen lossen.
-Er is reeds veel onderzoek gebeurt naar het oplossen van het circle-packing probleem voor zowel cirkels van gelijke gootte, als voor cirkels van verschillende grootte.
+Hoewel dit wiskundig eenvoudig te omschrijven is, blijft het toch een zeer moeilijk probleem om exact op te lossen.
+Het is een NP-moeilijk probleem.
+Er is reeds veel onderzoek gebeurd naar het oplossen van het circle-packing probleem voor zowel cirkels van gelijke gootte, als voor cirkels van verschillende grootte.
 In \cite{graham1996repeated} en \cite{lubachevsky1997curved} probeert men vaste patronen te vinden die een optimale packing van cirkels met gelijke grootte geeft.
-In \cite{graham1998dense}, \cite{lubachevsky1991simulate} en \cite{wang2002improved} worden fysisch geïnspireerde simulaties gebruikt om packing te bekomen.
-Ook worden zijn er pogingen om meta-heuristieken te gebruiken om packings te bekomen.
+In \cite{graham1998dense} en \cite{wang2002improved} worden fysisch geïnspireerde simulaties gebruikt om packing te bekomen.
 In \cite{george1995packing} worden verschillende meta-heuristieken, waaronder een genetisch algoritme, uitgeprobeerd en vergeleken.
-Zij ondervinden dat dit genetisch algoritme en een quasi-random techniek, in vergelijking met de andere uitgeprobeerde meta-heuristieken, de beste resultaten geven.
+Zij ondervinden dat dit genetisch algoritme, als ook een quasi-random techniek, in vergelijking met de andere uitgeprobeerde meta-heuristieken, de beste resultaten geven.
 In \cite{hifi2004approximate} en \cite{hifi2004simulated} worden respectievelijk een genetisch en een simulated-annealing algoritme voorgesteld.
 Een recentere poging is het Monotonic Basin Hopping algoritme voorgesteld in \cite{grosso2010}.
-Hierin beschrijven ze dat er teveel lokale optima zijn voor een eenvoudige multi-start behandeling, en stellen een variant voor waarin ze op een slimme manier de begin punten proberen genereren.
-Ook relatief recent is \cite{jors2011}, waarin gebruik wordt gemaakt van de combinatorische eigenschappen van circle-packing in combinatie met een taboo-search en een off-the-shelf non-linear optimizer.
-Hierin plaatsen ze één voor één elke cirkel en laat de non-linear optimizer hiervoor telkens een lokaal extremum berekenen.
-Ze zoeken van met de taboo-search naar de beste volgorde om de cirkels te plaatsen.
+Hierin beschrijven ze dat er te veel lokale optima zijn voor een eenvoudige multi-start behandeling, en stellen een variant voor waarin ze op een slimme manier de begin punten proberen genereren.
+Ook meer recent zijn \cite{jors2011} (2011), \cite{ye2013iterated} (2013) en cite{zeng2016iterated} (2016).
+Zij gebruiken de combinatorische eigenschappen van circle-packing in combinatie met een zoekmethode zoals \textit{tabu-search} en \textit{iterated local search} om een goede volgorde te vinden waarin de cirkels geplaatst worden.
+In \cite{jors2011} plaatsen ze zo één voor één elke cirkel en berekend een \textit{non-linear optimizer} hiervoor telkens een lokaal extremum voor de \textit{packing}.
 
 Constructieve algoritmen voor het oplossen van circle-packings zijn veel minder onderzocht.
-Eén van de weinig constructieve methoden word beschreven in \cite{akeb2006basic}, waar ze een alternatieve vorm van circle-packings oplossen: de grootte van de container ligt vast, en je moet zo veel mogelijk cirkels van gelijke grootte er in plaatsen.
-In \cite{hifi2004approximate} wordt er dan weer een aanpassing gedaan op de klassieke bottom-left-first heuristiek, voor het plaatsen van rechthoeken, om gebruikt te maken van de cirkelvormigheid van de objecten.
+Een constructief algoritme is een algoritme dat, beginnende van een zekere begin situatie, stapsgewijs de oplossing uit breidt tot een volledige oplossing bekomen is.
+Eén van de weinige constructieve methoden wordt beschreven in \cite{akeb2006basic}, waar ze een alternatieve vorm van het \textit{circle-packing} probleem oplossen: de grootte van de container ligt vast, en er moeten zo veel mogelijk cirkels van gelijke grootte in de container geplaatst worden.
+In \cite{hifi2004approximate} wordt er een aanpassing gedaan op de klassieke bottom-left-first heuristiek, voor het plaatsen van rechthoeken.
 
-Hoewel veel van deze oplossingen zeer goede packings maken, regelmatig verbeteren ze hun voorganger, vragen ze zeer veel reken tijd en beperken ze zich tot een klein aantal cirkels.
+Hoewel veel van deze oplossingen zeer goede packings maken, en regelmatig hun voorgangers verbeteren, vragen ze veel rekentijd en beperken ze zich tot een klein aantal cirkels.
+Voor slechts tientallen cirkels kan de nodige rekentijd oplopen tot tientallen uren.
 In deze thesis stel ik een nieuw constructieve heuristiek voor om het circle-packing probleem op te lossen.
-Deze laat toe in een fractie van de tijd nodig voor andere algoritmen packings te maken.
+Deze nieuwe heuristiek laat toe om packings te maken in een fractie van de tijd die andere algoritmen daarvoor nodig hebben.
 Ook is het mogelijk om veel grotere aantallen cirkels te plaatsen.
-De packings zijn echter minder dicht dan deze verkregen in voorgenoemd onderzoek.
-Deze \textit{verslechtering} blijft echter beperkt en laat toe de packings in slecht enkele ogenblikken te maken, waar anderen uren rekentijd vragen.
+De omcirkel van packings verkregen met deze nieuwe heuristiek is echter iets groter dan deze verkregen in voorgenoemd onderzoek.
+Deze uitbreiding van de omcirkel blijft echter beperkt en laat toe de packings in slecht enkele ogenblikken te maken, waar anderen uren rekentijd vragen.
 
 De heuristiek voorgesteld in deze thesis is een best-fit heuristiek gebaseerd op een oplossing voor het Orthogonal Stock-Cutting Problem voorgesteld in \cite{burke2004new}.
-Zij stellen een heuristiek voor die de volgende balk om te plaatsen kiest uit een lijst, en deze plaatst op de \textit{beste} positie.
-Dit in tegenstelling tot cirkels plaatsen in een vooraf bepaalde volgorde zoals in \cite{grosso2010} en \cite{jors2011}.
+In dit probleem worden balken geplaatst in een container met een vaste breedte, zodat de hoogte zo klein mogelijk blijft.
+Zij gebruiken het verschil tussen de breedte van een balk en een gat in de packing als heuristiek voor de \textit{beste} positie.
+Hun heuristiek kiest dus de volgende balk om te plaatsen uit een lijst, en deze plaatst op de \textit{beste} positie.
+Dit is in tegenstelling tot cirkels plaatsen in een vooraf bepaalde volgorde zoals in \cite{grosso2010} en \cite{jors2011}.
 Op een gelijkaardige manier kiest mijn algoritme de volgende cirkel die best past in de huidige packing.
 
 In \autoref{chap:algoritme} bespreek ik hoe de heuristiek opgebouwd is.
-Ik bespreek de twee basis concepten voor mijn best-fit heuristiek: \textit{holes} en de \textit{shell}.
+Ik beschrijf de twee basisconcepten voor mijn best-fit heuristiek, \textit{holes} en de \textit{shell}, in detail.
 Ik bespreek hoe deze werken, en op welke manier gekozen wordt welke cirkel best past in de packing.
-Hierbij bespreek ik ook de implementatie. In \autoref{chap:resultaten} worden de verkregen resultaten besproken.
+Hierbij haal ik ook de implementatie aan om deze concepten te verduidelijken.
+In \autoref{chap:resultaten} worden de verkregen resultaten besproken.
 Hier vergelijk ik de packings met de best gekende resultaten zoals gerapporteerd op de Packomania website (\cite{packomania}).
-Ik doe hier een vergelijking zowel op omtrek van de verkregen omcirkel, als op nodige tijd om deze packing te berekenen tegenover de best gekende oplossingen.
+De Packomania website verzameld alle best gekende oplossingen voor verschillende circle-packing problemen.
+Ik vergelijk de omtrek van de verkregen omcirkel en de nodige tijd om de packing te berekenen van mijn eigen heuristiek met de best gekende oplossingen op de Packomania website.
 Ook toon ik resultaten voor packings voor veel meer cirkels dan getoond op de Packomania website.
-In \autoref{chap:opmerkingen-en-verder-werk} bespreek ik mogelijke verbeteringen, de \textit{losse eindjes} en ideeën voor verdere uitbreidingen en onderzoek.
-In \autoref{chap:handleiding-visualisaties} wordt kort verduidelijkt hoe u de visualisaties gebruikt doorheen deze thesis kan interpreteren.
+In \autoref{chap:opmerkingen-en-verder-werk} bespreek ik mogelijke verbeteringen en ideeën voor verdere uitbreidingen en onderzoek.
+Ook geef ik enkele bedenkingen over implementatie en conceptuele details van de heuristiek zoals hij nu is.
+In \autoref{chap:handleiding-visualisaties} wordt kort verduidelijkt hoe de visualisaties te interpreteren die doorheen deze thesis gebruikt worden.
+
+// TODO: Vraag voor Patrick: Is het nodig sommige termen te verduidelijken? De termen: NP-Moeilijk, meta-heuristiek, genetisch algoritme, quasi-random techniek, simulated-annealing, tabu-search, bottom-left-first heuristiek, 
+// TODO: Vraag voor Patrick: Is het nodig de aangehaalde papers verder te verduidelijk? Of zijn de zeer korte besprekingen zoals ze nu zijn genoeg?
 
 \chapter{Handleiding voor het lezen van de visualisaties} \label{chap:handleiding-visualisaties}
 
