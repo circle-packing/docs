@@ -16,9 +16,9 @@
 \usepackage[T1]{fontenc}
 \usepackage{helvet}
 \usepackage{amsmath}
+\usepackage{listings}
 \usepackage{hyperref}
 \usepackage[hypcap]{caption}
-\usepackage{listings}
 \usepackage{color}
 
 % -------------------- Pagina-instellingen --------------------------
@@ -53,6 +53,8 @@
 \renewcommand{\sectionautorefname}{sectie}
 \renewcommand{\subsectionautorefname}{sectie}
 \renewcommand{\figureautorefname}{figuur}
+\newcommand{\lstnumberautorefname}{lijn}
+
 
 \lstset{frame=tb,
   language=Java,
@@ -324,9 +326,9 @@ Deze figuren kan u op de volgende manier interpreteren:
 
 \begin{itemize}  
 \item De \textbf{reeds geplaatste cirkels} worden getoond als \textbf{licht blauwe cirkels}.
-\item De \textbf{shell} is een \textbf{gele lijn} aan de buitenste rand van de packing.
+\item De \textbf{shell} is een \textbf{gele lijn} aan de buitenste rand van de packing. Deze verbind de middelpunten van de cirkels op de shell.
 \item De kleine \textbf{groene bolletjes} op de shell geven de posities aan waarop mogelijk een cirkel geplaatst zal worden.
-\item \textbf{Holes} worden getoond als \textbf{rode driehoeken}.
+\item \textbf{Holes} worden getoond als \textbf{rode driehoeken}. De hoekpunten liggen dicht bij de middelpunten van de drie cirkels die het gat definiëren.
 \item De \textbf{omcirkel} van de huidige packing wordt getoond als een \textbf{groene cirkel}.
 \end{itemize}
 
@@ -364,16 +366,24 @@ Op deze manier word een volledige packing opgebouwd voor alle cirkels.
 
 \section{Structuur}
 
-De implementatie van het algoritme is op te delen in drie belangrijke delen.
+De implementatie van het algoritme bevat enkele belangrijke classen die regelmatig zullen terug komen in de verdere uit, vooral in code fragmenten:
 
-\begin{itemize}  
-\item Problem of probleem
-\item Solution of oplossing
-\item Solver of oplosser
+\begin{itemize} 
+\item Cirkel (Circle)
+\item Vector2
+\item Locatie (Location)
+\item Probleem (Problem)
+\item Oplossing (Solution)
+\item Oplosser (Solver)
+\item Gat (Hole)
+\item Schil (Shell)
 \end{itemize}
 
-Bovenop deze delen komen dan ook nog enkele voor de hand liggende hulp klassen, zoals $circle$ en $vector2$.
-Ook zijn er klassen voorzien om de uiteindelijke oplossing te visualiseren, tussen stappen te visualiseren en automatisch verschillende tests uit te voeren.
+Een $circle$ is voor de hand liggend. Deze heeft een radius, maar geen positie.
+
+$Vector2$ is een 2D positie. Deze bevat een x en y coördinaat.
+
+Een $location$ of locatie is de combinatie van een cirkel met mijn positie. Deze bevat dus een referentie naar een $circle$ en een $vector2$.
 
 Een $problem$ of probleem is een lijst van cirkels.
 Deze hebben nog geen positie, en worden gesorteerd van groot naar klein.
@@ -390,6 +400,7 @@ Dit is dus het belangrijkste deel van de code, en hier is de nieuwe heuristiek g
 De best-fit solver, zoals beschreven in deze thesis, doet dit stap voor stap.
 In elke stap wordt er één cirkel geplaats op zijn finale positie, dit aan de hand van enkele keuzes die verder in dit hoofdstuk toegelicht zullen worden.
 
+$Hole$ en $shell$ worden verder uitgelegd in respectievelijk \autoref{sec:holes} en \autoref{sec:shell}.
 
 \section{Structuur van de solver}
 
@@ -402,17 +413,58 @@ Een oplossing kan zelf ook een omcirkel berekenen, maar de solver gebruikt een i
 Bovendien heeft de solver extra informatie die de oplossing niet heeft, waardoor deze omcirkel efficiënter berekend kan worden.
 Zie \autoref{sec:shell} voor meer uitleg hierover.
 
-De best-fit solver uit deze thesis kan stap voor stap de oplossing genereren.
-Dit zorgt er voor dat tussentijdse stappen gevisualiseerd kunnen worden.
-Het is dus niet nodig een packing volledig te maken, het kan zeer nuttig zijn tussentijdse packings te zien, zeker bij het debuggen of implementeren van nieuwe functionaliteit.
+In de implementatie ziet de code van de solver er als volgt uit (vereenvoudigde versie):
 
-//TODO Code best-fit-step?
+\begin{lstlisting}
+List<Circle> circlesToPack; |\label{code:start-vars}|
+Queue<Hole> holes;
+List<Location> shell;
+Location enclosingCircle;
 
-\section{Initialisatie}
+Solution solution; |\label{code:end-vars}|
+
+void solve() { |\label{code:start-solve}|
+	init();
+	packFirstThree();
+	
+	while(!circlesToPack.isEmpty()) { |\label{code:best-fit-loop}|
+		boolean ok = bestFitStep();
+		if (!ok) break;
+	}
+}
+
+boolean bestFitStep() {
+	if (circlesToPack.isEmpty()) {
+		return false;
+	}
+	
+	if(!holes.isEmpty()) {
+		...
+		// Probeer een cirkel in een gat te plaatsen
+		...
+		return true;
+	}
+	else if (!shell.isEmpty()) {
+		...
+		// Probeer een cirkel op de shell te plaatsen
+		...
+		return true;
+	}
+}
+\end{lstlisting}
+
+De solver bevat alle nodige informatie over de shell en holes, als ook de cirkels die nog geplaatst moeten worden en de huidige tussen-oplossing (\autoref{code:start-vars} tot \autoref{code:end-vars}).
+Om een probleem op te lossen wordt de solve methode (\autoref{code:start-solve}) aangeroepen.
+Deze initialiseert eerst alle nodige variabelen, doet dan de initiële packing (meer hierover in \autoref{sec:initialisatie}) en voert dan best-fit-stappen uit tot een oplossing bereikt is (vanaf \autoref{code:best-fit-loop}).
+
+De best-fit solver implementatie uit deze thesis kan stap voor stap de oplossing genereren en tussentijdse oplossingen visualiseren.
+Het is dus niet nodig een packing volledig te maken, het kan zeer nuttig zijn tussentijdse oplossingen te zien, zeker bij het debuggen of implementeren van nieuwe functionaliteit.
+
+\section{Initialisatie} \label{sec:initialisatie}
 
 Zoals eerder gezegd bouwt het algoritme steeds verder op een packing uit de vorige stap.
 Hierdoor is het dus nodig om een initiële packing te maken van een aantal cirkels waarop de volgende stappen kunnen verder bouwen.
-Deze initiële packing is eenvoudigweg een packing van de drie grootste cirkels in het probleem.
+Deze initiële packing is de optimale packing van de drie grootste cirkels in het probleem.
 Deze drie cirkels worden zo geplaatst dat ze alle drie aan elkaar raken, zoals getoond in \autoref{fig:initialisatie}.
 De licht blauwe cirkels tonen de drie eerste-geplaatste cirkels.
 Meer uitleg over hoe u deze figuur kan interpreteren kan u vinden in \autoref{chap:handleiding-visualisaties}
@@ -423,46 +475,120 @@ Meer uitleg over hoe u deze figuur kan interpreteren kan u vinden in \autoref{ch
   \caption{Voorbeeld van initiële packing} \label{fig:initialisatie} 
 \end{figure}
 
-// TODO Interessant om deze code toe te voegen?
+Het exacte proces om deze initiële packing te bekomen wordt verduidelijkt aan de hand van code uit de implementatie:
 
 \begin{lstlisting}
-	private void packFirstThree() {
-		//Initially place the two biggest circles next to eachother
-		Circle first = circlesToPack.get(0);
-		Circle second = circlesToPack.get(1);
+private void packFirstThree() {
+	//Initially place the two biggest circles next to eachother
+	Circle first = circlesToPack.get(0); |\label{code:start-grootste-twee-plaatsen}|
+	Circle second = circlesToPack.get(1);
 
-		Vector2 firstPos = new Vector2(0, 0);
-		Vector2 secondPos = new Vector2(first.getRadius() + second.getRadius(), 0);
+	Vector2 firstPos = new Vector2(0, 0);
+	Vector2 secondPos = new Vector2(first.getRadius() + second.getRadius(), 0); |\label{code:end-grootste-twee-plaatsen}|
 
-		Location firstLoc = new Location(firstPos, first);
-		Location secondLoc = new Location(secondPos, second);
+	Location firstLoc = new Location(firstPos, first);
+	Location secondLoc = new Location(secondPos, second);
+	getSolution().add(firstLoc); |\label{code:twee-grootste-aan-sol-toevoegen}|
+	getSolution().add(secondLoc);
 
-		getSolution().add(firstLoc);
-		getSolution().add(secondLoc);
+	// Place the third biggest circle on top of the first two (assuming they are positioned clockwise)
+	Circle third = circlesToPack.get(2);
+	Vector2 thirdPos = Helpers.getMountPositionFor(third, firstLoc, secondLoc); |\label{code:derde-grootste-positie-berekenen}|
+	Location thirdLoc = new Location(thirdPos, third);
+	getSolution().add(thirdLoc);
 
-		// Place the third biggest circle on top of the first two (assuming they are positioned clockwise)
-		Circle third = circlesToPack.get(2);
-		Vector2 thirdPos = Helpers.getMountPositionFor(third, firstLoc, secondLoc);
-		Location thirdLoc = new Location(thirdPos, third);
-		getSolution().add(thirdLoc);
+	circlesToPack.remove(first);
+	circlesToPack.remove(second);
+	circlesToPack.remove(third);
 
-		circlesToPack.remove(first);
-		circlesToPack.remove(second);
-		circlesToPack.remove(third);
+	// Create first hole
+	holes.add(new NHole(firstLoc, secondLoc, thirdLoc)); |\label{code:eerste-gat-maken}|
+	// Create the initial shell
+	// IMPORTANT: must be clock-wise
+	shell.add(firstLoc); |\label{code:initiele-shell-maken}|
+	shell.add(thirdLoc);
+	shell.add(secondLoc);
 
-		// Create first hole
-		holes.add(new NHole(firstLoc, secondLoc, thirdLoc));
-		// Create the initial shell
-		// IMPORTANT: must be clock-wise
-		shell.add(firstLoc);
-		shell.add(thirdLoc);
-		shell.add(secondLoc);
-
-		enclosingCircle = Location.calculateEnclosingCircle(Arrays.asList(firstLoc, secondLoc, thirdLoc));
-	}
+	enclosingCircle = Location.calculateEnclosingCircle(Arrays.asList(firstLoc, secondLoc, thirdLoc));
+}
 \end{lstlisting}
 
-// TODO Licht de code toe
+Eerst worden de twee grootste cirkels naast elkaar geplaatst.
+Vanaf \autoref{code:start-grootste-twee-plaatsen} tot \autoref{code:end-grootste-twee-plaatsen} worden eerst de twee grootste cirkels uit het probleem opgevraagd.
+De lijst \textit{circlesToPack} is gesorteerd van groot naar klein, dus dit zijn de eerste twee cirkels in deze lijst.
+De eerste wordt in de oorsprong geplaatst, en de tweede er tegen op de horizontale as.
+Deze worden ook reeds aan de tussentijdse oplossing toegevoegd (vanaf \autoref{code:twee-grootste-aan-sol-toevoegen}).
+Vervolgend wordt de positie berekend voor de derde aan de hand van een helper functie op \autoref{code:derde-grootste-positie-berekenen}.
+Deze helper functie komt regelmatig terug, en wordt verduidelijkt in \autoref{sec:een-cirkel-tegen-twee-andere-plaatsen}.
+
+In de initialisatie wordt ook het eerste gat gemaakt, gedefinieerd door de eerste drie cirkels.
+Dit gat wordt toegevoegd aan de lijst van gaten in de solver op \autoref{code:eerste-gat-maken}.
+Ook wordt de shell aangemaakt, vanaf \autoref{code:initiele-shell-maken}.
+Deze wordt met de klok mee (gezien vanuit het centrum van de huidige packing) bij gehouden.
+Verdere uitleg hierover is te vinden in \autoref{sec:shell}.
+
+\section{Een cirkel tegen twee andere plaatsen} \label{sec:een-cirkel-tegen-twee-andere-plaatsen}
+
+In verschillende delen van de heuristiek is het nodig om een cirkel $c_i$, met radius $r_i$, tegen twee andere cirkels te plaatsen.
+Deze twee cirkels noemen we $c_g1, c_g2$, en hun radii $r_g1, r_g2$.
+Het punt vinden waarop deze cirkel moet staan om beide andere cirkels te raken wordt bepaald door een eenvoudige cirkel-cirkel intersectie, tussen twee cirkels met hun middelpunt gelijk aan het middelpunt van de cirkels $c_g1$ en $c_g2$ en als radii $r_g1+r_i$ en $r_g2+r_i$:
+
+\begin{lstlisting}
+Vector2 getMountPositionFor(Circle cir, Location first, Location second) {
+	double x0 = first.getPosition().getX();
+	double y0 = first.getPosition().getY();
+	double r0 = first.getCircle().getRadius() + cir.getRadius();
+
+	double x1 = second.getPosition().getX();
+	double y1 = second.getPosition().getY();
+	double r1 = second.getCircle().getRadius() + cir.getRadius();
+
+	// dx en dy zijn de verticale en horizontale afstand tussen de cirkel-centra.
+	double dx = x1 - x0;
+	double dy = y1 - y0;
+
+	// Bepaalde de afstand tussen de centra
+	//d = sqrt((dy*dy) + (dx*dx));
+	double d = Math.hypot(dx, dy);
+
+	// 'Punt 2' is het punt waar de lijn door de cirkel-intersectie punten de lijn tussen de cirkel-centra kruist
+	// We berekenen hier de coordinaten x2 en y2 van dit punt
+
+	// Bepaal eerst de afstand van tussen Punt 2 en het centrum van de eerste cirkel
+	double a = ((r0*r0) - (r1*r1) + (d*d)) / (2.0 * d);
+
+	// Bepaal dan de coordinaten van Punt 2.
+	double x2 = x0 + (dx * a/d);
+	double y2 = y0 + (dy * a/d);
+
+	// Bepaal nu de afstand van Punt 2 naar een van de intersectie-punten
+	// Het tweede intersectie-punt ligt even ver
+	double h = Math.sqrt((r0*r0) - (a*a));
+
+	// Zet deze afstand om naar een vector met de juiste richting
+	double rx = -dy * (h/d);
+	double ry = dx * (h/d);
+
+	// Bepaal een van de tweede intersectie punten
+	return new Vector2(x2 - rx, y2 - ry); |\label{code:cirkel-cirkel-intersectie-neg}|
+}
+\end{lstlisting}
+
+In deze code wordt één van de intersectie punten bepaald.
+Dit intersectie punt is steeds het negatieve punt.
+Als op \autoref{code:cirkel-cirkel-intersectie-neg} $+$ gebruikt wordt in plaats van $-$ kan het tweede punt bekomen worden.
+Het is ook mogelijk het andere intersectie punt te verkrijgen door de twee $location$ parameters om te wisselen.
+
+Het bekomen punt is steeds het punt dat aan uw linker kant zou liggen indien je wandelt van het centrum van de eerste cirkel naar het centrum van de tweede cirkel.
+Dit is verduidelijkt in \autoref{fig:cirkel-cirkel-intersectie}, de onderste cirkel is de eerste, de bovenste cirkel de tweede.
+De pijl tussen deze cirkels geeft de \textit{wandel richting} aan.
+
+\begin{figure}
+  \centering
+  \includegraphics[width=0.65\textwidth]{cirkel-cirkel-intersectie.png}
+  \caption{Verkregen intersectie punt van $getMountPositionFor$} \label{fig:cirkel-cirkel-intersectie} 
+  \caption*{(Gemaakt met web.geogebra.org)}
+\end{figure}
 
 \section{Holes} \label{sec:holes}
 
@@ -477,21 +603,96 @@ Indien er nog gaten zijn zal hij deze dus eerst hier een cirkel in proberen plaa
 Indien het gat te klein is voor alle nog-te-plaatsen cirkels wordt dit gat simpelweg verwijderd uit de lijst van gaten in de solver.
 Op deze manier weet de solver in de volgende stap dat hij daar niet meer moet proberen om een cirkel te plaatsen, en zal hij een ander gat uitproberen.
 Indien er wel een cirkel in het gat past wordt deze daar in geplaatst.
-Dit zal leiden tot het creëren van drie nieuwe gaten, zoals getoond in ... en ....
+Dit zal leiden tot het creëren van drie nieuwe gaten, zoals getoond in \autoref{fig:voorbeeld-gat-stap-1} en \autoref{fig:voorbeeld-gat-stap-2}.
+De eerste figuur toont het gat waarin een cirkel geplaatst zal worden (de rode driehoek).
+De tweede figuur toont de nieuwe packing, nadat een cirkel geplaatst is in dit gat.
+Er zijn drie nieuwe kleinere gaten gemaakt, die in de volgende stappen ook zullen opgevuld worden indien mogelijk.
+Het algoritme zal deze gaten ook terug proberen opvullen.
+In \autoref{fig:voorbeeld-gat-stap-3} en \autoref{fig:voorbeeld-gat-stap-3alt} wordt respectievelijk de tussen-oplossing getoond voor wanneer er nog een cirkel is die klein genoeg is, en wanneer dit niet het geval is, om het onderste gat op te vullen.
 
-// TODO Voeg twee afbeeldingen toe, eerste van een gat, tweede waarin het gat opgevuld is en aanleiding geeft tot 3 nieuwe gaten.
+\begin{figure}
+  \centering
+  \includegraphics[width=0.65\textwidth]{voorbeeld-gat-stap-1.png}
+  \caption{Packing voor het opvullen van een gat} \label{fig:voorbeeld-gat-stap-1} 
+\end{figure}
 
-\subsection{Grootste cirkel zoeken die past een \textit{hole}}
+\begin{figure}
+  \centering
+  \includegraphics[width=0.65\textwidth]{voorbeeld-gat-stap-2.png}
+  \caption{Packing na het opvullen van een gat} \label{fig:voorbeeld-gat-stap-2} 
+\end{figure}
+
+\begin{figure}
+  \centering
+  \includegraphics[width=0.65\textwidth]{voorbeeld-gat-stap-3.png}
+  \caption{Packing na het opvullen van een tweede gat} \label{fig:voorbeeld-gat-stap-3} 
+\end{figure}
+
+\begin{figure}
+  \centering
+  \includegraphics[width=0.65\textwidth]{voorbeeld-gat-stap-3alt.png}
+  \caption{Packing als het opvullen van een tweede gat mislukt} \label{fig:voorbeeld-gat-stap-3alt} 
+\end{figure}
+
+\subsection{Grootste cirkel zoeken die past in een \textit{hole}} \label{sec:grootste-cirkel-zoeken-die-past-in-een-hole}
 
 Bij het plaatsen van een cirkel in een gat wordt een zo groot mogelijke cirkel gezocht die in dit gat past.
 Dit is bij wijze van spreken de best-passende cirkel, vandaar \textit{best-fit}.
 Meer uitleg over hoe bepaald wordt of een cirkel past vind je in \autoref{subsec:bepalen-of-een-cirkel-past-in-hole}.
+Hier wordt het proces om te vinden \textit{welke} cirkel past verder verduidelijkt.
 Er wordt logaritmisch gezocht door de lijst van cirkels om te bepalen welke cirkel de grootste is die past.
+Onderstaande code verduidelijkt dit proces.
+
+\begin{lstlisting}
+Location findBestFitFor(Hole hole, List<Circle> sortedBigToSmall) {
+	// Probeer eerst de kleinste cirkel
+	int lower = sortedBigToSmall.size() - 1; |\label{code:probeer-eerst-kleinste-in-hole}|
+	Circle smallestCir = sortedBigToSmall.get(lower);
+	Vector2 smallestPos = hole.tryFit(smallestCir);
+	if (smallestPos == null) {
+		return null;
+	}
+
+	// Probeer dan de grootste cirkel
+	int upper = 0; |\label{code:probeer-dan-grootste-in-hole}|
+	Circle biggestCir = sortedBigToSmall.get(upper);
+	Vector2 biggestPos = hole.tryFit(biggestCir);
+	if (biggestPos != null) {
+		return new Location(biggestPos, biggestCir);
+	}
+
+	// Logaritmisch zoeken
+	Circle cir = null;
+	Vector2 pos = null;
+	while (lower - upper > 1) {
+		int middle = (upper + lower) / 2;
+		cir = sortedBigToSmall.get(middle);
+		pos = hole.tryFit(cir);
+
+		if (pos == null) {
+			upper = middle;
+		}
+		else {
+			lower = middle;
+		}
+	}
+
+	cir = sortedBigToSmall.get(lower);
+	pos = hole.tryFit(cir);
+	if (pos != null) {
+		return new Location(pos, cir);
+	}
+	else {
+		return null;
+	}
+}
+\end{lstlisting}
+
 De solver houdt de lijst van cirkels bij gesorteerd op grootte, dat is cruciaal om snel de beste-passende cirkel te vinden.
-Eerst worden de grootste en kleinste cirkel uitgeprobeerd.
+Eerst worden de grootste en kleinste cirkel uitgeprobeerd (\autoref{code:probeer-eerst-kleinste-in-hole}).
 Indien de kleinste niet past zal het algoritme direct rapporteren dat dit gat te klein is.
 Het gat zal dan, zoals vermeld in \autoref{sec:holes}, verwijderd worden uit de lijst van mogelijk holes.
-Indien de grootste past zal het algoritme onmiddellijk deze cirkel plaatsen in het gat.
+Indien de grootste past (\autoref{code:probeer-dan-grootste-in-hole}) zal het algoritme onmiddellijk deze cirkel plaatsen in het gat.
 Er zijn immers geen grotere cirkels, dus deze is de cirkel die verondersteld wordt best te passen.
 Vervolgens word er een gebied bepaald in de overblijvende cirkels, waarin de best-passende cirkel zich bevind.
 Initieel ligt de boven-en ondergrens van dit gebied op de uiteinden van de overblijvende cirkels.
@@ -500,75 +701,46 @@ Afhangende of deze wel of niet past zal de boven-of ondergrens aangepast worden.
 Dit wordt telkens herhaald tot er nog maar één cirkel over blijft.
 Dit is dan de grootste cirkel die past in het gat.
 
-// TODO Add code
-
 \subsection{Bepalen of een cirkel past in een \textit{hole}} \label{subsec:bepalen-of-een-cirkel-past-in-hole}
 
 Er is geen exact definitie van de grootte van een gat.
 Dit is niet mogelijk omdat de cirkels die het gat bepalen niet altijd aan elkaar raken.
 Het is echter wel mogelijk om te bepalen of een cirkel past.
-Dit gebeurt door de cirkel $c_i$, met radius $r_i$, die je wilt testen te plaatsen zodat hij twee van de drie cirkels $c_g1, c_g2$, met radii $r_g1, r_g2$, van het gat raakt.
-Het punt vinden waarop deze cirkel moet staan om beide andere cirkels te raken wordt bepaald door een eenvoudige cirkel-cirkel intersectie, tussen twee cirkels met hun middelpunt gelijk aan het middelpunt van de cirkels $c_g1$ en $c_g2$ en als radii $r_g1+r_i$ en $r_g2+r_i$:
 
-\begin{lstlisting}
-	Vector2 getMountPositionFor(Circle cir, Location first, Location second) {
-		double x0 = first.getPosition().getX();
-		double y0 = first.getPosition().getY();
-		double r0 = first.getCircle().getRadius() + cir.getRadius();
-
-		double x1 = second.getPosition().getX();
-		double y1 = second.getPosition().getY();
-		double r1 = second.getCircle().getRadius() + cir.getRadius();
-
-		/* dx and dy are the vertical and horizontal distances between
-		 * the circle centers.
-		 */
-		double dx = x1 - x0;
-		double dy = y1 - y0;
-
-		/* Determine the straight-line distance between the centers. */
-		//d = sqrt((dy*dy) + (dx*dx));
-		double d = Math.hypot(dx, dy);
-
-		/* 'point 2' is the point where the line through the circle
-		 * intersection points crosses the line between the circle
-		 * centers.
-		 */
-
-		/* Determine the distance from point 0 to point 2. */
-		double a = ((r0*r0) - (r1*r1) + (d*d)) / (2.0 * d) ;
-
-		/* Determine the coordinates of point 2. */
-		double x2 = x0 + (dx * a/d);
-		double y2 = y0 + (dy * a/d);
-
-		/* Determine the distance from point 2 to either of the
-		 * intersection points.
-		 */
-		double h = Math.sqrt((r0*r0) - (a*a));
-
-		/* Now determine the offsets of the intersection points from
-		 * point 2.
-		 */
-		double rx = -dy * (h/d);
-		double ry = dx * (h/d);
-
-		/* Determine the absolute intersection points. */
-		return new Vector2(x2 - rx, y2 - ry);
-	}
-\end{lstlisting}
-// TODO Is deze code interessant?
-
+Dit gebeurt door de cirkel die we willen testen te plaatsen in het gat.
+Eerst wordt de cirkel tegen twee van de cirkels in het gat geplaatst, met een cirkel-cirkel intersectie zoals beschreven in \autoref{sec:een-cirkel-tegen-twee-andere-plaatsen}.
 Een cirkel-cirkel intersectie heeft natuurlijk altijd twee punten.
 Hiervan moet er één gekozen worden.
 Door systematisch de gaten op te bouwen, wordt verzekerd dat telkens het punt in het gat gekozen wordt.
-//TODO verder uitweiden over clockwise/counterclockwise en dat hier tussen gewisseld wordt voor een stabielere fout?
-
 Eenmaal dit punt bepaald is word de cirkel op deze plek gezet.
 Dan wordt gekeken of deze cirkel wel effectief in het gat geplaatst is, en of deze niet overlapt met de derde cirkel die het gat definieert.
 
-//TODO Add code "tryFit" van Hole.java
-// TODO explain code
+\begin{lstlisting}
+public Vector2 tryFit(Circle cir) {
+	// Try to place circle
+	Vector2 pos = Helpers.getMountPositionFor(cir, first, second);
+
+	// Check that is inside the hole
+	boolean inside = Vector2.isInsideTriableBy(first.getPosition(), second.getPosition(), third.getPosition(), pos); |\label{code:try-fit-in-triangle}|
+	if (!inside) {
+		return null;
+	}
+
+	// Test for overlap
+	Location loc = new Location(pos, cir);
+	if (third.overlaps(loc)) { |\label{code:try-fit-derde-overlap}|
+		return null;
+	}
+	return pos;
+}
+\end{lstlisting}
+
+Op \autoref{code:try-fit-in-triangle} wordt verzekerd dat het middelpunt van de cirkel in het gat ligt.
+Dit voorkomt dat de geplaatste cirkel buiten het gat geplaatst wordt, en dus zeker niet kan overlappen met cirkels buiten het gat zonder ook te overlappen met één van de cirkels die het gat definiëren.
+Op \autoref{code:try-fit-derde-overlap} wordt dan de overlap met de derde gat-definiërende cirkel nagekeken.
+Er kan geen overlap zijn met de eerste twee, de methode $getMountPositionFor$ plaatst de cirkel zodanig dat deze de twee andere cirkels raakt, maar niet overlapt.
+Indien de cirkel in het gat past, en dus alle checks doorstaat, wordt de positie voor deze cirkel terug gegeven.
+De solver zal deze cirkel kan plaatsen in zijn oplossing.
 
 Het is niet nodig om na te gaan of er overlap is met andere cirkels in de oplossing.
 Als er met een andere overlap zou zijn, moet dit zijn omdat de cirkel buiten het gat geplaatst is, of er is ook overlap met één van de cirkels in het gat zelf.
@@ -576,13 +748,166 @@ Dit zorgt er voor dat er zeer weinig overlap-checks gedaan moeten worden, wat he
 
 \section{Shell} \label{sec:shell}
 
-// TODO Uitleg over intelligent de omcirkel berekenen niet vergeten
+De \textit{shell} of \textit{schil} is het tweede van de belangrijkste concepten van de heuristiek.
+Dit is de buitenste laag van cirkels in een (tussen-)oplossing van de solver.
+Deze wordt in de implementatie simpelweg bijgehouden als een geordende lijst van cirkels.
+Cirkels die naast elkaar staan in de lijst, grenzen ook aan elkaar in de shell.
+De cirkels in deze laag zijn met de klok mee gesorteerd, ten opzichte van het middelpunt van de omcirkel.
+De eerste en laatste cirkel in de lijst grenzen ook aan elkaar in de shell.
+
+De heuristiek voorgesteld in deze thesis probeert steeds eerst alle gaten op te vullen.
+Maar wanneer er geen cirkels meer over zijn die klein genoeg zijn om te passen in gaten, word er een cirkel op de shell geplaatst.
+Op de shell worden alle posities tegen twee cirkels van de shell overwogen.
+Dit is een goede heuristiek voor de optimale positie, beperkt het aantal mogelijke posities voor de geplaatste cirkel enorm en maakt het algoritme dus zeer snel.
+Er wordt steeds een cirkel zo dicht mogelijk bij het centrum van de huidige tussen-oplossing geplaatst.
+Dit om het uitbreiden van de omcirkel zo min mogelijk te houden.
+
+Eerst worden twee cirkels gekozen waartegen de nieuwe geplaatst zal worden.
+Hiervoor wordt gekeken naar het middelpunt tussen alle cirkels die naast elkaar staan op de shell.
+De twee cirkels waarvoor het middelpunt het dichtst bij het centrum van de huidige omcirkel ligt worden gekozen als kandidaten om de derde cirkel tegen te plaatsen.
+Dan wordt er gezocht naar een zo groot mogelijke cirkel die daar past op de shell.
+Indien geen enkele cirkel past wordt één van de twee kandidaat cirkels verwijderd uit de shell.
+Welke verwijderd wordt verduidelijkt in \autoref{sec:bepalen-of-een-cirkel-past-op-de-shell}.
+Dit zorgt er voor dat de shell veranderd en \textit{groeit} naar buiten.
+In de volgende stap van het algoritme zal dan ook een andere positie voor een cirkel uitgeprobeerd worden.
+Indien er wel een cirkel past wordt deze toegevoegd aan de shell, en geeft deze aanleiding tot een nieuw gat.
+Dit gat zal vervolgens opgevuld worden indien mogelijk, zoals beschreven in \autoref{sec:holes}.
+Op \autoref{fig:plaats-op-shell-simpel} wordt getoond hoe de packing veranderd wanneer een cirkel geplaatst wordt op de shell.
+Eerst wordt een packing zonder gaten getoond en vervolgens de packing nadat een cirkel op de shell geplaatst is.
+Hierop is duidelijk te zien hoe de shell aangepast is geweest, en deze plaatsing geleid heeft tot een nieuw gat.
+Zoals eerder gezegd is het mogelijk dat op een positie op de shell de grootste cirkel niet past.
+Dit wordt geïllustreerd in \autoref{fig:plaats-op-shell-kleiner}.
+Het is ook mogelijk dat geen enkele cirkel nog past op de shell, zoals getoond in \autoref{fig:plaats-op-shell-geen-enkele-past}.
+
+\begin{figure}
+  \centering
+  \includegraphics[width=1.0\textwidth]{plaats-op-shell-simpel.png}
+  \caption{Het plaatsen van de grootste cirkel op de shell} \label{fig:plaats-op-shell-simpel} 
+\end{figure}
+
+\begin{figure}
+  \centering
+  \includegraphics[width=1.0\textwidth]{plaats-op-shell-kleiner.png}
+  \caption{Het plaatsen van een kleinere cirkel op de shell} \label{fig:plaats-op-shell-kleiner} 
+  \caption*{Focus: midden bovenaan}
+\end{figure}
+
+\begin{figure}
+  \centering
+  \includegraphics[width=1.0\textwidth]{plaats-op-shell-geen-enkele-past.png}
+  \caption{Shell aanpassen als geen enkele cirkel past} \label{fig:plaats-op-shell-geen-enkele-past} 
+  \caption*{Focus: rechts onderaan}
+\end{figure}
+
+\subsection{Slim de omcirkel berekenen gebaseerd op de shell}
+
+Bij het kiezen van de kandidaat cirkels om een cirkel tegen te plaatsen op de shell wordt gebruik gemaakt van de omcirkel van de huidige tussen-oplossing.
+Zoals eerder vermeld kan voor elke (tussen-)oplossing de omcirkel berekend worden.
+Dit gebeurt door een aangepaste versie van het Welz algoritme voor de omcirkel van punten beschreven in \cite{welzl1991smallest}.
+De implementatie is gebaseerd op de implementatie in \cite{sunshine2008welzl}.
+Het is een recursief algoritme dat in lineaire tijd de omcirkel kan berekenen.
+Het idee is dat de omcirkel van een aantal cirkels (of punten) volledig gedefinieerd is door maximum drie cirkels.
+Het algoritme vind deze twee of drie cirkels.
+
+Het is eenvoudig in te zien dat deze drie cirkels aan de buitenkant van een (tussen-)oplossing zullen liggen.
+Dit is ook net wat de shell is, de cirkels aan de buitenkant van een oplossing.
+Het is dus mogelijk om in elke stap van de solver de omcirkel zeer efficient te berekenen.
+De complexiteit is dan slechts lineair in de omtrek van de huidige (tussen-)oplossing, en niet in het totaal aantal cirkels in de oplossing.
+Aangezien de omcirkel regelmatig moet herberekend worden doorheen het algoritme is dit een zeer interessante optimalisatie.
+
+\subsection{Bepalen of een cirkel past op de shell} \label{sec:bepalen-of-een-cirkel-past-op-de-shell}
+
+Om te bepalen of een cirkel op de shell past plaatsen we de cirkel eerst tegen twee cirkels op de shell.
+Dit gebeurt op de zelfde manier als het plaatsen van een cirkel tegen twee cirkels van een gat.
+De exacte methode is reeds uitgelegd in \autoref{sec:een-cirkel-tegen-twee-andere-plaatsen}.
+Eenmaal deze positie gekend is, wordt er nagekeken of dit niet tot overlap leidt.
+Indien er overlap is is het niet mogelijk om de cirkel daar op de shell te plaatsen, en wordt er informatie terug gegeven over welke cirkel op de shell voor problemen zorgt.
+
+Om na te gaan of er overlap is, wordt er systematisch een aantal cirkels op de shell nagekeken.
+Het is niet nodig andere cirkels, die niet op de shell zitten, na te kijken voor overlap.
+Een nieuwe cirkel wordt steeds op de shell geplaatst zodanig dat als er overlap zou zijn met cirkels in de oplossing, minstens één van die cirkels op de shell ligt.
+Doordat ik geen exacte definitie van de shell heb, ze is enkel gedefinieerd door het algoritme dat ze opbouwt, is het niet mogelijk om hier een echt bewijs van te geven.
+Uit empirische tests lijkt dit echter wel te kloppen.
+Verdere bedenkingen hierbij kan u terug vinden in \autoref{chap:opmerkingen-en-verder-werk}.
+Om deze overlappings-test zeer snel te kunnen uitvoeren worden eerst cirkels dicht bij nagekeken.
+Er staat ook een limiet op het aantal cirkels die getest worden.
+Uit tests, tot 5000 cirkels, blijkt dat drie cirkels aan elke kant van de shell nakijken genoeg is.
+Voor de meeste gevallen is één cirkel nakijken genoeg, maar sommige randgevallen (wanneer meerdere kleine cirkels dicht bij elkaar staan op de shell) vragen deze extra checks.
+
+Het aantal cirkels dat nagekeken wordt is een hyperparameter $checkRadius$ van het algoritme.
+De volgende code toont hoe de overlap nagekeken wordt:
+
+\begin{lstlisting}
+for (int i = 1; i <= checkRadius; ++i) {
+	int prevIndex = (firstIndex + shell.size() - i) % shell.size();
+	Location prev = shell.get(prevIndex);
+	if (loc.overlaps(prev)) {
+		toRemove = first;
+		break;
+	}
+	int nextIndex = (secondIndex + i) % shell.size();
+	Location next = shell.get(nextIndex);
+	if (loc.overlaps(next)) {
+		toRemove = second;
+		break;
+	}
+}
+\end{lstlisting}
+
+Er wordt dus om te beurt links en rechts van de huidige positie op de shell nakeken voor overlap.
+Indien er overlap gevonden is, wordt bijgehouden aan welke kant van de shell dit gebeurt is.
+$toRemove$ is dus uiteindelijk $first$ of $secons$, wat aan geeft of er aan de kant van de eerste cirkel, of van de tweede cirkel, overlap voorkomt.
+$toRemove$ kan ook $null$ zijn indien er geen overlap is.
+Deze informatie wordt dan gebruikt door de solver om te bepalen of de cirkel geplaatst kan worden ($toRemove = null$), of dat de shell aangepast moet worden.
+Meer informatie hierover in \autoref{sec:een-cirkel-plaatsen-op-de-shell}
+
+\subsection{Een cirkel plaatsen op de shell} \label{sec:een-cirkel-plaatsen-op-de-shell}
+
+Om een cirkel te plaatsen op de shell wordt eerst de grootste cirkel is die past op de shell logaritmisch gezocht in de lijst van nog-te-plaatsen cirkels.
+Dit gebeurt op analoge manier als het zoeken naar de grootste cirkel die past in een gat, zoals beschreven in \autoref{sec:grootste-cirkel-zoeken-die-past-in-een-hole}.
+Indien er een cirkel gevonden wordt die past op de shell wordt de shell uitgebreid met deze cirkel.
+De cirkel wordt dan tussen de cirkels, waartegen hij geplaatst is, gezet in de shell.
+Dit wordt geïllustreerd in \autoref{fig:plaats-op-shell-simpel}, \autoref{fig:plaats-op-shell-kleiner}.
+De gele lijn (die de shell voorstelt, zoals beschreven in \autoref{chap:handleiding-visualisaties}) wordt uitgebreid met een extra punt.
+Ook zorgt dit er voor dat een nieuw gat gemaakt wordt waar mogelijk kleinere cirkels in passen.
+
+Een laatste check die gebeurt is om na te gaan of door het plaatsen van de cirkel de shell nog juist gevormd is.
+Indien een cirkel geplaatst wordt zodat de cirkels niet meer met de klok mee gesorteerd zijn, zou dit er voor kunnen zorgen dat foutieve plaatsingen voorkomen.
+Om dit te verzekeren wordt de gerichte hoek tussen de geplaatste cirkel en de cirkels waartegen hij geplaatst is nagekeken.
+Indien deze hoek negatief is wordt de shell hier voor aangepast.
+Dit wordt getoond in \autoref{fig:plaats-op-shell-hoek}.
+Het eerste deel toont de configuratie waarop een cirkel geplaatst zal worden.
+Het laatste deel de toteindelijke configuratie van de shell.
+Het middelste deel toont met een zwarte lijn het deel van de shell dat verwijderd is om er voor te zorgen dat deze kloksgewijs gesorteerd blijft.
+Op \autoref{fig:plaats-op-shell-hoek-fout}  wordt getoond wat er kan gebeuren als deze check niet gebeurt.
+
+\begin{figure}
+  \centering
+  \includegraphics[width=1.0\textwidth]{plaats-op-shell-hoek.png}
+  \caption{Een cirkel veroorzaakt een tegen-ge-klok shell} \label{fig:plaats-op-shell-hoek} 
+\end{figure}
+
+\begin{figure}
+  \centering
+  \includegraphics[width=1.0\textwidth]{plaats-op-shell-hoek-fout.png}
+  \caption{Mogelijke fout indien de shell niet met de klok mee gesorteerd is} \label{fig:plaats-op-shell-hoek-fout} 
+\end{figure}
+
+\section{Conclusie}
+
+Dit hoofdstuk gaf een volledig overzicht van de nieuwe constructieve heuristiek.
+Waar nodig werd het uitleg verduidelijkt met code uit de implementatie.
+Er werden ook de verschillende veronderstellingen geformuleerd die gebruikt worden om het algoritme zeer snel te maken.
+Zie ook \autoref{chap:opmerkingen-en-verder-werk} voor verdere bedenkingen hieromtrent.
 
 \chapter{Resultaten} \label{chap:resultaten}
 
 
 \chapter{Opmerkingen en verder werk} \label{chap:opmerkingen-en-verder-werk}
 
+// TODO Bespreking van verbeteringen/andere mogelijke strategieën/losse eindjes
+// TODO Bedenkingen bij veronderstellingen in het algorime, deze lijken te kloppen maar hebben geen bewijs.
+// TODO verder uitweiden over clockwise/counterclockwise en dat hier tussen gewisseld wordt voor een stabielere fout?
 
 \chapter{Conclusie} \label{chap:conclusie}
 
