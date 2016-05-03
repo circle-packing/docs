@@ -181,14 +181,14 @@ Voorafgaande schriftelijke toestemming van de promotor(en) is eveneens vereist v
 \addcontentsline{toc}{chapter}{Voorwoord}
 
 Het circle-packing probleem bestaat er uit om een aantal cirkels, met gekende radii, in een zo klein mogelijke container te plaatsen.
-De vorm van deze container kan verschillen, meestal is het een driehoek, rechthoek of cirkel.
-In deze thesis stel ik een nieuwe \textit{best-fit} gebaseerde heuristiek voor voor het plaatsen van cirkels in een cirkel.
+De vorm van deze container kan verschillen, maar meestal is het een driehoek, rechthoek of cirkel.
+In deze thesis stel ik een nieuwe heuristiek voor het plaatsen van cirkels in een cirkel, gebaseerd op het \textit{best-fit}-principe.
 Het is een constructieve heuristiek waarin stapsgewijs telkens de best-passende cirkel geplaatst zal worden.
-Alle code is beschikbaar op GitHub \cite{circle-packing-github}
+Alle broncode is beschikbaar op GitHub \cite{circle-packing-github}
 
-Wiskundig is dit een relatief eenvoudig probleem om voor te stellen, maar computationeel is het zeer zwaar om exact op te lossen.
-Bestaande pogingen om dit probleem op te lossen vragen zeer veel tijd om het te berekenen.
-In deze thesis stel ik een nieuwe heuristiek voor die het mogelijk maakt zéér snel oplossingen te genereren.
+Hoewel dit probleem wiskunig relatief eenvoudig voor te stellen is, is het uitwerken van een computioneel exacte oplossing wél een uitdaging.
+Bestaande implementaties zijn niet tijds-geoptimaliseerd, en vragen dus veel berekeningstijd. 
+In deze thesis stek ik heuristiek voor die het mogelijk maakt zéér snel oplossingen te genereren.
 
 Ik wil hierbij Patrick De Causmaeker bedanken voor alle hulp en ondersteuning bij het ontwerpen van deze heuristiek en verwezenlijken van dit werk.
 Ook wil ik Jim Bollansée, Marie Julia Bollansée en Pieter Van de Walle bedanken voor hun hulp bij het schrijven van deze tekst.
@@ -233,13 +233,13 @@ TODO
 
 \chapter{Inleiding}
 
-In deze thesis stel ik een nieuwe \textit{best-fit} gebaseerde heuristiek voor om het \textit{circle-packing} probleem.
+In deze thesis stel ik een nieuwe heuristiek, gebaseerd op het \textit{best-fit}-principe, als oplossing voor \textit{circle-packing} probleem.
 De heuristiek is specifiek ontworpen voor het sub-probleem van het plaatsen van cirkels in een cirkel.
 Het \textit{circle-packing} probleem bestaat uit het plaatsen van $n$ cirkels in een zo klein mogelijke cirkelvormige \textit{container}.
-Het is de bedoeling om voor de gegeven cirkels de coordinaten van de middelpunten te vinden zodat de cirkels niet overlappen en de radius van de omcirkel zo klein mogelijk is.
+Het is de bedoeling om voor de gegeven cirkels de coordinaten van de middelpunten te vinden zodat de cirkels niet overlappen en de radius van de omsluitende cirkel zo klein mogelijk is.
 
 Circle-packing is zowel theoretisch als praktisch een zeer interessant probleem.
-Het kan gebruikt worden om verschillende \textit{real-world} problemen op te lossen, zoals het plaatsen van zendmasten, stokage van cilindrische voorwerpen, en het combineren van verschillende kabels. //TODO voeg referenties toe voor deze gebruiken
+Het kan gebruikt worden om verschillende \textit{real-world} problemen op te lossen, zoals het plaatsen van zendmasten, stockage van cilindrische voorwerpen of bijvoorbeeld en het combineren van verschillende kabels. //TODO voeg referenties toe voor deze gebruiken
 
 Mathematisch is het probleem redelijk eenvoudig als een optimalisatieprobleem te omschrijven:
 
@@ -263,14 +263,14 @@ Het circle-packing probleem voor andere containers heeft gelijkaardige, relatief
 
 Hoewel dit wiskundig eenvoudig te omschrijven is, blijft het toch een zeer moeilijk probleem om exact op te lossen.
 Het is een NP-moeilijk probleem.
-Er is reeds veel onderzoek gebeurd naar het oplossen van het circle-packing probleem voor zowel cirkels van gelijke gootte, als voor cirkels van verschillende grootte.
+Er is reeds veel onderzoek gebeurd naar het oplossen van het circle-packing probleem voor zowel cirkels van gelijke grootte, als voor cirkels van verschillende grootte.
 In \cite{graham1996repeated} en \cite{lubachevsky1997curved} probeert men vaste patronen te vinden die een optimale packing van cirkels met gelijke grootte geeft.
 In \cite{graham1998dense} en \cite{wang2002improved} worden fysisch geïnspireerde simulaties gebruikt om packing te bekomen.
 In \cite{george1995packing} worden verschillende meta-heuristieken, waaronder een genetisch algoritme, uitgeprobeerd en vergeleken.
-Zij ondervinden dat dit genetisch algoritme, als ook een quasi-random techniek, in vergelijking met de andere uitgeprobeerde meta-heuristieken, de beste resultaten geven.
+Zij ondervinden dat dit genetisch algoritme, alsook een quasi-random techniek, in vergelijking met de andere uitgeprobeerde meta-heuristieken, de beste resultaten geven. // QUESTION: wat zijn "de beste" in deze context? Snelheid? Precisie? Efficientie?
 In \cite{hifi2004approximate} en \cite{hifi2004simulated} worden respectievelijk een genetisch en een simulated-annealing algoritme voorgesteld.
 Een recentere poging is het Monotonic Basin Hopping algoritme voorgesteld in \cite{grosso2010}.
-Hierin beschrijven ze dat er te veel lokale optima zijn voor een eenvoudige multi-start behandeling, en stellen een variant voor waarin ze op een slimme manier de begin punten proberen genereren.
+Hierin beschrijven ze dat er te veel lokale optima zijn voor een eenvoudige multi-start behandeling, en stellen een variant voor waarin ze op een slimme manier de beginpunten proberen genereren.
 Ook meer recent zijn \cite{jors2011} (2011), \cite{ye2013iterated} (2013) en cite{zeng2016iterated} (2016).
 Zij gebruiken de combinatorische eigenschappen van circle-packing in combinatie met een zoekmethode zoals \textit{tabu-search} en \textit{iterated local search} om een goede volgorde te vinden waarin de cirkels geplaatst worden.
 In \cite{jors2011} plaatsen ze zo één voor één elke cirkel en berekend een \textit{non-linear optimizer} hiervoor telkens een lokaal extremum voor de \textit{packing}.
