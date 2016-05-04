@@ -250,7 +250,7 @@ Mathematisch is het probleem redelijk eenvoudig als een optimalisatieprobleem te
 & \text{onderhevig aan}
 & & x_i^2 + y_i^2 \leq (r-r_i)^2, 
 & & &i = {1,...,n}\\
-&&& (x_i - x_j)^2 + (y_i + y_j)^2 \geq (r_i + r_j)^2,
+&&& (x_i - x_j)^2 + (y_i - y_j)^2 \geq (r_i + r_j)^2,
 & & &i \neq j
 \end{aligned}
 \end{equation*}
@@ -262,7 +262,6 @@ Wanneer alle cirkels dezelfde grootte hebben, wordt meestal $r_i$ gelijk aan $1$
 Het circle-packing probleem voor andere containers heeft gelijkaardige, relatief eenvoudige, wiskundige omschrijvingen.
 
 Hoewel dit wiskundig eenvoudig te omschrijven is, blijft het toch een zeer moeilijk probleem om exact op te lossen.
-Het is een NP-moeilijk probleem.
 Er is reeds veel onderzoek gebeurd naar het oplossen van het circle-packing probleem voor zowel cirkels van gelijke gootte, als voor cirkels van verschillende grootte.
 In \cite{graham1996repeated} en \cite{lubachevsky1997curved} probeert men vaste patronen te vinden die een optimale packing van cirkels met gelijke grootte geeft.
 In \cite{graham1998dense} en \cite{wang2002improved} worden fysisch geïnspireerde simulaties gebruikt om packing te bekomen.
@@ -270,13 +269,13 @@ In \cite{george1995packing} worden verschillende meta-heuristieken, waaronder ee
 Zij ondervinden dat dit genetisch algoritme, als ook een quasi-random techniek, in vergelijking met de andere uitgeprobeerde meta-heuristieken, de beste resultaten geven.
 In \cite{hifi2004approximate} en \cite{hifi2004simulated} worden respectievelijk een genetisch en een simulated-annealing algoritme voorgesteld.
 Een recentere poging is het Monotonic Basin Hopping algoritme voorgesteld in \cite{grosso2010}.
-Hierin beschrijven ze dat er te veel lokale optima zijn voor een eenvoudige multi-start behandeling, en stellen een variant voor waarin ze op een slimme manier de begin punten proberen genereren.
-Ook meer recent zijn \cite{jors2011} (2011), \cite{ye2013iterated} (2013) en cite{zeng2016iterated} (2016).
-Zij gebruiken de combinatorische eigenschappen van circle-packing in combinatie met een zoekmethode zoals \textit{tabu-search} en \textit{iterated local search} om een goede volgorde te vinden waarin de cirkels geplaatst worden.
+Hierin beschrijven de auteurs dat er te veel lokale optima zijn voor een eenvoudige multi-start behandeling, en stellen een variant voor waarin ze op een slimme manier de begin punten proberen genereren.
+Ook meer recent zijn \cite{jors2011} (2011), \cite{ye2013iterated} (2013) en \cite{zeng2016iterated} (2016).
+Hierin worden de combinatorische eigenschappen van circle-packing in combinatie met een zoekmethode zoals \textit{tabu-search} en \textit{iterated local search} gebruikt om een goede volgorde te vinden waarin de cirkels geplaatst worden.
 In \cite{jors2011} plaatsen ze zo één voor één elke cirkel en berekend een \textit{non-linear optimizer} hiervoor telkens een lokaal extremum voor de \textit{packing}.
 
 Constructieve algoritmen voor het oplossen van circle-packings zijn veel minder onderzocht.
-Een constructief algoritme is een algoritme dat, beginnende van een zekere begin situatie, stapsgewijs de oplossing uit breidt tot een volledige oplossing bekomen is.
+Een constructief algoritme is een algoritme dat, beginnende van een zekere begin situatie, stapsgewijs de oplossing uitbreidt tot een volledige oplossing bekomen is.
 Eén van de weinige constructieve methoden wordt beschreven in \cite{akeb2006basic}, waar ze een alternatieve vorm van het \textit{circle-packing} probleem oplossen: de grootte van de container ligt vast, en er moeten zo veel mogelijk cirkels van gelijke grootte in de container geplaatst worden.
 In \cite{hifi2004approximate} wordt er een aanpassing gedaan op de klassieke bottom-left-first heuristiek, voor het plaatsen van rechthoeken.
 
@@ -304,16 +303,29 @@ Hier vergelijk ik de packings met de best gekende resultaten zoals gerapporteerd
 De Packomania website verzameld alle best gekende oplossingen voor verschillende circle-packing problemen.
 Ik vergelijk de omtrek van de verkregen omcirkel en de nodige tijd om de packing te berekenen van mijn eigen heuristiek met de best gekende oplossingen op de Packomania website.
 Ook toon ik resultaten voor packings voor veel meer cirkels dan getoond op de Packomania website.
-In \autoref{chap:opmerkingen-en-verder-werk} bespreek ik mogelijke verbeteringen en ideeën voor verdere uitbreidingen en onderzoek.
+In \autoref{chap:opmerkingen-en-verder-werk} bespreek ik mogelijke verbeteringen, overblijvende problemen in de heuristiek en ideeën voor verdere uitbreidingen en onderzoek.
 Ook geef ik enkele bedenkingen over implementatie en conceptuele details van de heuristiek zoals hij nu is.
 In \autoref{chap:handleiding-visualisaties} wordt kort verduidelijkt hoe de visualisaties te interpreteren die doorheen deze thesis gebruikt worden.
+Maar eerst worden enkele termen die gebruikt worden in de verdere tekst, sommige uniek voor voor deze heuristiek, en definities gegeven in \autoref{chap:definities}.
 
-// TODO: Vraag voor Patrick: Is het nodig sommige termen te verduidelijken? De termen: NP-Moeilijk, meta-heuristiek, genetisch algoritme, quasi-random techniek, simulated-annealing, tabu-search, bottom-left-first heuristiek, 
-// TODO: Vraag voor Patrick: Is het nodig de aangehaalde papers verder te verduidelijk? Of zijn de zeer korte besprekingen zoals ze nu zijn genoeg?
+// TODO: Vraag voor Patrick: Is het nodig sommige termen te verduidelijken? De termen: NP-Moeilijk, meta-heuristiek, genetisch algoritme, quasi-random techniek, simulated-annealing, tabu-search, bottom-left-first heuristiek -> Ja. TODO
+% TODO: Vraag voor Patrick: Is het nodig de aangehaalde papers verder te verduidelijk? Of zijn de zeer korte besprekingen zoals ze nu zijn genoeg? -> Korte zijn genoeg
+
+\chapter{Definities en termen} \label{chap:definities}
+
+\textbf{Cirkel} In de literatuur rond \textit{circle-packing} en deze thesis wordt het woord "cirkel" of "circle" gebruikt, maar eigenlijk zou het correcter zijn om "schijf" te gebruiken.
+Er is dus ook een overlap tussen cirkels wanneer een cirkel volledig omringd is door een andere.
+Voor twee cirkels met radii $r_a, r_b$ en coordinaten  $(x_a,y_a), (x_b,y_b)$ is er een overlap wanneer $r_a + r_b > \sqrt{(x_a-x_b)^2 + (y_a-y_b)^2}$. 
+
+\textbf{Packing} of \textbf{Plaatsing} Is een collectie cirkels met elks een toegewezen positie. Een packing is correct wanneer er geen overlap is tussen de cirkels in de packing.
+
+\textbf{Holes} Is één van de concepten uniek aan deze heuristiek. Op een \textit{high-level} niveau is dit een plek tussen drie cirkels waar nog een andere cirkel kan geplaatst worden. Dit wordt in diep detail uitgelegd in \autoref{sec:holes}.
+
+\textbf{Shell} Is het tweede concept uniek aan deze heuristiek. Dit is, op \textit{high-level} niveau, de collectie cirkels die aan de buitenkant van een packing liggen. Dit wordt verder verduidelijkt in \autoref{sec:shell}.
 
 \chapter{Handleiding voor het lezen van de visualisaties} \label{chap:handleiding-visualisaties}
 
-Doorheen deze thesis zal ik gebruik maken visualisaties gegenereerd door de java implementatie van het algoritme.
+Doorheen deze thesis zal ik gebruik maken van visualisaties gegenereerd door de java implementatie van het algoritme.
 Dit om de concepten grafisch te verduidelijken.
 Twee voorbeelden van zulke visualisaties zijn \autoref{fig:handleiding-visualisatie-1} en \autoref{fig:handleiding-visualisatie-2}.
 
@@ -350,7 +362,12 @@ Op beide figuren kan je ook de omcirkel zien.
 In dit hoofdstuk bespreek ik de werking van de heuristiek.
 Eerst geef ik een korte beschrijving van het basis idee van het algoritme, gevolgd door de structuur van de code.
 Vervolgens leg ik stelselmatig de volledige werking uit, alle veronderstellingen die gemaakt worden en implementatie details waar nodig.
-De volledige implementatie is beschikbaar op GitHub \cite{circle-packing-github} en is gebeurt in Java.
+De volledige implementatie is beschikbaar op GitHub \cite{circle-packing-github} en is gebeurd in Java.
+
+Om het algoritme zeer snel te maken worden enkele veronderstellingen gemaakt omtrent de nodige overlap checks bij elke stap.
+Deze veronderstellingen zijn niet theoretisch bewezen, maar wel empirisch getest.
+Voor de meeste verdelingen van cirkels lijken ze goed stand te houden, maar er zijn nog enkele \textit{edge-cases} waarin er toch nog fouten gebeuren.
+Deze problemen worden besproken in \autoref{chap:opmerkingen-en-verder-werk} en de snelheid en kwaliteit van de oplossingen wordt verder besproken in \autoref{chap:resultaten}.
 
 \section{Basis idee}
 
@@ -373,7 +390,7 @@ Op deze manier word een volledige packing opgebouwd voor alle cirkels.
 
 \section{Structuur}
 
-De implementatie van het algoritme bevat enkele belangrijke classen die regelmatig zullen terug komen in de verdere uit, vooral in code fragmenten:
+De implementatie van het algoritme bevat enkele belangrijke (programmeer-)klassen die regelmatig zullen terug komen in de verdere uit, vooral in code fragmenten:
 
 \begin{itemize} 
 \item Cirkel (Circle)
@@ -647,7 +664,7 @@ Bij het plaatsen van een cirkel in een gat wordt een zo groot mogelijke cirkel g
 Dit is bij wijze van spreken de best-passende cirkel, vandaar \textit{best-fit}.
 Meer uitleg over hoe bepaald wordt of een cirkel past vind je in \autoref{subsec:bepalen-of-een-cirkel-past-in-hole}.
 Hier wordt het proces om te vinden \textit{welke} cirkel past verder verduidelijkt.
-Er wordt logaritmisch gezocht door de lijst van cirkels om te bepalen welke cirkel de grootste is die past.
+Er wordt binair gezocht door de lijst van cirkels om te bepalen welke cirkel de grootste is die past.
 Onderstaande code verduidelijkt dit proces.
 
 \begin{lstlisting}
@@ -668,7 +685,7 @@ Location findBestFitFor(Hole hole, List<Circle> sortedBigToSmall) {
 		return new Location(biggestPos, biggestCir);
 	}
 
-	// Logaritmisch zoeken
+	// Binair zoeken
 	Circle cir = null;
 	Vector2 pos = null;
 	while (lower - upper > 1) {
@@ -716,9 +733,10 @@ Het is echter wel mogelijk om te bepalen of een cirkel past.
 
 Dit gebeurt door de cirkel die we willen testen te plaatsen in het gat.
 Eerst wordt de cirkel tegen twee van de cirkels in het gat geplaatst, met een cirkel-cirkel intersectie zoals beschreven in \autoref{sec:een-cirkel-tegen-twee-andere-plaatsen}.
-Een cirkel-cirkel intersectie heeft natuurlijk altijd twee punten.
+Deze cirkel-cirkel intersectie heeft natuurlijk altijd twee punten.
 Hiervan moet er één gekozen worden.
-Door systematisch de gaten op te bouwen, wordt verzekerd dat telkens het punt in het gat gekozen wordt.
+De implementatie zorgt er voor dat de cirkels die het gat definieren telkens tegen de klok gesorteerd zijn (ten op zichte van het middelpunt van deze deze drie cirkels).
+Dit maakt het mogelijk telkens het juiste punt te kiezen.
 Eenmaal dit punt bepaald is word de cirkel op deze plek gezet.
 Dan wordt gekeken of deze cirkel wel effectief in het gat geplaatst is, en of deze niet overlapt met de derde cirkel die het gat definieert.
 
@@ -747,7 +765,7 @@ Dit voorkomt dat de geplaatste cirkel buiten het gat geplaatst wordt, en dus zek
 Op \autoref{code:try-fit-derde-overlap} wordt dan de overlap met de derde gat-definiërende cirkel nagekeken.
 Er kan geen overlap zijn met de eerste twee, de methode $getMountPositionFor$ plaatst de cirkel zodanig dat deze de twee andere cirkels raakt, maar niet overlapt.
 Indien de cirkel in het gat past, en dus alle checks doorstaat, wordt de positie voor deze cirkel terug gegeven.
-De solver zal deze cirkel kan plaatsen in zijn oplossing.
+De solver zal deze cirkel dan plaatsen in zijn oplossing.
 
 Het is niet nodig om na te gaan of er overlap is met andere cirkels in de oplossing.
 Als er met een andere overlap zou zijn, moet dit zijn omdat de cirkel buiten het gat geplaatst is, of er is ook overlap met één van de cirkels in het gat zelf.
@@ -765,7 +783,7 @@ De eerste en laatste cirkel in de lijst grenzen ook aan elkaar in de shell.
 De heuristiek voorgesteld in deze thesis probeert steeds eerst alle gaten op te vullen.
 Maar wanneer er geen cirkels meer over zijn die klein genoeg zijn om te passen in gaten, word er een cirkel op de shell geplaatst.
 Op de shell worden alle posities tegen twee cirkels van de shell overwogen.
-Dit is een goede heuristiek voor de optimale positie, beperkt het aantal mogelijke posities voor de geplaatste cirkel enorm en maakt het algoritme dus zeer snel.
+Dit is een goede heuristiek voor de optimale positie, beperkt het aantal mogelijke posities voor de geplaatste cirkel enorm en maakt het algoritme dus zeer snel (zie \autoref{chap:resultaten} voor een vergelijking in snelheid).
 Er wordt steeds een cirkel zo dicht mogelijk bij het centrum van de huidige tussen-oplossing geplaatst.
 Dit om het uitbreiden van de omcirkel zo min mogelijk te houden.
 
@@ -775,11 +793,11 @@ De twee cirkels waarvoor het middelpunt het dichtst bij het centrum van de huidi
 Dan wordt er gezocht naar een zo groot mogelijke cirkel die daar past op de shell.
 Indien geen enkele cirkel past wordt één van de twee kandidaat cirkels verwijderd uit de shell.
 Welke verwijderd wordt verduidelijkt in \autoref{sec:bepalen-of-een-cirkel-past-op-de-shell}.
-Dit zorgt er voor dat de shell veranderd en \textit{groeit} naar buiten.
+Dit zorgt er voor dat de shell verandert en \textit{groeit} naar buiten.
 In de volgende stap van het algoritme zal dan ook een andere positie voor een cirkel uitgeprobeerd worden.
 Indien er wel een cirkel past wordt deze toegevoegd aan de shell, en geeft deze aanleiding tot een nieuw gat.
 Dit gat zal vervolgens opgevuld worden indien mogelijk, zoals beschreven in \autoref{sec:holes}.
-Op \autoref{fig:plaats-op-shell-simpel} wordt getoond hoe de packing veranderd wanneer een cirkel geplaatst wordt op de shell.
+Op \autoref{fig:plaats-op-shell-simpel} wordt getoond hoe de packing verandert wanneer een cirkel geplaatst wordt op de shell.
 Eerst wordt een packing zonder gaten getoond en vervolgens de packing nadat een cirkel op de shell geplaatst is.
 Hierop is duidelijk te zien hoe de shell aangepast is geweest, en deze plaatsing geleid heeft tot een nieuw gat.
 Zoals eerder gezegd is het mogelijk dat op een positie op de shell de grootste cirkel niet past.
@@ -819,7 +837,7 @@ Het algoritme vind deze twee of drie cirkels.
 Het is eenvoudig in te zien dat deze drie cirkels aan de buitenkant van een (tussen-)oplossing zullen liggen.
 Dit is ook net wat de shell is, de cirkels aan de buitenkant van een oplossing.
 Het is dus mogelijk om in elke stap van de solver de omcirkel zeer efficient te berekenen.
-De complexiteit is dan slechts lineair in de omtrek van de huidige (tussen-)oplossing, en niet in het totaal aantal cirkels in de oplossing.
+De complexiteit is dan slechts lineair in het aantal cirkels op de shell in huidige (tussen-)oplossing, wat slechts een subset is van totaal aantal cirkels in de oplossing.
 Aangezien de omcirkel regelmatig moet herberekend worden doorheen het algoritme is dit een zeer interessante optimalisatie.
 
 \subsection{Bepalen of een cirkel past op de shell} \label{sec:bepalen-of-een-cirkel-past-op-de-shell}
@@ -862,7 +880,7 @@ for (int i = 1; i <= checkRadius; ++i) {
 \end{lstlisting}
 
 Er wordt dus om te beurt links en rechts van de huidige positie op de shell nakeken voor overlap.
-Indien er overlap gevonden is, wordt bijgehouden aan welke kant van de shell dit gebeurt is.
+Indien er overlap gevonden is, wordt bijgehouden aan welke kant van de shell dit gebeurd is.
 $toRemove$ is dus uiteindelijk $first$ of $secons$, wat aan geeft of er aan de kant van de eerste cirkel, of van de tweede cirkel, overlap voorkomt.
 $toRemove$ kan ook $null$ zijn indien er geen overlap is.
 Deze informatie wordt dan gebruikt door de solver om te bepalen of de cirkel geplaatst kan worden ($toRemove = null$), of dat de shell aangepast moet worden.
@@ -870,7 +888,7 @@ Meer informatie hierover in \autoref{sec:een-cirkel-plaatsen-op-de-shell}
 
 \subsection{Een cirkel plaatsen op de shell} \label{sec:een-cirkel-plaatsen-op-de-shell}
 
-Om een cirkel te plaatsen op de shell wordt eerst de grootste cirkel is die past op de shell logaritmisch gezocht in de lijst van nog-te-plaatsen cirkels.
+Om een cirkel te plaatsen op de shell wordt eerst de grootste cirkel is die past op de shell binair gezocht in de lijst van nog-te-plaatsen cirkels.
 Dit gebeurt op analoge manier als het zoeken naar de grootste cirkel die past in een gat, zoals beschreven in \autoref{sec:grootste-cirkel-zoeken-die-past-in-een-hole}.
 Indien er een cirkel gevonden wordt die past op de shell wordt de shell uitgebreid met deze cirkel.
 De cirkel wordt dan tussen de cirkels, waartegen hij geplaatst is, gezet in de shell.
@@ -880,11 +898,11 @@ Ook zorgt dit er voor dat een nieuw gat gemaakt wordt waar mogelijk kleinere cir
 
 Een laatste check die gebeurt is om na te gaan of door het plaatsen van de cirkel de shell nog juist gevormd is.
 Indien een cirkel geplaatst wordt zodat de cirkels niet meer met de klok mee gesorteerd zijn, zou dit er voor kunnen zorgen dat foutieve plaatsingen voorkomen.
-Om dit te verzekeren wordt de gerichte hoek tussen de geplaatste cirkel en de cirkels waartegen hij geplaatst is nagekeken.
+Om dit te voorkomen wordt de gerichte hoek tussen de geplaatste cirkel en de cirkels waartegen hij geplaatst is nagekeken.
 Indien deze hoek negatief is wordt de shell hier voor aangepast.
 Dit wordt getoond in \autoref{fig:plaats-op-shell-hoek}.
 Het eerste deel toont de configuratie waarop een cirkel geplaatst zal worden.
-Het laatste deel de toteindelijke configuratie van de shell.
+Het laatste deel de uiteindelijke configuratie van de shell.
 Het middelste deel toont met een zwarte lijn het deel van de shell dat verwijderd is om er voor te zorgen dat deze kloksgewijs gesorteerd blijft.
 Op \autoref{fig:plaats-op-shell-hoek-fout}  wordt getoond wat er kan gebeuren als deze check niet gebeurt.
 
@@ -913,7 +931,11 @@ Zie ook \autoref{chap:opmerkingen-en-verder-werk} voor verdere bedenkingen hiero
 \chapter{Opmerkingen en verder werk} \label{chap:opmerkingen-en-verder-werk}
 
 // TODO Bespreking van verbeteringen/andere mogelijke strategieën/losse eindjes
+
 // TODO Bedenkingen bij veronderstellingen in het algorime, deze lijken te kloppen maar hebben geen bewijs.
+
+// TODO Problemen met hole bespreken
+
 // TODO verder uitweiden over clockwise/counterclockwise en dat hier tussen gewisseld wordt voor een stabielere fout?
 
 \chapter{Conclusie} \label{chap:conclusie}
