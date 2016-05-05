@@ -20,6 +20,9 @@
 \usepackage{hyperref}
 \usepackage[hypcap]{caption}
 \usepackage{color}
+\usepackage{longtable}
+\usepackage{booktabs}
+\usepackage{pgfplotstable}
 
 % -------------------- Pagina-instellingen --------------------------
 % Indien je deze wijzigt, zal het titelblad ook wijzigen.  Dit dien je
@@ -55,7 +58,6 @@
 \renewcommand{\subsectionautorefname}{sectie}
 \renewcommand{\figureautorefname}{figuur}
 \newcommand{\lstnumberautorefname}{lijn}
-
 
 \lstset{frame=tb,
   language=Java,
@@ -935,9 +937,53 @@ Een deel van de packings op Packomania hebben geen bijkomende publicatie.
 Het gebruikte algoritme en de nodige tijd om de packing te bekomen is dus niet gekend.
 Ook geef ik resultaten voor packings met veel meer cirkels dan deze geraporteerd op Packomania.
 
-\section{Test-sets}
+\section{Packomania vergelijking}
+
+\newcommand{\powerTable}[2]{
+	\pgfplotstabletypeset[
+		string type,
+		col sep = comma,
+		skip rows between index={0}{#1},
+		skip rows between index={#2}{1000000000},
+		begin table=\begin{longtable},
+		end table=\end{longtable},
+		% packo id,N,Packomania Radius,,id,circlecount,Radius,time (ns),overlap (square units),nancount,Time,,Difference,% Increase
+	  	columns={{N},{ratio},{Radius},{Difference},{Increase},{Time}},
+		every head row/.style={before row=\toprule, after row=\midrule\endhead},
+		every last row/.style={after row=\bottomrule},
+		column type={l}, %default
+		columns/{N}/.style={column type={c}},
+		columns/{ratio}/.style={column name={Beste radius}},
+		columns/{Radius}/.style={column name={Radius}},
+		columns/{Difference}/.style={column name={Vergroting}},
+		columns/{Increase}/.style={column type={c}, column name={Vergroting (\%)}},
+		columns/{Time}/.style={column name={Tijd}},
+	]
+	{csv/Power Packomania Problems Comparison.csv}
+}
+
+Packomania 1
+
+\powerTable{0}{196}
+
+Packomania 1/2
+
+\powerTable{196}{292}
+
+Packomania -1/2
+
+\powerTable{292}{388}
+
+Packomania -2/3
+
+\powerTable{388}{444}
+
+Packomania -1/5
+
+\powerTable{444}{504}
 
 \section{Grotere aantallen cirkels}
+
 
 
 
