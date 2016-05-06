@@ -938,8 +938,10 @@ Zie ook \autoref{chap:opmerkingen-en-verder-werk} voor verdere bedenkingen hiero
 In dit hoofdstuk worden de verkregen packings vergeleken met de best gekende packings, zoals gerapporteerd op de Packomania website \cite{packomania}.
 Packomania is een website die de best gekende oplossingen voor verschillende circle-packing problemen verzameld.
 Deze vergelijking wordt gemaakt op zowel de verkregen radius van de omschreven cirkel, als ook de tijd nodig om tot deze packing te komen indien deze gekend is.
-Een deel van de packings op Packomania hebben geen bijkomende publicatie.
+De nodige rekentijd voor deze algoritmen is echter niet altijd even makkelijk te vinden.
+Veel van de packings op Packomania hebben geen bijkomende publicatie.
 Het gebruikte algoritme en de nodige tijd om de packing te bekomen is dus niet gekend, enkel de coördinaten van de uiteindelijke packing.
+De vergelijking in tijd zal dus een zeer ruwe vergelijking zijn gebaseerd op slechts enkele papers.
 
 Ook geef ik resultaten voor packings met veel meer cirkels dan deze geraporteerd op Packomania.
 Hiervoor heb ik geen andere resultaten gevonden in de literatuur om met te vergelijken.
@@ -981,42 +983,91 @@ De verhouding tussen enkele van deze verdelingen worden verduidelijk in \autoref
 
 \section{Packomania vergelijking}
 
-In volgende tabellen wordt telkens het aantal cirkels in de kolom $N$ gegeven, de best gekende radius van op Packomania in kolom $Beste radius$ en de radius verkregen door mijn algoritme in kolom $Radius$.
+In de tabellen in deze sectie wordt telkens het aantal cirkels in de kolom $N$ gegeven, de best gekende radius van op Packomania in kolom $Beste radius$ en de radius verkregen door mijn algoritme in kolom $Radius$.
 Ook wordt het absolute verschil van mijn oplossing ten opzichte van de best gekende radius in de kolom $Vergroting$ gegeven, en de procentuele vergroting in kolom $Vergroting (\%)$.
 Als laatste geef ik de rekentijd die mijn algoritme nodig had om tot deze oplossing te komen.
 U zal merken dat sommige oplossingen plots meer tijd vragen, maar dit komt doordat alle tests na elkaar uitgevoerd werden, en hier de Java garbage collector wat tijd op eiste.
 
-Voor het circle-packing probleem met even grote cirkels worden de oplossingen voor $N=5$ tot $N=100$ in \autoref{table:packomania-equal} getoond.
-Dit is slechts een subset van alle gekende oplossingen.
-De volledige lijst voor dit probleem vind u in \autoref{append:packomania-equal}.
+\subsection{Even grote cirkels}
 
-Packomania Equal
+Voor het circle-packing probleem met even grote cirkels worden de oplossingen voor $N=3$ tot $N=100$ in \autoref{table:packomania-equal} getoond.
+Dit is slechts een subset van alle gekende oplossingen.
+De volledige lijst van vergelijkingen voor dit probleem, meer dan 2500 vergelijkingen, kan u terug vinden op GitHub \cite{packomania-tables-github}.
 
 \equalTable{Packomania \ensuremath{r_i=1}}{0}{98} \label{table:packomania-equal}
 
-Packomania 1
+Gemiddeld geeft mijn algoritme een resultaat dat $1.89\%$ groter is dan de het best gekende resultaat.
+Nodige tijd blijft onder 10 milliseconden tot $N=100$ (sommige boven 10 milliseconden zijn de wijten aan de garbage collector die dan begint te werken).
+Tot 500 cirkels blijft de nodige rekentijd onder 100 milliseconden.
+De rekentijd loopt pas op tot één seconden bij 2200 cirkels.
 
-\powerTable{Packomania \ensuremath{r_i=i}}{0}{196} \label{table:packomania-1}
+Zoals eerder vermeld zijn vergelijkingen in nodige rekentijd moeilijk te vinden.
+In \cite{grosso2010} worden echter tijden gerapporteerd van 110 seconden voor 30 cirkels (mijn algoritme vroeg hier minder dan een milliseconden tijd), en 15311 seconden (meer dan 4 uur) voor 100 cirkels (mijn algoritme vroeg hier 7 milliseconden).
+Zij halen resultaten die zeer dicht bij de best gekende liggen (soms de beste).
 
-Packomania 1/2
+Omdat mijn algoritme enkel nieuwe cirkels tegen twee reeds geplaatste cirkels plaats, hebben alle oplossingen voor dit probleem een duidelijke structuur.
+Deze structuur is een zeshoekige structuur.
+Dit wordt geïllustreerd in \autoref{fig:packing-even-groot-50}, \autoref{fig:packing-even-groot-500} en \autoref{fig:packing-even-groot-2000}.
+//TODO Update deze afbeeldingen
+
+\begin{figure}
+  \centering
+  \includegraphics[width=0.65\textwidth]{packing-even-groot-50.png}
+  \caption{Packing voor 50 even grote cirkels} \label{fig:packing-even-groot-50} 
+\end{figure}
+
+\begin{figure}
+  \centering
+  \includegraphics[width=0.65\textwidth]{packing-even-groot-500.png}
+  \caption{Packing voor 500 even grote cirkels} \label{fig:packing-even-groot-500} 
+\end{figure}
+
+\begin{figure}
+  \centering
+  \includegraphics[width=0.65\textwidth]{packing-even-groot-2000.png}
+  \caption{Packing voor 2000 even grote cirkels} \label{fig:packing-even-groot-2000} 
+\end{figure}
+
+
+\subsection{Packomania Machten}
+
+Packomania rapporteert ook resultaten voor verschillende verdelingen met een vaste structuur: $r_i=i^X$.
+Hier is X steeds een andere macht.
+Deze problemen neem ik onder één noemen, de \textit{Packomania macht} problemen.
+
+In onderstaande tabellen worden alle resultaten van deze problemen gegeven:
+
+\powerTable{Packomania \ensuremath{r_i=i}}{0}{196}
 
 \powerTable{Packomania \ensuremath{r_i=i^{1/2}}}{196}{292}
 
-Packomania -1/5
-
 \powerTable{Packomania \ensuremath{r_i=i^{-1/5}}}{444}{504}
-
-Packomania -1/2
 
 \powerTable{Packomania \ensuremath{r_i=i^{-1/2}}}{292}{388}
 
-Packomania -2/3
-
 \powerTable{Packomania \ensuremath{r_i=i^{-2/3}}}{388}{444}
 
+Gemiddeld geeft mijn algoritme een resultaat dat $5,61\%$ groter is dan de best gekende resultaten.
+Nodige rekentijd is voor al deze problemen slechts enkele milliseconden, met enkele uitschieters die te wijten zijn aan de Java garbage collector.
 
+Nodige rekentijd in de literatuur loopt op tot 6 uur in \cite{jors2011}, tot 7 uur in \cite{lopez2013packing} en zelfs meer dan een volledige dag (27 uur) in \cite{zeng2016iterated}, voor slechts 30 cirkels (dit in vergelijking met één milliseconde voor mijn algoritme).
+Het snelste andere algoritme, tot zover ik weet, werd gegeven in \cite{ye2013iterated}.
+Zij hadden tijden tussen 1 seconden voor 5 cirkels, en 1 uur voor 30 cirkels.
+Zij hadden echter geen goed stopping-criteria, en deze tijd was dus de tijd nodig alvorens ze hun beste oplossing vonden, maar hun algoritme bleef ongeacht meer dan 2,5 uur zoeken.
 
-Packomania Benchmark
+\begin{figure}
+  \centering
+  \includegraphics[width=0.65\textwidth]{packing-neg1div2-1000.png}
+  \caption{Packing voor 1000 cirkels met verdeling $r_i=i^{-1/2}$} \label{fig:packing-neg1div2-1000} 
+\end{figure}
+
+\begin{figure}
+  \centering
+  \includegraphics[width=0.65\textwidth]{packing-neg1div5-1000.png}
+  \caption{Packing voor 1000 cirkels met verdeling $r_i=i^{-1/5}$} \label{fig:packing-neg1div5-1000} 
+\end{figure}
+
+\subsection{Packomania Benchmark}
 
 \benchmarkTable{Packomania Benchmark Instances}{0}{1000}
 
