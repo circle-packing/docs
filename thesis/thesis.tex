@@ -287,6 +287,9 @@ Constructieve algoritmen voor het oplossen van circle-packings zijn veel minder 
 Een constructief algoritme is een algoritme dat, beginnende van een zekere begin situatie, stapsgewijs de oplossing uitbreidt tot een volledige oplossing bekomen is.
 Eén van de weinige constructieve methoden wordt beschreven in \cite{akeb2006basic}, waar ze een alternatieve vorm van het \textit{circle-packing} probleem oplossen: de grootte van de container ligt vast, en er moeten zo veel mogelijk cirkels van gelijke grootte in de container geplaatst worden.
 In \cite{hifi2004approximate} wordt er een aanpassing gedaan op de klassieke bottom-left-first heuristiek, voor het plaatsen van rechthoeken.
+Deze heuristiek plaats rechthoeken zo ver mogelijk in de linker beneden hoek.
+Dit is een zeer eenvoudige heuristiek die redelijk goede resultaten geeft.
+Zij hebben deze dan aangepast om cirkels in een rechthoek te plaatsen.
 
 Hoewel veel van deze oplossingen zeer goede packings maken, en regelmatig hun voorgangers verbeteren, vragen ze veel rekentijd en beperken ze zich tot een klein aantal cirkels.
 Voor slechts tientallen cirkels kan de nodige rekentijd oplopen tot tientallen uren.
@@ -1005,6 +1008,9 @@ De rekentijd loopt pas op tot één seconden bij 2200 cirkels.
 Zoals eerder vermeld zijn vergelijkingen in nodige rekentijd moeilijk te vinden.
 In \cite{grosso2010} worden echter tijden gerapporteerd van 110 seconden voor 30 cirkels (mijn algoritme vroeg hier minder dan een milliseconden tijd), en 15311 seconden (meer dan 4 uur) voor 100 cirkels (mijn algoritme vroeg hier 7 milliseconden).
 Zij halen resultaten die zeer dicht bij de best gekende liggen (soms de beste).
+
+Zelfs de constructieve algoritmen beschreven in \cite{akeb2006basic} en \cite{hifi2004approximate} vragen meerdere seconden, en soms minuten, om te berekenen.
+Hun resultaten zijn echter moeilijk te vergelijking omdat \cite{akeb2006basic} een alternatieve versie van circle-packing op lost, en \cite{hifi2004approximate} packings maakt in rechthoeken.
 
 Omdat mijn algoritme enkel nieuwe cirkels tegen twee reeds geplaatste cirkels plaats, hebben alle oplossingen voor dit probleem een duidelijke structuur.
 Deze structuur is een zeshoekige structuur.
