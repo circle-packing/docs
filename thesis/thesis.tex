@@ -1003,7 +1003,7 @@ De volledige lijst van vergelijkingen voor dit probleem, meer dan 2500 vergelijk
 Gemiddeld geeft mijn algoritme een resultaat dat $1.89\%$ groter is dan de het best gekende resultaat.
 Nodige tijd blijft onder 10 milliseconden tot $N=100$ (sommige boven 10 milliseconden zijn de wijten aan de garbage collector die dan begint te werken).
 Tot 500 cirkels blijft de nodige rekentijd onder 100 milliseconden.
-De rekentijd loopt pas op tot één seconden bij 2200 cirkels.
+De rekentijd loopt pas op tot één seconden bij 2200 cirkels, en slechts 3,5 seconden voor 5000 cirkels.
 
 Zoals eerder vermeld zijn vergelijkingen in nodige rekentijd moeilijk te vinden.
 In \cite{grosso2010} worden echter tijden gerapporteerd van 110 seconden voor 30 cirkels (mijn algoritme vroeg hier minder dan een milliseconden tijd), en 15311 seconden (meer dan 4 uur) voor 100 cirkels (mijn algoritme vroeg hier 7 milliseconden).
@@ -1149,6 +1149,14 @@ Dit in vergelijking met mijn heuristiek die slechts enkele milliseconden nodig h
 \section{Grotere aantallen cirkels}
 
 // TODO, laat pc enkele grotere aantallen berekenen.
+
+\section{Conclusie}
+
+In dit hoofdstuk heb ik oplossingen verkregen door mijn algoritme vergeleken met de best gekende packings.
+Ook heb ik kort de nodige rekentijd vergeleken met enkele andere algoritmen.
+De oplossingen verkregen met mijn nieuwe constructieve heuristiek hebben gemiddeld een minder dan 6\% grotere omschreven cirkel.
+Dit lijkt mij een zeer aanvaardbare vergroting van de omschreven cirkel, rekening houdend dat het algoritme deze problemen in slechts milliseconden op lost.
+Zelfs de grootste problemen, bestaande uit duizenden cirkels, kunnen in slechts enkele seconden opgelost worden.
 
 \chapter{Opmerkingen en verder werk} \label{chap:opmerkingen-en-verder-werk}
 
