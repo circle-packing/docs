@@ -24,6 +24,7 @@
 \usepackage{booktabs}
 \usepackage{pgfplotstable}
 \usepackage{needspace}
+\usepackage[toc,page]{appendix}
 
 % -------------------- Pagina-instellingen --------------------------
 % Indien je deze wijzigt, zal het titelblad ook wijzigen.  Dit dien je
@@ -49,6 +50,7 @@
 \setlength{\TPVertModule}{1mm}
 
 % Eigen instellingen
+\input{packoTables}
 \graphicspath{{images/}}
 \renewcommand{\contentsname}{Inhoud}
 \renewcommand{\listfigurename}{Lijst van figuren}
@@ -58,7 +60,9 @@
 \renewcommand{\sectionautorefname}{sectie}
 \renewcommand{\subsectionautorefname}{sectie}
 \renewcommand{\figureautorefname}{figuur}
+\renewcommand{\tableautorefname}{tabel}
 \newcommand{\lstnumberautorefname}{lijn}
+\newcommand*{\Appendixautorefname}{bijlage}
 
 \lstset{frame=tb,
   language=Java,
@@ -935,44 +939,72 @@ In dit hoofdstuk worden de verkregen packings vergeleken met de best gekende pac
 Packomania is een website die de best gekende oplossingen voor verschillende circle-packing problemen verzameld.
 Deze vergelijking wordt gemaakt op zowel de verkregen radius van de omschreven cirkel, als ook de tijd nodig om tot deze packing te komen indien deze gekend is.
 Een deel van de packings op Packomania hebben geen bijkomende publicatie.
-Het gebruikte algoritme en de nodige tijd om de packing te bekomen is dus niet gekend.
+Het gebruikte algoritme en de nodige tijd om de packing te bekomen is dus niet gekend, enkel de coördinaten van de uiteindelijke packing.
+
 Ook geef ik resultaten voor packings met veel meer cirkels dan deze geraporteerd op Packomania.
+Hiervoor heb ik geen andere resultaten gevonden in de literatuur om met te vergelijken.
+
+Packomania heeft resultaten voor verschillende verdelingen van cirkels.
+Deze verdelingen zijn als volgt:
+
+\begin{itemize}
+	\item $r_i=1$ (alle cirkels gelijke grootte)
+	\item $r_i=i$
+	\item $r_i=i^{1/2}$
+	\item $r_i=i^{-1/5}$
+	\item $r_i=i^{-1/2}$
+	\item $r_i=i^{-2/3}$
+\end{itemize}
+
+Hierbij zijn er telkens $N$ cirkels in het probleem, en is $i \in (1,2,...,N)$.
+De verhouding tussen enkele van deze verdelingen worden verduidelijk in \autoref{fig:packomania-verdelingen}.
+
+\begin {figure}
+	\centering
+	\resizebox {0.8\columnwidth} {!} {
+		\begin{tikzpicture}
+			\begin{axis}[ xlabel=$i$, ylabel=radius, domain=1:50 ]
+				\addplot[green]{x^(-1/5)};
+				\addlegendentry{$x^{-1/5}$}
+				
+				\addplot[blue]{x^(-1/2)};
+				\addlegendentry{$x^{-1/2}$}
+				
+				\addplot[red]{x^(-2/3)};
+				\addlegendentry{$x^{-2/3}$}
+			\end{axis}
+		\end{tikzpicture}
+	}
+	\caption{Packomania verdelingen}
+	\label{fig:packomania-verdelingen}
+\end {figure}
 
 \section{Packomania vergelijking}
 
-%%%%%%%%%%%%%%%%%%%%%%
-\newcommand{\powerTable}[3]{
-    \Needspace{15\baselineskip}
-    \pgfplotstabletypeset[
-        string type,
-        col sep = comma,
-        skip rows between index={0}{#2},
-        skip rows between index={#3}{1000000000},
-        begin table=\begin{longtable},
-        end table=\end{longtable},
-        % packo id,N,Packomania Radius,,id,circlecount,Radius,time (ns),overlap (square units),nancount,Time,,Difference,% Increase
-        columns={{N},{ratio},{Radius},{Difference},{Increase},{Time}},
-        every head row/.style={before row=\caption[]{#1}\\\toprule, after row=\midrule\endhead},
-        every last row/.style={after row=\bottomrule},
-        every first row/.style={before row=\captionsetup{labelformat=empty}\caption[#1]{}\\[-23pt]},
-        column type={l}, %default
-        columns/{N}/.style={column type={c}},
-        columns/{ratio}/.style={column name={Beste radius}},
-        columns/{Radius}/.style={column name={Radius}},
-        columns/{Difference}/.style={column name={Vergroting}},
-        columns/{Increase}/.style={column type={c}, column name={Vergroting (\%)}},
-        columns/{Time}/.style={column name={Tijd}},
-    ]{csv/Power Packomania Problems Comparison.csv}
-}
-%%%%%%%%%%%%%%%%%%%%%%
+In volgende tabellen wordt telkens het aantal cirkels in de kolom $N$ gegeven, de best gekende radius van op Packomania in kolom $Beste radius$ en de radius verkregen door mijn algoritme in kolom $Radius$.
+Ook wordt het absolute verschil van mijn oplossing ten opzichte van de best gekende radius in de kolom $Vergroting$ gegeven, en de procentuele vergroting in kolom $Vergroting (\%)$.
+Als laatste geef ik de rekentijd die mijn algoritme nodig had om tot deze oplossing te komen.
+U zal merken dat sommige oplossingen plots meer tijd vragen, maar dit komt doordat alle tests na elkaar uitgevoerd werden, en hier de Java garbage collector wat tijd op eiste.
+
+Voor het circle-packing probleem met even grote cirkels worden de oplossingen voor $N=5$ tot $N=100$ in \autoref{table:packomania-equal} getoond.
+Dit is slechts een subset van alle gekende oplossingen.
+De volledige lijst voor dit probleem vind u in \autoref{append:packomania-equal}.
+
+Packomania Equal
+
+\equalTable{Packomania \ensuremath{r_i=1}}{0}{98} \label{table:packomania-equal}
 
 Packomania 1
 
-\powerTable{Packomania \ensuremath{r_i=i}}{0}{196}
+\powerTable{Packomania \ensuremath{r_i=i}}{0}{196} \label{table:packomania-1}
 
 Packomania 1/2
 
 \powerTable{Packomania \ensuremath{r_i=i^{1/2}}}{196}{292}
+
+Packomania -1/5
+
+\powerTable{Packomania \ensuremath{r_i=i^{-1/5}}}{444}{504}
 
 Packomania -1/2
 
@@ -982,66 +1014,7 @@ Packomania -2/3
 
 \powerTable{Packomania \ensuremath{r_i=i^{-2/3}}}{388}{444}
 
-Packomania -1/5
 
-\powerTable{Packomania \ensuremath{r_i=i^{-1/5}}}{444}{504}
-
-%%%%%%%%%%%%%%%%%%%%%%
-\newcommand{\equalTable}[3]{
-    \Needspace{15\baselineskip}
-    \pgfplotstabletypeset[
-        string type,
-        col sep = comma,
-        skip rows between index={0}{#2},
-        skip rows between index={#3}{1000000000},
-        begin table=\begin{longtable},
-        end table=\end{longtable},
-        % N,radius,distance,ratio,density,contacts,loose,boundary,symmetry group,reference,,id,circlecount,Radius,time (ns),overlap (square units),nancount,Time,,Difference,Increase
-        columns={{N},{ratio},{Radius},{Difference},{Increase},{Time}},
-        every head row/.style={before row=\caption[]{#1}\\\toprule, after row=\midrule\endhead},
-        every last row/.style={after row=\bottomrule},
-        every first row/.style={before row=\captionsetup{labelformat=empty}\caption[#1]{}\\[-23pt]},
-        column type={l}, %default
-        columns/{N}/.style={column type={c}},
-        columns/{ratio}/.style={column name={Beste radius}},
-        columns/{Radius}/.style={column name={Radius}},
-        columns/{Difference}/.style={column name={Vergroting}},
-        columns/{Increase}/.style={column type={c}, column name={Vergroting (\%)}},
-        columns/{Time}/.style={column name={Tijd}},
-    ]{csv/Equal size Packomania problems comparison.csv}
-}
-%%%%%%%%%%%%%%%%%%%%%%
-
-Packomania Equal
-
-\equalTable{Packomania \ensuremath{r_i=1}}{0}{98}
-
-%%%%%%%%%%%%%%%%%%%%%%
-\newcommand{\benchmarkTable}[3]{
-    \Needspace{15\baselineskip}
-    \pgfplotstabletypeset[
-        string type,
-        col sep = comma,
-        skip rows between index={0}{#2},
-        skip rows between index={#3}{1000000000},
-        begin table=\begin{longtable},
-        end table=\end{longtable},
-        % instance,N,radius,ratio,density,,id,circlecount,Radius,time (ns),overlap (square units),nancount,Time,,Difference,Increase
-        columns={{instance},{N},{ratio},{Radius},{Difference},{Increase},{Time}},
-        every head row/.style={before row=\caption[]{#1}\\\toprule, after row=\midrule\endhead},
-        every last row/.style={after row=\bottomrule},
-        every first row/.style={before row=\captionsetup{labelformat=empty}\caption[#1]{}\\[-23pt]},
-        column type={l}, %default
-        columns/{instance}/.style={column name={Instantie}},
-        columns/{N}/.style={column type={c}},
-        columns/{ratio}/.style={column name={Beste radius}},
-        columns/{Radius}/.style={column name={Radius}},
-        columns/{Difference}/.style={column name={Vergroting}},
-        columns/{Increase}/.style={column type={c}, column name={Vergroting (\%)}},
-        columns/{Time}/.style={column name={Tijd}},
-    ]{csv/IN NR Packomania problems comparison.csv}
-}
-%%%%%%%%%%%%%%%%%%%%%%
 
 Packomania Benchmark
 
@@ -1070,6 +1043,12 @@ Packomania Benchmark
 // TODO ALGEMEEN: Minder informele termen? Omcirkel->omschreven cirkel
 
 // TODO ALGEMEEN: Voeg echte definities toe, bv bij Hole echt een hoofding "Definitie" en dan het gat definieren. Ook voor shell, omcirkel.
+
+\newpage
+
+\begin{appendices}
+
+\end{appendices}
 
 \newpage
 
