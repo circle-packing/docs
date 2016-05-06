@@ -315,8 +315,8 @@ Hier vergelijk ik de packings met de best gekende resultaten zoals gerapporteerd
 De Packomania website verzameld alle best gekende oplossingen voor verschillende circle-packing problemen.
 Ik vergelijk de omtrek van de verkregen omcirkel en de nodige tijd om de packing te berekenen van mijn eigen heuristiek met de best gekende oplossingen op de Packomania website.
 Ook toon ik resultaten voor packings voor veel meer cirkels dan getoond op de Packomania website.
-In \autoref{chap:opmerkingen-en-verder-werk} bespreek ik mogelijke verbeteringen, overblijvende problemen in de heuristiek en ideeën voor verdere uitbreidingen en onderzoek.
-Ook geef ik enkele bedenkingen over implementatie en conceptuele details van de heuristiek zoals hij nu is.
+In \autoref{chap:bedenkingen} bespreek ik enkele bedenkingen die ik heb bij de heuristiek en zijn implementatie.
+In \autoref{chap:verder-werk} bespreek ik mogelijke verbeteringen en ideeën voor verder onderzoek.
 In \autoref{chap:handleiding-visualisaties} wordt kort verduidelijkt hoe de visualisaties te interpreteren die doorheen deze thesis gebruikt worden.
 Maar eerst worden enkele termen die gebruikt worden in de verdere tekst, sommige uniek voor voor deze heuristiek, en definities gegeven in \autoref{chap:definities}.
 
@@ -379,7 +379,7 @@ De volledige implementatie is beschikbaar op GitHub \cite{circle-packing-github}
 Om het algoritme zeer snel te maken worden enkele veronderstellingen gemaakt omtrent de nodige overlap checks bij elke stap.
 Deze veronderstellingen zijn niet theoretisch bewezen, maar wel empirisch getest.
 Voor de meeste verdelingen van cirkels lijken ze goed stand te houden, maar er zijn nog enkele \textit{edge-cases} waarin er toch nog fouten gebeuren.
-Deze problemen worden besproken in \autoref{chap:opmerkingen-en-verder-werk} en de snelheid en kwaliteit van de oplossingen wordt verder besproken in \autoref{chap:resultaten}.
+Deze problemen worden besproken in \autoref{chap:bedenkingen} en de snelheid en kwaliteit van de oplossingen wordt verder besproken in \autoref{chap:resultaten}.
 
 \section{Basis idee}
 
@@ -865,7 +865,7 @@ Het is niet nodig andere cirkels, die niet op de shell zitten, na te kijken voor
 Een nieuwe cirkel wordt steeds op de shell geplaatst zodanig dat als er overlap zou zijn met cirkels in de oplossing, minstens één van die cirkels op de shell ligt.
 Doordat ik geen exacte definitie van de shell heb, ze is enkel gedefinieerd door het algoritme dat ze opbouwt, is het niet mogelijk om hier een echt bewijs van te geven.
 Uit empirische tests lijkt dit echter wel te kloppen.
-Verdere bedenkingen hierbij kan u terug vinden in \autoref{chap:opmerkingen-en-verder-werk}.
+Verdere bedenkingen hierbij kan u terug vinden in \autoref{chap:bedenkingen}.
 Om deze overlappings-test zeer snel te kunnen uitvoeren worden eerst cirkels dicht bij nagekeken.
 Er staat ook een limiet op het aantal cirkels die getest worden.
 Uit tests, tot 5000 cirkels, blijkt dat drie cirkels aan elke kant van de shell nakijken genoeg is.
@@ -935,7 +935,7 @@ Op \autoref{fig:plaats-op-shell-hoek-fout}  wordt getoond wat er kan gebeuren al
 Dit hoofdstuk gaf een volledig overzicht van de nieuwe constructieve heuristiek.
 Waar nodig werd het uitleg verduidelijkt met code uit de implementatie.
 Er werden ook de verschillende veronderstellingen geformuleerd die gebruikt worden om het algoritme zeer snel te maken.
-Zie ook \autoref{chap:opmerkingen-en-verder-werk} voor verdere bedenkingen hieromtrent.
+Zie ook \autoref{chap:bedenkingen} voor verdere bedenkingen hieromtrent.
 
 \chapter{Resultaten} \label{chap:resultaten}
 
@@ -1158,31 +1158,79 @@ De oplossingen verkregen met mijn nieuwe constructieve heuristiek hebben gemidde
 Dit lijkt mij een zeer aanvaardbare vergroting van de omschreven cirkel, rekening houdend dat het algoritme deze problemen in slechts milliseconden op lost.
 Zelfs de grootste problemen, bestaande uit duizenden cirkels, kunnen in slechts enkele seconden opgelost worden.
 
-\chapter{Opmerkingen en verder werk} \label{chap:opmerkingen-en-verder-werk}
+\chapter{Bedenkingen} \label{chap:bedenkingen}
 
-// TODO Bespreking van verbeteringen/andere mogelijke strategieën/losse eindjes
+\section{Precisie}
 
-// TODO Bespreek precisie fout
+De implementatie gebruikt $double$ variabelen voor getallen voor te stellen.
+Ook geeft de methode gebruikt om cirkels tegen elkaar te plaatsen, beschreven in \autoref{sec:een-cirkel-tegen-twee-andere-plaatsen}, geen exacte oplossing.
+Hierdoor wordt er doorheen het algoritme een kleine fout opgebouwd.
+Deze fout uit zich in een kleine overlap in de uiteindelijke verkregen packing.
+Deze overlap blijft echter beperkt tot $10^{-15}$ vierkante eenheden voor de grootste packings.
 
-// TODO Bedenkingen bij veronderstellingen in het algorime, deze lijken te kloppen maar hebben geen bewijs.
+\section{Veronderstellingen}
 
-// TODO Problemen met hole bespreken
+Zoals eerder vermeld worden er, bij de gaten en shell, enkele veronderstellingen gedaan om het algoritme zeer snel te laten verlopen.
+Deze veronderstellingen lijken voor de meeste problemen correct te zijn.
+Er zijn echter sommige problemen, vooral als er gewerkt wordt met zeer hoge aantallen cirkels (duizenden), dat er toch nog fouten kunnen gebeuren.
+Dit uit zich dan in packings met een grote overlap.
 
-// TODO verder uitweiden over clockwise/counterclockwise en dat hier tussen gewisseld wordt voor een stabielere fout?
+Uit huidige tests lijkt er vooral een probleem met de gaten, de shell heeft voor zover mijn huidige tests uitwijzen geen problemen.
+Doordat de cirkels die een gat definiëren niet altijd aan elkaar raken kan het gebeuren, als twee gaten naast elkaar staan, er toch nog een overlap is.
+
+Een voorstel om dit op te lossen is een gat niet op te delen in drie gaten als er een cirkel in geplaatst wordt, maar slechts in twee.
+Eén van die gaten bestaat dan uit meer dan drie cirkels.
+Zo is het wel mogelijk om altijd aaneensluitende cirkels een gat te laten bepalen.
+
+\chapter{Verder werk} \label{chap:verder-werk}
+
+In dit hoofdstuk geef ik enkele voorstellen voor verdere uitwerkingen van het algoritme.
+Mogelijke verbeteringen, zowel in snelheid als kwaliteit van uitkomsten.
+Dit zijn mogelijke ideeën om in de toekomst op verder te werken.
+
+\section{Constante-tijd omschreven cirkel}
+
+In het algoritme bij het plaatsen op de shell wordt gebruik gemaakt van de omschreven cirkel van de huidige tussen-oplossing.
+Deze omschreven cirkel wordt berekend in lineaire tijd ten opzichte van het aantal cirkels op de shell.
+Dit geeft dan de kleinst mogelijke omschreven cirkel van de huidige oplossing.
+
+Het is echter mogelijk om in constante tijd een omschreven cirkel te berekenen.
+Simpelweg door, telkens er een cirkel geplaatst wordt buiten de huidige omschreven cirkel, een nieuwe te berekenen die rond de oude omcirkel en deze nieuwe cirkel past.
+Dit kan zeer eenvoudig in constante tijd, maar geeft niet de kleinst-mogelijke omschreven cirkel voor de packing.
+Deze constante-tijd omschreven cirkel is mogelijk wel goed genoeg als benadering, en kan een grote snelheids-winst geven voor zeer grote packings.
+
+\section{Best-Fit}
+
+Het algoritme is gebaseerd op een \textit{best-fit} principe.
+Met andere woorden in elke stap wordt de best-bassende cirkel gekozen.
+Wat de best-passende cirkel is is echter moeilijk te bepalen.
+In de huidige implementatie worden er daarom enkele keuzes gemaakt, gebaseerd op bestaande heuristieken en intuïtie.
+Hier kunnen echter andere keuzes gemaakt worden, die mogelijk tot betere resultaten zullen leiden.
+
+Eén zo'n alternatieve keuze is bij het plaatsen op de shell.
+Nu worden de nieuwe cirkels zo dicht mogelijk bij het huidige middelpunt geplaatst.
+Dit omdat de omschreven cirkel dan zo weinig mogelijk uitgebreid moet worden.
+Maar wat als, wanneer we geen cirkel meer binnen de huidige omcirkel kunnen plaatsen, we de cirkel zo ver mogelijk van het middelpunt plaatsen (maar wel nog tegen twee cirkels op de shell)?
+Dit zal er voor zorgen dat de omschreven cirkel veel verder uitgebreid zal worden.
+Het zal er ook voor zorgen dat de omcirkel veel minder vaak uitgebreid moet worden, omdat hij in grotere stappen uitbreid.
+Mogelijk geeft dit aanleiding tot betere en misschien snellere packings omdat de omschreven cirkel minder vaak herberekend moet worden.
 
 \chapter{Conclusie} \label{chap:conclusie}
 
+In deze thesis heb ik een nieuwe constructieve heuristiek voorgesteld.
+Deze is gebaseerd op het \textit{best-fit} principe, waarbij in elke stap de beste cirkel gekozen wordt om aan de oplossing toe te voegen.
+Deze keuze werd gebaseerd op twee concepten: \textit{gaten} en de \textit{shell}.
+Eerst werden de gaten opgevuld, en dan cirkels geplaatst aan de buitenkant van de tussen-oplossing, op de shell.
+Door enkele veronderstellingen te maken over het aantal cirkels die getest moeten worden voor overlap bij elke plaatsing, kan het algoritme zeer snel relatief goede packings genereren.
+Ik heb resultaten getoond, vergeleken met de best-gekende packings voor een groot aantal cirkel-verdelingen, die aantonen dat het algoritme packings maakt die gemiddeld slechts 5\% groter zijn.
+Deze packings werden gegenereerd in een fractie van de tijd die andere, state-of-the-art algoritmen nodig hebben (milliseconden tegenover uren).
 
+Ik denk dus dat ik zeker geslaagd ben in mijn opzet.
+Een constructief algoritme maken dat in real-time goede packings kan maken voor het zeer moeilijke \textit{cirkel-packing} probleem.
 
 // TODO ALGEMEEN: Minder informele termen? Omcirkel->omschreven cirkel
 
 // TODO ALGEMEEN: Voeg echte definities toe, bv bij Hole echt een hoofding "Definitie" en dan het gat definieren. Ook voor shell, omcirkel.
-
-\newpage
-
-\begin{appendices}
-
-\end{appendices}
 
 \newpage
 
