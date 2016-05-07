@@ -992,7 +992,6 @@ Al deze berekeningen zijn uitgevoerd op een Mid 2009 Macbook-Pro 15 inc met een 
 In de tabellen in deze sectie wordt telkens het aantal cirkels in de kolom $N$ gegeven, de best gekende radius van op Packomania in kolom $Beste radius$ en de radius verkregen door mijn algoritme in kolom $Radius$.
 Ook wordt het absolute verschil van mijn oplossing ten opzichte van de best gekende radius in de kolom $Vergroting$ gegeven, en de procentuele vergroting in kolom $Vergroting (\%)$.
 Als laatste geef ik de rekentijd die mijn algoritme nodig had om tot deze oplossing te komen.
-U zal merken dat sommige oplossingen plots meer tijd vragen, maar dit komt doordat alle tests na elkaar uitgevoerd werden, en hier de Java garbage collector wat tijd op eiste.
 
 \subsection{Even grote cirkels}
 
@@ -1003,7 +1002,7 @@ De volledige lijst van vergelijkingen voor dit probleem, meer dan 2500 vergelijk
 \equalTable{Packomania \ensuremath{r_i=1}}{0}{98} \label{table:packomania-equal}
 
 Gemiddeld geeft mijn algoritme een resultaat dat $1.89\%$ groter is dan de het best gekende resultaat.
-Nodige tijd blijft onder 10 milliseconden tot $N=100$ (sommige boven 10 milliseconden zijn de wijten aan de garbage collector die dan begint te werken).
+Nodige tijd blijft onder 10 milliseconden tot $N=100$.
 Tot 500 cirkels blijft de nodige rekentijd onder 100 milliseconden.
 De rekentijd loopt pas op tot één seconden bij 2200 cirkels, en slechts 3,5 seconden voor 5000 cirkels.
 
@@ -1060,7 +1059,7 @@ Opmerking: Een oplossing voor 56 cirkels, met raddii $r_i=i^{-2/3}$ miste op de 
 //TODO Vraag voor Patrick: Deze tabellen tonen een vergelijking alle problemen van op Packomania, behalve voor de gelijke grote cirkels aangezien dit anders meer dan 60 bladzijden voor één tabel zou zijn. De tabellen die er nu staan nemen echter ook wel wat paginas in beslag. Moet ik deze ook slechts deels tonen, of is het ok zo?
 
 Gemiddeld geeft mijn algoritme een resultaat dat $5,61\%$ groter is dan de best gekende resultaten.
-Nodige rekentijd is voor al deze problemen slechts enkele milliseconden, met enkele uitschieters die te wijten zijn aan de Java garbage collector.
+Nodige rekentijd is voor al deze problemen slechts enkele milliseconden.
 
 Nodige rekentijd in de literatuur loopt op tot 6 uur in \cite{jors2011}, tot 7 uur in \cite{lopez2013packing} en zelfs meer dan een volledige dag (27 uur) in \cite{zeng2016iterated}, voor slechts 30 cirkels (dit in vergelijking met één milliseconde voor mijn algoritme).
 Het snelste andere algoritme, tot zover ik weet, werd gegeven in \cite{ye2013iterated}.
