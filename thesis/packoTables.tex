@@ -78,3 +78,30 @@
         columns/{Time}/.style={column name={Tijd}},
     ]{csv/IN NR Packomania problems comparison.csv}
 }
+
+
+
+
+
+
+\newcommand{\bigTable}[3]{
+    \Needspace{10\baselineskip}
+    \pgfplotstabletypeset[
+        string type,
+        col sep = comma,
+        skip rows between index={0}{#2},
+        skip rows between index={#3}{1000000000},
+        begin table=\begin{longtable},
+        end table=\end{longtable},
+        % instance,N,radius,ratio,density,,id,circlecount,Radius,time (ns),overlap (square units),nancount,Time,,Difference,Increase
+        columns={{circlecount},{size (radius)},{overlap (square units)},{Time}},
+        every head row/.style={before row=\caption[]{#1}\\\toprule, after row=\midrule\endhead},
+        every last row/.style={after row=\bottomrule},
+        every first row/.style={before row=\captionsetup{labelformat=empty}\caption[#1]{}\\[-23pt]},
+        column type={l}, %default
+        columns/{circlecount}/.style={column type={c}},
+        columns/{size (radius)}/.style={column name={Radius}},
+        columns/{overlap (square units)}/.style={column type={c}, column name={Overlap ($eenheden^2$)}},
+        columns/{Time}/.style={column name={Tijd}},
+    ]{csv/BIG.csv}
+}

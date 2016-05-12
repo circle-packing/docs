@@ -1284,7 +1284,23 @@ Dit zijn denk ik de meest indrukwekkende resultaten, en tonen het best de kracht
 
 \section{Grotere aantallen cirkels}
 
-// TODO, laat pc enkele grotere aantallen berekenen.
+Het algoritme uit deze thesis laat ook toe om problemen met veel grotere aantallen cirkels op te lossen.
+Resultaten voor cirkels tussen 1000 en 14000 cirkels kan je vinden in \autoref{append:packomania-tabellen-groter-aantal-cirkels}.
+Ik heb geen andere methoden gevonden die problemen met zo'n grote aantallen cirkels kunnen oplossen.
+De verkregen radii van de omschreven cirkel kan ik dus niet vergelijken.
+
+De nodige tijd om deze problemen op te lossen blijft ook beperkt.
+Problemen tot 1400 cirkels blijft onder één seconde.
+Problemen tot 9000 cirkels onder 10 seconden, en 14000 cirkels vragen minden dan één minuut tijd.
+
+Bij deze grote aantallen cirkels komen echter wel enkele problemen naar boven, zoals beschreven in \autoref{chap:bedenkingen}.
+Ook was het niet mogelijk op mijn computer om problemen met meer dan 14000 cirkels op te lossen.
+Bij het nakijken van de oplossing wordt een recursief algoritme gebruikt op de volledige lijst cirkels.
+Dit geeft een \textit{stack-overflow} en heb ik nog niet kunnen oplossen.
+
+Mits de resterende problemen met overlap voor sommige van deze problemen met grote aantallen cirkels, zijn dit interessante resultaten.
+Zelfs voor duizenden cirkels kan het algoritme een resultaat geven in enkele seconden.
+Dit is, voor zover ik weet, niet mogelijk met andere algoritmen in aanvaardbare tijd, laat staan in enkele seconden.
 
 \section{Conclusie}
 
@@ -1296,6 +1312,9 @@ Dit lijkt mij een zeer aanvaardbare vergroting van de omschreven cirkel, rekenin
 Zelfs de grootste problemen, bestaande uit duizenden cirkels, kunnen in slechts enkele seconden opgelost worden.
 Ook is er een interessante neerwaartse trend in de vergroting van de radius van de bekomen omschreven cirkel.
 Dit toont de kracht van het algoritme wanneer het meer cirkels heeft met verschillende radii om uit te kiezen.
+
+Bovendien laat het algoritme toe om problemen met veel grotere aantallen cirkels in aanvaardbare tijd op te lossen.
+Iets dat, voor zover ik zeet, geen enkel ander algoritme mogelijk maakt binnen aanvaardbare tijd, laat staan binnen enkele seconden.
 
 \chapter{Verder werk} \label{chap:verder-werk}
 
@@ -1343,9 +1362,9 @@ Deze packings werden gegenereerd in een fractie van de tijd die andere, state-of
 Ik denk dus dat ik zeker geslaagd ben in mijn opzet.
 Een constructief algoritme maken dat in real-time goede packings kan maken voor het zeer moeilijke \textit{cirkel-packing} probleem.
 
-// TODO ALGEMEEN: Minder informele termen? Omcirkel->omschreven cirkel
+% // TODO ALGEMEEN: Minder informele termen? Omcirkel->omschreven cirkel
 
-// TODO ALGEMEEN: Voeg echte definities toe, bv bij Hole echt een hoofding "Definitie" en dan het gat definieren. Ook voor shell, omcirkel.
+% // TODO ALGEMEEN: Voeg echte definities toe, bv bij Hole echt een hoofding "Definitie" en dan het gat definieren. Ook voor shell, omcirkel.
 
 \newpage
 
@@ -1434,6 +1453,21 @@ Opmerking: Een oplossing voor 56 cirkels, met raddii $r_i=i^{-2/3}$ miste op de 
 \section{Packomania Benchmark problemen} \label{append:packomania-tabellen-benchmark}
 
 \benchmarkTable{Packomania Benchmark Instances}{0}{1000}
+
+\section{Grotere aantallen cirkels} \label{append:packomania-tabellen-groter-aantal-cirkels}
+
+Enkel de resultaten voor meer dan 1000 cirkels wordt hier getoond.
+De volledige lijst van grotere problemen, van 100 cirkels tot 14000 cirkels, kan je terug vinden op GitHub \cite{packomania-tables-github}.
+
+\bigTable{Grotere aantallen gelijke cirkels}{130}{153}
+
+\bigTable{Groteren aantallen cirkels: \ensuremath{r_i = i^{1/2}}}{283}{306}
+
+\bigTable{Groteren aantallen cirkels: \ensuremath{r_i = i^{-1/2}}}{436}{459}
+
+\bigTable{Groteren aantallen cirkels: \ensuremath{r_i = i^{-2/3}}}{589}{612}
+
+\bigTable{Groteren aantallen cirkels: \ensuremath{r_i = i^{-1/5}}}{742}{765}
 
 \chapter{Extra packing figuren} \label{append:extra-packing-figuren}
 
