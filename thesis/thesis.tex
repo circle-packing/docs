@@ -11,6 +11,7 @@
 % Deze kan je eventueel toevoegen aan de pakketten die je al inlaadt
 % als je dit titelblad integreert met de rest van thesis.
 % -------------------------------------------------------------------
+\usepackage[dutch]{babel}
 \usepackage{graphicx,xcolor,textpos}
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
@@ -51,6 +52,7 @@
 \setlength{\TPVertModule}{1mm}
 
 % Eigen instellingen
+%\setdefaultlanguage{dutch}
 \input{packoTables}
 \graphicspath{{images/}}
 \renewcommand{\contentsname}{Inhoud}
@@ -63,7 +65,7 @@
 \renewcommand{\figureautorefname}{figuur}
 \renewcommand{\tableautorefname}{tabel}
 \newcommand{\lstnumberautorefname}{lijn}
-\newcommand*{\Appendixautorefname}{bijlage}
+\renewcommand{\appendixautorefname}{bijlage}
 
 \lstset{frame=tb,
   language=Java,
@@ -82,6 +84,40 @@
   tabsize=4,
   escapechar=|
 }
+
+% begin appendix autoref patch [\autoref subsections in appendix](http://tex.stackexchange.com/questions/149807/autoref-subsections-in-appendix)
+\usepackage{etoolbox}
+\makeatletter
+\patchcmd{\hyper@makecurrent}{%
+    \ifx\Hy@param\Hy@chapterstring
+        \let\Hy@param\Hy@chapapp
+    \fi
+}{%
+    \iftoggle{inappendix}{%true-branch
+        % list the names of all sectioning counters here
+        \@checkappendixparam{chapter}%
+        \@checkappendixparam{section}%
+        \@checkappendixparam{subsection}%
+        \@checkappendixparam{subsubsection}%
+        \@checkappendixparam{paragraph}%
+        \@checkappendixparam{subparagraph}%
+    }{}%
+}{}{\errmessage{failed to patch}}
+
+\newcommand*{\@checkappendixparam}[1]{%
+    \def\@checkappendixparamtmp{#1}%
+    \ifx\Hy@param\@checkappendixparamtmp
+        \let\Hy@param\Hy@appendixstring
+    \fi
+}
+\makeatletter
+
+\newtoggle{inappendix}
+\togglefalse{inappendix}
+
+\apptocmd{\appendix}{\toggletrue{inappendix}}{}{\errmessage{failed to patch}}
+\apptocmd{\subappendices}{\toggletrue{inappendix}}{}{\errmessage{failed to patch}}
+% end appendix autoref patch
 
 \begin{document}
 
@@ -384,7 +420,7 @@ Deze problemen worden besproken in \autoref{chap:bedenkingen} en de snelheid en 
 \section{Basis idee}
 
 Het basis idee van de heuristiek is om stelselmatig een packing op te bouwen, door telkens cirkels te zoeken die het best passen.
-Bij elke stap wordt telkens eerst een plek gekozen wordt om een cirkel te plaatsen (in een hole, of op de shell, later hier meer over).
+Bij elke stap wordt telkens eerst een plek gekozen om een cirkel te plaatsen (in een hole, of op de shell, later hier meer over).
 Hier wordt dan de best-passende cirkel geplaatst.
 Eenmaal een cirkel geplaatst is wordt deze nooit meer verplaatst.
 Dit laat toe om intelligente structuren op te bouwen en deze op een zeer efficiënte manier te gebruiken.
@@ -937,14 +973,49 @@ Waar nodig werd het uitleg verduidelijkt met code uit de implementatie.
 Er werden ook de verschillende veronderstellingen geformuleerd die gebruikt worden om het algoritme zeer snel te maken.
 Zie ook \autoref{chap:bedenkingen} voor verdere bedenkingen hieromtrent.
 
+
+\chapter{Bedenkingen bij implementatie} \label{chap:bedenkingen}
+
+\section{Precisie}
+
+De implementatie gebruikt $double$ variabelen.
+Ook geeft de methode gebruikt om cirkels tegen elkaar te plaatsen, beschreven in \autoref{sec:een-cirkel-tegen-twee-andere-plaatsen}, geen exacte oplossing.
+Hierdoor wordt er doorheen het algoritme een kleine fout opgebouwd.
+Deze fout uit zich in een kleine overlap in de uiteindelijke verkregen packing.
+Deze overlap blijft echter beperkt tot $10^{-15}$ vierkante eenheden voor de grootste packings.
+
+Dit is een inherent probleem van werken in eindige precisie.
+Andere algoritmen hebben dus te kampen met het zelfde probleem, hoewel er niet altijd aandacht aan wordt besteed in de gepubliceerde papers.
+In \cite{akeb2006basic}, \cite{ye2013iterated} en \cite{m2013packing} worden resultaten verkregen met een precisie van respectievelijk $10^{-10}$, $10^{-28}$ en $10^{-7}$.
+
+%\cite{akeb2006basic} -> $10^{-10}$.
+%\cite{ye2013iterated} -> $10^{-28}$.
+%\cite{m2013packing}  -> $10^{-7}$.
+
+Aangezien de vergelijkingen in \autoref{chap:resultaten} tot een precisie van $10^{-10}$ gebeuren heeft dit verder geen impact op de resultaten.
+
+\section{Veronderstellingen}
+
+Zoals eerder vermeld worden er, bij de gaten en shell, enkele veronderstellingen gedaan om het algoritme zeer snel te laten verlopen.
+Deze veronderstellingen lijken voor de meeste problemen correct te zijn.
+Er zijn echter sommige problemen, vooral als er gewerkt wordt met zeer hoge aantallen cirkels (duizenden), dat er toch nog fouten kunnen gebeuren.
+Dit uit zich dan in packings met een grote overlap.
+
+Uit huidige tests lijkt er vooral een probleem met de gaten, de shell heeft voor zover mijn huidige tests uitwijzen geen problemen.
+Doordat de cirkels die een gat definiëren niet altijd aan elkaar raken kan het gebeuren, als twee gaten naast elkaar staan, er toch nog een overlap is.
+
+Een voorstel om dit op te lossen is een gat niet op te delen in drie gaten als er een cirkel in geplaatst wordt, maar slechts in twee.
+Eén van die gaten bestaat dan uit meer dan drie cirkels.
+Zo is het wel mogelijk om altijd aaneensluitende cirkels een gat te laten bepalen.
+
 \chapter{Resultaten} \label{chap:resultaten}
 
 In dit hoofdstuk worden de verkregen packings vergeleken met de best gekende packings, zoals gerapporteerd op de Packomania website \cite{packomania}.
 Packomania is een website die de best gekende oplossingen voor verschillende circle-packing problemen verzameld.
 Deze vergelijking wordt gemaakt op zowel de verkregen radius van de omschreven cirkel, als ook de tijd nodig om tot deze packing te komen indien deze gekend is.
 De nodige rekentijd voor deze algoritmen is echter niet altijd even makkelijk te vinden.
-Veel van de packings op Packomania hebben geen bijkomende publicatie.
-Het gebruikte algoritme en de nodige tijd om de packing te bekomen is dus niet gekend, enkel de coördinaten van de uiteindelijke packing.
+Veel van de packings op Packomania hebben geen bijhorende publicatie.
+Het gebruikte algoritme en de nodige tijd om de packing te bekomen is dus niet gekend, enkel de verkregen omschreven cirkel en coördinaten van de packing.
 De vergelijking in tijd zal dus een zeer ruwe vergelijking zijn gebaseerd op slechts enkele papers.
 
 Ook geef ik resultaten voor packings met veel meer cirkels dan deze geraporteerd op Packomania.
@@ -989,34 +1060,59 @@ Al deze berekeningen zijn uitgevoerd op een Mid 2009 Macbook-Pro 15 inc met een 
 
 \section{Packomania vergelijking}
 
-In de tabellen in deze sectie wordt telkens het aantal cirkels in de kolom $N$ gegeven, de best gekende radius van op Packomania in kolom $Beste radius$ en de radius verkregen door mijn algoritme in kolom $Radius$.
-Ook wordt het absolute verschil van mijn oplossing ten opzichte van de best gekende radius in de kolom $Vergroting$ gegeven, en de procentuele vergroting in kolom $Vergroting (\%)$.
-Als laatste geef ik de rekentijd die mijn algoritme nodig had om tot deze oplossing te komen.
-
 \subsection{Even grote cirkels}
 
-Voor het circle-packing probleem met even grote cirkels worden de oplossingen voor $N=3$ tot $N=100$ in \autoref{table:packomania-equal} getoond.
-Dit is slechts een subset van alle gekende oplossingen.
-De volledige lijst van vergelijkingen voor dit probleem, meer dan 2500 vergelijkingen, kan u terug vinden op GitHub \cite{packomania-tables-github}.
+In \autoref{fig:vergelijking-even-grote-cirkels} wordt de procentuele vergroting weergegeven voor packings met $N$ cirkels van gelijke grootte.
+Er wordt een volledig beeld gegeven, als ook een detail-beeld waar vergrotingen boven de 1,5\% niet worden getekend.
+Deze vergroting is ten opzichte van de best gekende oplossing op de Packomania website.
+Tabellen die mijn resultaten met de best gekende vergelijken kan u terug vinden in \autoref{append:packomania-tabellen-gelijke-grootte}.
 
-\equalTable{Packomania \ensuremath{r_i=1}}{0}{98} \label{table:packomania-equal}
+\begin {figure}
+	\centering
+	\resizebox {0.8\columnwidth} {!} {
+		\begin{tikzpicture}
+			\begin{axis}[xlabel=Aantal Cirkels, ylabel=\% Vergroting]
+				\addplot table [x=N, y=Increase, col sep=comma]{csv/Equal size Packomania problems comparison.csv};
+				\addlegendentry{Gelijke grootte}
+			\end{axis}
+		\end{tikzpicture}
+	}
+	\resizebox {0.8\columnwidth} {!} {
+		\begin{tikzpicture}
+			\begin{axis}[xlabel=Aantal Cirkels, ylabel=\% Vergroting, ymin=0, ymax=1.5]
+				\addplot table [x=N, y=Increase, col sep=comma]{csv/Equal size Packomania problems comparison.csv};
+				\addlegendentry{Gelijke grootte}
+			\end{axis}
+		\end{tikzpicture}
+	}
+	\caption{Vergelijking van packings van even grote cirkels}
+	\label{fig:vergelijking-even-grote-cirkels}
+\end {figure}
 
-Gemiddeld geeft mijn algoritme een resultaat dat $1.89\%$ groter is dan de het best gekende resultaat.
+Gemiddeld geeft mijn algoritme een resultaat dat $0,79\%$ groter is dan de het best gekende resultaat voor problemen met cirkels van gelijke grootte.
+Er is echter een duidelijke neerwaartse trend.
+Voor problemen met meer dan 1000 cirkels is de gemiddelde vergroting nog slechts 0,48\%.
+Voor meer dan 2000 cirkels nog 0,39\% en voor meer dan 3000 nog 0,32\%.
+Problemen met een groter aantal cirkels geven duidelijk een beter resultaat.
+
+Dit komt mogelijk omdat hoe meer cirkels er zijn, hoe moeilijker het probleem wordt.
+Hierdoor zullen de best-gekende oplossingen voor problemen met zulke grote aantallen cirkels minder dicht bij de absolute optimale oplossing liggen.
+Omdat mijn algoritme enkel nieuwe cirkels tegen twee reeds geplaatste cirkels plaats, hebben al mijn oplossingen voor dit probleem een duidelijke structuur.
+Deze structuur is een zeshoekige structuur.
+Dit wordt geïllustreerd in \autoref{fig:packing-even-groot-50}.
+Dit is een zeer eenvoudige structuur, maar lijkt toch redelijk goed de best gekende oplossingen te benaderen.
+Meer figuren hiervan vind u terug in \autoref{append:extra-packing-figuren}.
+
 Nodige tijd blijft onder 10 milliseconden tot $N=100$.
 Tot 500 cirkels blijft de nodige rekentijd onder 100 milliseconden.
-De rekentijd loopt pas op tot één seconden bij 2200 cirkels, en slechts 3,5 seconden voor 5000 cirkels.
+De rekentijd loopt pas op tot één seconde bij 2200 cirkels, en slechts 3,5 seconden voor 5000 cirkels.
 
 Zoals eerder vermeld zijn vergelijkingen in nodige rekentijd moeilijk te vinden.
-In \cite{grosso2010} worden echter tijden gerapporteerd van 110 seconden voor 30 cirkels (mijn algoritme vroeg hier minder dan een milliseconden tijd), en 15311 seconden (meer dan 4 uur) voor 100 cirkels (mijn algoritme vroeg hier 7 milliseconden).
+In \cite{grosso2010} worden echter tijden gerapporteerd van 110 seconden voor 30 cirkels (mijn algoritme vroeg hier minder dan een millisecond tijd), en 15311 seconden (meer dan 4 uur) voor 100 cirkels (mijn algoritme vroeg hier 7 milliseconden).
 Zij halen resultaten die zeer dicht bij de best gekende liggen (soms de beste).
 
 Zelfs de constructieve algoritmen beschreven in \cite{akeb2006basic} en \cite{hifi2004approximate} vragen meerdere seconden, en soms minuten, om te berekenen.
-Hun resultaten zijn echter moeilijk te vergelijking omdat \cite{akeb2006basic} een alternatieve versie van circle-packing op lost, en \cite{hifi2004approximate} packings maakt in rechthoeken.
-
-Omdat mijn algoritme enkel nieuwe cirkels tegen twee reeds geplaatste cirkels plaats, hebben alle oplossingen voor dit probleem een duidelijke structuur.
-Deze structuur is een zeshoekige structuur.
-Dit wordt geïllustreerd in \autoref{fig:packing-even-groot-50}, \autoref{fig:packing-even-groot-500} en \autoref{fig:packing-even-groot-2000}.
-//TODO Update deze afbeeldingen
+Hun resultaten zijn echter moeilijk te vergelijking omdat \cite{akeb2006basic} een alternatieve versie van circle-packing oplost, en \cite{hifi2004approximate} packings maakt in rechthoeken.
 
 \begin{figure}
   \centering
@@ -1024,47 +1120,141 @@ Dit wordt geïllustreerd in \autoref{fig:packing-even-groot-50}, \autoref{fig:pa
   \caption{Packing voor 50 even grote cirkels} \label{fig:packing-even-groot-50} 
 \end{figure}
 
-\begin{figure}
-  \centering
-  \includegraphics[width=0.65\textwidth]{packing-even-groot-500.png}
-  \caption{Packing voor 500 even grote cirkels} \label{fig:packing-even-groot-500} 
-\end{figure}
+\subsubsection{Bespreking}
 
-\begin{figure}
-  \centering
-  \includegraphics[width=0.65\textwidth]{packing-even-groot-2000.png}
-  \caption{Packing voor 2000 even grote cirkels} \label{fig:packing-even-groot-2000} 
-\end{figure}
+Over het algemeen zijn dit goede resultaten.
+Ze liggen redelijk dicht bij de best gekende oplossing, maar hebben een duidelijk en eenvoudig patroon.
+Dit patroon kan je eenvoudig genereren met een ander algoritme, en dus zijn dit zeker niet de meest indrukwekkende resultaat.
+Het probleem waar alle cirkels een gelijke grootte hebben is dan ook niet de kracht van mijn algoritme.
+Aangezien elke cirkel even groot is, zal er nooit een cirkel gevonden worden dat in een gat past.
+Ook is dit het eenvoudigste probleem.
+Het feit dat er resultaten zijn tot 5000 cirkels, waar voor problemen met verschillende radii slechts tot maximum 200 cirkels opgelost zijn, wijst hier op.
+Hoewel mijn algoritme dus relatief goede resultaten geeft voor dit probleem, zijn de resultaten die volgen interessanter.
+
+\subsection{Packomania Benchmark}
+
+Packomania geeft ook resultaten voor enkele benchmark instanties geïntroduceerd door WenQi Huang in verscheidene papers, en samengevat in \cite{huang2006new}.
+De radii van de cirkels in deze benchmark instanties kan u terug vinden in \autoref{append:packomania-benchmark-verdelingen}.
+Een eerste set verdelingen (met prefix $NR$) heeft tussen 10 en 60 cirkels per probleem, een tweede set (met prefix $IN$) tussen 9 en 28 cirkels met nog één probleem van 162 cirkels.
+In elke verdeling zitten cirkels met verschillende raddii, maar ook cirkels met gelijke raddii.
+
+In \autoref{fig:vergelijking-packomania-benchmark} wordt de procentuele vergroting van de oplossing verkregen met mijn algoritme, vergelijken met de best gekende oplossing.
+Gemiddeld geeft mijn algoritme een resultaat dat $5,94\%$ groter is dan de best gekende resultaten.
+Door het zeer gelimiteerd aantal instanties is er echter geen duidelijke trend te zien zoals bij packings voor cirkels met gelijke grootte, en de Packomania Macht problemen.
+
+\begin {figure}
+	\centering
+	\resizebox {0.8\columnwidth} {!} {
+		\begin{tikzpicture}
+			\begin{axis}[xlabel=Aantal Cirkels, ylabel=\% Vergroting]
+				\addplot table [x=N, y=Increase, col sep=comma,
+						skip coords between index={24}{1000}
+					]{csv/IN NR Packomania problems comparison.csv};
+				\addlegendentry{NR}
+
+				\addplot table [x=N, y=Increase, col sep=comma,
+						skip coords between index={0}{24}
+					]{csv/IN NR Packomania problems comparison.csv};
+				\addlegendentry{IN}
+			\end{axis}
+		\end{tikzpicture}
+	}
+	\caption{Vergelijking van Packomania Benchmark problemen}
+	\label{fig:vergelijking-packomania-benchmark}
+\end {figure}
+
+Nodige rekentijd is voor al deze problemen ook slechts enkele milliseconden.
+In \cite{ye2013iterated} worden deze problemen opgelost in tijden tussen 1 second voor 10 cirkels, en meer dan 2 uur voor 60 cirkels.
+Ook in \cite{huang2013tabu} kan de nodige tijd oplopen tot meerdere uren voor de grotere problemen.
+Zelfs de kleinere problemen (10 tot 15 cirkels) vragen soms meerdere minuten om te berekenen.
+Dit in vergelijking met mijn algoritme dat slechts enkele milliseconden nodig heeft voor elk probleem.
+
+\subsubsection{Bespreking}
+
+Over het algemeen zijn dit goede resultaten.
+Gemiddeld is er slechts een $5,94\%$ vergroting van de radius van de omschreven cirkel, met slechts 3 problemen die meer dan $10\%$ vergroting hebben.
+Er zijn echter ook 2 problemen die even goed opgelost worden dan de best gekende!
+
+Dit zijn dus goede resultaten, maar het aantal probleem instanties blijft zeer beperkt.
+In de volgende sectie wordt de kracht van het algoritme veel duidelijker met meer cirkel-verdelingen.
 
 \subsection{Packomania Machten}
 
 Packomania rapporteert ook resultaten voor verschillende verdelingen met een vaste structuur: $r_i=i^X$.
 Hier is X steeds een andere macht.
-Deze problemen neem ik onder één noemen, de \textit{Packomania macht} problemen.
+Deze problemen neem ik onder één noemer: de \textit{Packomania macht} problemen.
+Tabellen die mijn resultaten met de best gekende vergelijken kan u terug vinden in \autoref{append:packomania-tabellen-macht}.
 
-In onderstaande tabellen worden alle resultaten van deze problemen gegeven:
+In \autoref{fig:vergelijking-packomania-macht} worden voor al deze macht problemen de procentuele vergroting getoond.
+Dit is de omtrek van de omschreven cirkel verkregen uit mijn algoritme ten opzichte van de best gekende oplossing.
 
-\powerTable{Packomania \ensuremath{r_i=i}}{0}{196}
+\begin {figure}
+	\centering
+	\resizebox {0.8\columnwidth} {!} {
+		\begin{tikzpicture}
+			\begin{axis}[xlabel=Aantal Cirkels, ylabel=\% Vergroting, no markers]
+				\addplot+[line width=1, opacity=0.5] table [x=N, y=Increase, col sep=comma,
+							skip coords between index={196}{10000}
+						]{csv/Power Packomania Problems Comparison.csv};
+				\addlegendentry{$r_i = i$}
 
-\powerTable{Packomania \ensuremath{r_i=i^{1/2}}}{196}{292}
+				\addplot+[line width=1, opacity=0.5] table [x=N, y=Increase, col sep=comma,
+							skip coords between index={0}{196},
+							skip coords between index={292}{10000}
+						]{csv/Power Packomania Problems Comparison.csv};
+				\addlegendentry{$r_i = i^{1/2}$}
 
-\powerTable{Packomania \ensuremath{r_i=i^{-1/5}}}{444}{504}
+				\addplot+[line width=1, opacity=0.5] table [x=N, y=Increase, col sep=comma,
+							skip coords between index={0}{444},
+							skip coords between index={504}{10000}
+						]{csv/Power Packomania Problems Comparison.csv};
+				\addlegendentry{$r_i = i^{-1/5}$}
 
-\powerTable{Packomania \ensuremath{r_i=i^{-1/2}}}{292}{388}
+				\addplot+[line width=1, opacity=0.5] table [x=N, y=Increase, col sep=comma,
+							skip coords between index={0}{292},
+							skip coords between index={388}{10000}
+						]{csv/Power Packomania Problems Comparison.csv};
+				\addlegendentry{$r_i = i^{-1/2}$}
 
-\powerTable{Packomania \ensuremath{r_i=i^{-2/3}}}{388}{444}
+				\addplot+[green, line width=1, opacity=0.5] table [x=N, y=Increase, col sep=comma,
+							skip coords between index={0}{388},
+							skip coords between index={444}{10000}
+						]{csv/Power Packomania Problems Comparison.csv};
+				\addlegendentry{$r_i = i^{-2/3}$}
+			\end{axis}
+		\end{tikzpicture}
+	}
+	\caption{Vergelijking van Packomania Macht problemen}
+	\label{fig:vergelijking-packomania-macht}
+\end {figure}
 
-Opmerking: Een oplossing voor 56 cirkels, met raddii $r_i=i^{-2/3}$ miste op de Packomania website op het moment van het schrijven van deze thesis.
+Gemiddeld geeft mijn algoritme een resultaat dat $5,61\%$ groter is dan de best gekende resultaten voor deze problemen.
+Ook is er duidelijk een neerwaartse trend.
+Problemen met een groter aantal cirkel lijken dichter bij de best gekende oplossing te liggen.
 
-//TODO Vraag voor Patrick: Deze tabellen tonen een vergelijking alle problemen van op Packomania, behalve voor de gelijke grote cirkels aangezien dit anders meer dan 60 bladzijden voor één tabel zou zijn. De tabellen die er nu staan nemen echter ook wel wat paginas in beslag. Moet ik deze ook slechts deels tonen, of is het ok zo?
+In volgende tabel worden de gemiddelde vergroting per macht probleem weergegeven:
 
-Gemiddeld geeft mijn algoritme een resultaat dat $5,61\%$ groter is dan de best gekende resultaten.
-Nodige rekentijd is voor al deze problemen slechts enkele milliseconden.
+\begin{tabularx}{\textwidth}{ l c c }
+\caption{Packomania Machten gemiddelde vergroting}
+\\\toprule
+Probleem & Aantal cirkels & \% Vergroting \\
+\midrule
+\endhead
+$r_i = i$ & 5 tot 200 & 5,41\% \\
+$r_i = i^{1/2}$ & 5 tot 100 & 6,42\% \\
+$r_i = i^{-1/2}$ & 5 tot 100 & 4,77\% \\
+$r_i = i^{-2/3}$  & 5 tot 60 & 2,78\% \\
+$r_i = i^{-1/5}$ & 5 tot 64 & 8,88\% \\
+\bottomrule
+\end{tabularx}
 
-Nodige rekentijd in de literatuur loopt op tot 6 uur in \cite{jors2011}, tot 7 uur in \cite{lopez2013packing} en zelfs meer dan een volledige dag (27 uur) in \cite{zeng2016iterated}, voor slechts 30 cirkels (dit in vergelijking met één milliseconde voor mijn algoritme).
+Nodige rekentijd is voor al deze problemen slechts enkele milliseconden voor mijn algoritme, rekentijd in de literatuur loopt op tot 6 uur in \cite{jors2011}, tot 7 uur in \cite{lopez2013packing} en zelfs meer dan een volledige dag (27 uur) in \cite{zeng2016iterated}, voor slechts 30 cirkels.
 Het snelste andere algoritme, tot zover ik weet, werd gegeven in \cite{ye2013iterated}.
 Zij hadden tijden tussen 1 seconden voor 5 cirkels, en 1 uur voor 30 cirkels.
 Zij hadden echter geen goed stopping-criteria, en deze tijd was dus de tijd nodig alvorens ze hun beste oplossing vonden, maar hun algoritme bleef ongeacht meer dan 2,5 uur zoeken.
+
+In \autoref{fig:packing-neg1div2-1000} wordt een packing getoond voor het $r_i = i^{-1/2}$ probleem.
+Meer afbeeldingen van packings vind u terug in \autoref{append:extra-packing-figuren}
 
 \begin{figure}
   \centering
@@ -1072,80 +1262,25 @@ Zij hadden echter geen goed stopping-criteria, en deze tijd was dus de tijd nodi
   \caption{Packing voor 1000 cirkels met verdeling $r_i=i^{-1/2}$} \label{fig:packing-neg1div2-1000} 
 \end{figure}
 
-\begin{figure}
-  \centering
-  \includegraphics[width=0.65\textwidth]{packing-neg1div5-1000.png}
-  \caption{Packing voor 1000 cirkels met verdeling $r_i=i^{-1/5}$} \label{fig:packing-neg1div5-1000} 
-\end{figure}
+\subsubsection{Bespreking}
 
-//TODO: Meer afbeeldingen van machten packings
+Deze resultaten zijn volgens mij zeer indrukwekkend.
+Resultaten voor de problemen $r_i = i$, $r_i = i^{1/2}$, $r_i = i^{-1/2}$ en $r_i = i^{-2/3}$ blijven steeds onder 10\% vergroting tegenover de best gekende.
+Enkel het probleem $r_i = i^{-1/5}$ heeft enkele uitschieters tot maximum 13,45\% vergroting.
+Dit laatste resultaat komt waarschijnlijk omdat $r_i = i^{-1/5}$ het probleem is waarin de cirkels het minst verschillen van grootte (zie \autoref{fig:packomania-verdelingen}).
+Dit zorgt er voor dat het algoritme minder gebruik kan maken van gaten, aangezien meestal enkel de kleinere cirkels gaten zullen opvullen.
+Het probleem met het meeste verschil in radii, $r_i = i^{-2/3}$, heeft dan ook de beste resultaten.
+Met maximum 4,77\% vergroting en gemiddeld slechts 2,78\%.
 
-\subsection{Packomania Benchmark}
+Ook is er een duidelijke neerwaartse trend in de vergroting van de omschreven cirkel als het aantal cirkels groter wordt.
+Dit komt doordat het algoritme dan meer keuzemogelijkheden heeft in elke stap.
+Hierdoor zal het algoritme vaker gaten kunnen opvullen, en een dichtere shell opbouwen.
+Hier zie je duidelijk de kracht van het algoritme als deze genoeg verschillende cirkels heeft om uit te kiezen.
 
-Packomania geeft ook resultaten voor enkele benchmark instanties geïntroduceerd in \cite{huang2006new}.
-Deze benchmark instanties hebben de volgende verdelingen:
+Bovendien worden deze resultaten zeer snel bekomen.
+Waar andere algoritmen uit de literatuur uren nodig hebben, vraagt mijn algoritme slechts milliseconden.
 
-\begin{tabularx}{\textwidth}{ l c X }
-\caption{Packomania Benchmark Verdelingen}
-\\\toprule
-Instantie & N & Radii \\
-\midrule
-\endhead
-NR10-1 & 10 & 10, 12, 15, 20, 21, 30, 30, 30, 40, 50 \\
-NR11-1 & 11 & 8.4, 11, 10, 10.5, 12, 14, 15, 20, 20, 25, 25 \\
-NR12-1 & 12 & 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22 \\
-NR14-1 & 14 & 11, 14, 15, 16, 17, 19, 23, 27, 31, 35, 36, 37, 38, 40 \\
-NR15-1 & 15 & 3, 3, 4, 4, 4.5, 6, 7.5, 8, 9, 10, 11, 12, 13, 14, 15 \\
-NR15-2 & 15 & 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15 \\
-NR16-1 & 16 & 13, 14, 15, 15, 17, 19, 23, 26, 27, 27, 32, 37, 38, 47, 57, 63 \\
-NR16-2 & 16 & 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36 \\
-NR17-1 & 17 & 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 10, 10, 10, 15, 15, 20, 25 \\
-NR18-1 & 18 & 12, 14, 16, 23, 25, 26, 27, 28, 33, 35, 47, 49, 53, 53, 55, 60, 67, 71 \\
-NR20-1 & 20 & 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30, 32, 34, 36, 38, 40, 42 \\
-NR20-2 & 20 & 6, 8, 9, 12, 12, 15, 16, 18, 20, 21, 24, 24, 27, 28, 30, 32, 33, 36, 40, 44 \\
-NR21-1 & 21 & 10, 15, 16, 17, 17, 18, 21, 22, 23, 25, 26, 31, 33, 34, 37, 37, 38, 39, 40, 42, 45 \\
-NR23-1 & 23 & 14, 14, 16, 18, 18, 21, 22, 23, 26, 28, 28, 32, 34, 34, 36, 37, 39, 41, 45, 48, 49, 49, 51 \\
-NR24-1 & 24 & 9, 10, 11, 13, 13, 16, 17, 17, 18, 19, 19, 20, 20, 20, 21, 22, 23, 23, 24, 25, 30, 31, 32, 82 \\
-NR25-1 & 25 & 14, 17, 22, 26, 26, 27, 28, 29, 29, 30, 31, 32, 33, 34, 34, 34, 34, 35, 37, 37, 37, 47, 52, 53, 55 \\
-NR26-1 & 26 & 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47,48, 49, 50, 51, 52, 53, 54, 55, 56 \\
-NR26-2 & 26 & 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57,58, 59, 60, 61, 62, 63, 64,65, 66 \\
-NR27-1 & 27 & 17, 21, 25, 26, 26, 27, 27, 28, 29, 33, 33, 34, 35, 35, 35, 37, 40, 42, 43, 44, 45, 49, 53, 55, 55, 55, 63 \\
-NR30-1 & 30 & 5, 8, 10, 10, 12, 14, 15, 16, 18, 20, 20, 20, 20, 20, 22, 24, 25, 26, 30, 30, 30, 30, 35, 40,40, 45, 48, 50, 55, 60 \\
-NR30-2 & 30 & 6, 8, 8, 10, 12, 13, 14, 16, 18, 18, 20, 22, 23, 24, 25, 27, 28, 29,31, 33, 33, 35, 37, 38, 39,41, 43, 43, 48, 53 \\
-NR40-1 & 40 & 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47,48, 49, 50, 51, 52, 53, 54,55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70 \\
-NR50-1 & 50 & 18, 18, 19, 19, 19, 19, 21, 21, 24, 25, 25, 30, 31, 31, 33, 33, 36,36, 40, 42, 43, 46, 46, 47,49, 49, 49, 50, 50, 54, 56, 56, 57, 57, 58, 58, 59, 59, 59, 61, 62,63, 63, 64, 65, 68, 78, 79,80, 86 \\
-NR60-1 & 60 & 35, 35, 35, 36, 37, 37, 38, 38, 39, 39, 40, 41, 41 ,42, 42, 42, 42,42, 44, 44, 45, 45, 46,46,47, 48, 48, 49, 50, 50, 54, 54, 57, 57, 59, 60,60, 71, 71, 71,72, 72, 74, 74, 76, 77, 77,79, 79, 80, 82, 82, 85, 86, 89, 90, 94, 95, 96, 100 \\
-
-IN9-1 & 9 & 10, 10, 10, 10, 4.1415, 4.1415, 4.1415, 4.1415, 4.1415 \\
-IN10-1 & 10 & 50, 40, 32, 31.5, 20, 20, 20, 11, 10, 10 \\
-IN10-2 & 10 & 50, 40, 30, 30, 30, 21, 20, 15, 12, 10 \\
-IN11-1 & 11 & 20, 19, 18, 17, 16, 15, 14, 13, 12, 11, 10 \\
-IN11-2 & 11 & 25, 25, 20, 20, 15, 14, 12, 11, 10.5, 10, 8.4 \\
-IN12-1 & 12 & 100, 100, 100, 48.26, 48.26, 48.26, 23.72, 23.72, 23.72, 23.72, 23.72, 23.72 \\
-IN14-1 & 14 & 40, 38, 37, 36, 35, 31, 27, 23, 19, 17, 16, 15, 14, 11 \\
-IN15-1 & 15 & 15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1 \\
-IN16-1 & 16 & 36, 35, 34, 33, 32, 31, 30, 29, 28, 27, 26, 25, 24, 23 ,22, 21 \\
-IN17-1 & 17 & 25, 20, 15, 15, 10, 10, 10, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5 \\
-IN17-2 & 17 & 100, 100, 100, 100, 41.415, 41.415, 41.415, 41.415, 41.415, 20, 20, 20, 20, 20, 20, 20, 20 \\
-IN25-1 & 25 & 10, 10, 10, 3.533, 3.533, 3.533, 3.533, 3.533, 3.533, 2.3, 2.3, 2.3, 1.8, 1.8, 1.8, 1.8, 1.8, 1.8, 1.547, 1.08, 1.08, 1.08, 1.08, 1.08, 1.08 \\
-IN28-1 & 28 & 10, 10, 10, 4.826, 4.826, 4.826, 2.371, 2.371, 2.371, 2.371, 2.371, 2.371, 1.547, 1.345, 1.345, 1.345, 1.345, 1.345, 1.345, 1.161, 1.161, 1.161, 0.9, 0.9, 0.9, 0.9, 0.9, 0.9  \\
-IN162-1 & 162 & 1.8, 1.8, 1.8, 1.75, 1.3, 1.3, 1.3, 1.3, 1.3, 1.3, 1.3, 1.3, 1.3, 1.3, 1.3, 1.3, 1.05, 1.05, 1.05, 1.05, 1.05, 1.05, 1.05, 1.05, 1.05, 0.9, 0.9, 0.9, 0.9, 0.9, 0.9, 0.9, 0.9, 0.9, 0.9, 0.9, 0.9, 0.9, 0.9, 0.9, 0.8, 0.8, 0.8, 0.8, 0.8, 0.8, 0.8, 0.8, 0.8, 0.8, 0.8, 0.8, 0.8, 0.8, 0.8, 0.8, 0.8, 0.8, 0.8, 0.8, 0.8, 0.8, 0.8, 0.8, 0.8, 0.8, 0.8, 0.8, 0.8, 0.8, 0.8, 0.75, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.65, 0.65, 0.65, 0.65, 0.65, 0.65, 0.65, 0.65, 0.65, 0.65, 0.65, 0.65, 0.65, 0.65, 0.65, 0.65, 0.65, 0.65, 0.65, 0.65, 0.65, 0.65, 0.65, 0.65, 0.65, 0.65, 0.65, 0.65, 0.65, 0.65, 0.65, 0.65, 0.65, 0.65, 0.65, 0.65, 0.65, 0.65, 0.65, 0.65, 0.65, 0.65, 0.65, 0.65, 0.65, 0.65, 0.65, 0.65, 0.65, 0.65, 0.65, 0.65, 0.65, 0.65, 0.55, 0.55, 0.55, 0.55, 0.55, 0.55, 0.55, 0.55, 0.55, 0.55, 0.55, 0.55, 0.55, 0.55, 0.55, 0.55, 0.55, 0.55, 0.55, 0.55, 0.55, 0.55, 0.55, 0.55, 0.55 \\
-\bottomrule
-\end{tabularx}
-
-In de volgende tabel worden packings voor deze benchmark instances vergeleken met mijn resultaten:
-
-\benchmarkTable{Packomania Benchmark Instances}{0}{1000}
-
-Gemiddeld geeft mijn algoritme een resultaat dat $5,94\%$ groter is dan de best gekende resultaten.
-In het slechtste geval krijg ik resultaten die $13.17\%$ groter zijn.
-Maar in het beste geval zijn vind mijn algoritme een oplossing die even goed is als de best gekende!
-Nodige rekentijd is voor al deze problemen weer slechts enkele milliseconden.
-
-In \cite{ye2013iterated} worden deze problemen opgelost in tijden tussen 1 second voor 10 cirkels, en meer dan 2 uur voor 60 cirkels.
-Ook in \cite{huang2013tabu} kan de nodige tijd oplopen tot meerdere uren voor de grotere problemen.
-Zelfs de kleinere problemen (10 tot 15 cirkels) vragen soms meerdere minuten om te berekenen.
-Dit in vergelijking met mijn heuristiek die slechts enkele milliseconden nodig heeft voor elk probleem.
+Dit zijn denk ik de meest indrukwekkende resultaten, en tonen het best de kracht van het algoritme.
 
 \section{Grotere aantallen cirkels}
 
@@ -1154,34 +1289,13 @@ Dit in vergelijking met mijn heuristiek die slechts enkele milliseconden nodig h
 \section{Conclusie}
 
 In dit hoofdstuk heb ik oplossingen verkregen door mijn algoritme vergeleken met de best gekende packings.
-Ook heb ik kort de nodige rekentijd vergeleken met enkele andere algoritmen.
-De oplossingen verkregen met mijn nieuwe constructieve heuristiek hebben gemiddeld een minder dan 6\% grotere omschreven cirkel.
+Ook heb ik de nodige rekentijd vergeleken met enkele andere algoritmen.
+
+De oplossingen verkregen met mijn nieuwe constructieve heuristiek hebben een gemiddeld minder dan 6\% grotere omschreven cirkel.
 Dit lijkt mij een zeer aanvaardbare vergroting van de omschreven cirkel, rekening houdend dat het algoritme deze problemen in slechts milliseconden op lost.
 Zelfs de grootste problemen, bestaande uit duizenden cirkels, kunnen in slechts enkele seconden opgelost worden.
-
-\chapter{Bedenkingen} \label{chap:bedenkingen}
-
-\section{Precisie}
-
-De implementatie gebruikt $double$ variabelen voor getallen voor te stellen.
-Ook geeft de methode gebruikt om cirkels tegen elkaar te plaatsen, beschreven in \autoref{sec:een-cirkel-tegen-twee-andere-plaatsen}, geen exacte oplossing.
-Hierdoor wordt er doorheen het algoritme een kleine fout opgebouwd.
-Deze fout uit zich in een kleine overlap in de uiteindelijke verkregen packing.
-Deze overlap blijft echter beperkt tot $10^{-15}$ vierkante eenheden voor de grootste packings.
-
-\section{Veronderstellingen}
-
-Zoals eerder vermeld worden er, bij de gaten en shell, enkele veronderstellingen gedaan om het algoritme zeer snel te laten verlopen.
-Deze veronderstellingen lijken voor de meeste problemen correct te zijn.
-Er zijn echter sommige problemen, vooral als er gewerkt wordt met zeer hoge aantallen cirkels (duizenden), dat er toch nog fouten kunnen gebeuren.
-Dit uit zich dan in packings met een grote overlap.
-
-Uit huidige tests lijkt er vooral een probleem met de gaten, de shell heeft voor zover mijn huidige tests uitwijzen geen problemen.
-Doordat de cirkels die een gat definiëren niet altijd aan elkaar raken kan het gebeuren, als twee gaten naast elkaar staan, er toch nog een overlap is.
-
-Een voorstel om dit op te lossen is een gat niet op te delen in drie gaten als er een cirkel in geplaatst wordt, maar slechts in twee.
-Eén van die gaten bestaat dan uit meer dan drie cirkels.
-Zo is het wel mogelijk om altijd aaneensluitende cirkels een gat te laten bepalen.
+Ook is er een interessante neerwaartse trend in de vergroting van de radius van de bekomen omschreven cirkel.
+Dit toont de kracht van het algoritme wanneer het meer cirkels heeft met verschillende radii om uit te kiezen.
 
 \chapter{Verder werk} \label{chap:verder-werk}
 
@@ -1234,6 +1348,122 @@ Een constructief algoritme maken dat in real-time goede packings kan maken voor 
 // TODO ALGEMEEN: Voeg echte definities toe, bv bij Hole echt een hoofding "Definitie" en dan het gat definieren. Ook voor shell, omcirkel.
 
 \newpage
+
+% Appendixes
+
+\appendix
+
+\chapter{Packomania Benchmark Verdelingen} \label{append:packomania-benchmark-verdelingen}
+
+\begin{tabularx}{\textwidth}{ l c X }
+\caption{Packomania Benchmark Verdelingen}
+\\\toprule
+Instantie & N & Radii \\
+\midrule
+\endhead
+NR10-1 & 10 & 10, 12, 15, 20, 21, 30, 30, 30, 40, 50 \\
+NR11-1 & 11 & 8.4, 11, 10, 10.5, 12, 14, 15, 20, 20, 25, 25 \\
+NR12-1 & 12 & 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22 \\
+NR14-1 & 14 & 11, 14, 15, 16, 17, 19, 23, 27, 31, 35, 36, 37, 38, 40 \\
+NR15-1 & 15 & 3, 3, 4, 4, 4.5, 6, 7.5, 8, 9, 10, 11, 12, 13, 14, 15 \\
+NR15-2 & 15 & 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15 \\
+NR16-1 & 16 & 13, 14, 15, 15, 17, 19, 23, 26, 27, 27, 32, 37, 38, 47, 57, 63 \\
+NR16-2 & 16 & 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36 \\
+NR17-1 & 17 & 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 10, 10, 10, 15, 15, 20, 25 \\
+NR18-1 & 18 & 12, 14, 16, 23, 25, 26, 27, 28, 33, 35, 47, 49, 53, 53, 55, 60, 67, 71 \\
+NR20-1 & 20 & 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30, 32, 34, 36, 38, 40, 42 \\
+NR20-2 & 20 & 6, 8, 9, 12, 12, 15, 16, 18, 20, 21, 24, 24, 27, 28, 30, 32, 33, 36, 40, 44 \\
+NR21-1 & 21 & 10, 15, 16, 17, 17, 18, 21, 22, 23, 25, 26, 31, 33, 34, 37, 37, 38, 39, 40, 42, 45 \\
+NR23-1 & 23 & 14, 14, 16, 18, 18, 21, 22, 23, 26, 28, 28, 32, 34, 34, 36, 37, 39, 41, 45, 48, 49, 49, 51 \\
+NR24-1 & 24 & 9, 10, 11, 13, 13, 16, 17, 17, 18, 19, 19, 20, 20, 20, 21, 22, 23, 23, 24, 25, 30, 31, 32, 82 \\
+NR25-1 & 25 & 14, 17, 22, 26, 26, 27, 28, 29, 29, 30, 31, 32, 33, 34, 34, 34, 34, 35, 37, 37, 37, 47, 52, 53, 55 \\
+NR26-1 & 26 & 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47,48, 49, 50, 51, 52, 53, 54, 55, 56 \\
+NR26-2 & 26 & 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57,58, 59, 60, 61, 62, 63, 64,65, 66 \\
+NR27-1 & 27 & 17, 21, 25, 26, 26, 27, 27, 28, 29, 33, 33, 34, 35, 35, 35, 37, 40, 42, 43, 44, 45, 49, 53, 55, 55, 55, 63 \\
+NR30-1 & 30 & 5, 8, 10, 10, 12, 14, 15, 16, 18, 20, 20, 20, 20, 20, 22, 24, 25, 26, 30, 30, 30, 30, 35, 40,40, 45, 48, 50, 55, 60 \\
+NR30-2 & 30 & 6, 8, 8, 10, 12, 13, 14, 16, 18, 18, 20, 22, 23, 24, 25, 27, 28, 29,31, 33, 33, 35, 37, 38, 39,41, 43, 43, 48, 53 \\
+NR40-1 & 40 & 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47,48, 49, 50, 51, 52, 53, 54,55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70 \\
+NR50-1 & 50 & 18, 18, 19, 19, 19, 19, 21, 21, 24, 25, 25, 30, 31, 31, 33, 33, 36,36, 40, 42, 43, 46, 46, 47,49, 49, 49, 50, 50, 54, 56, 56, 57, 57, 58, 58, 59, 59, 59, 61, 62,63, 63, 64, 65, 68, 78, 79,80, 86 \\
+NR60-1 & 60 & 35, 35, 35, 36, 37, 37, 38, 38, 39, 39, 40, 41, 41 ,42, 42, 42, 42,42, 44, 44, 45, 45, 46,46,47, 48, 48, 49, 50, 50, 54, 54, 57, 57, 59, 60,60, 71, 71, 71,72, 72, 74, 74, 76, 77, 77,79, 79, 80, 82, 82, 85, 86, 89, 90, 94, 95, 96, 100 \\
+
+IN9-1 & 9 & 10, 10, 10, 10, 4.1415, 4.1415, 4.1415, 4.1415, 4.1415 \\
+IN10-1 & 10 & 50, 40, 32, 31.5, 20, 20, 20, 11, 10, 10 \\
+IN10-2 & 10 & 50, 40, 30, 30, 30, 21, 20, 15, 12, 10 \\
+IN11-1 & 11 & 20, 19, 18, 17, 16, 15, 14, 13, 12, 11, 10 \\
+IN11-2 & 11 & 25, 25, 20, 20, 15, 14, 12, 11, 10.5, 10, 8.4 \\
+IN12-1 & 12 & 100, 100, 100, 48.26, 48.26, 48.26, 23.72, 23.72, 23.72, 23.72, 23.72, 23.72 \\
+IN14-1 & 14 & 40, 38, 37, 36, 35, 31, 27, 23, 19, 17, 16, 15, 14, 11 \\
+IN15-1 & 15 & 15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1 \\
+IN16-1 & 16 & 36, 35, 34, 33, 32, 31, 30, 29, 28, 27, 26, 25, 24, 23 ,22, 21 \\
+IN17-1 & 17 & 25, 20, 15, 15, 10, 10, 10, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5 \\
+IN17-2 & 17 & 100, 100, 100, 100, 41.415, 41.415, 41.415, 41.415, 41.415, 20, 20, 20, 20, 20, 20, 20, 20 \\
+IN25-1 & 25 & 10, 10, 10, 3.533, 3.533, 3.533, 3.533, 3.533, 3.533, 2.3, 2.3, 2.3, 1.8, 1.8, 1.8, 1.8, 1.8, 1.8, 1.547, 1.08, 1.08, 1.08, 1.08, 1.08, 1.08 \\
+IN28-1 & 28 & 10, 10, 10, 4.826, 4.826, 4.826, 2.371, 2.371, 2.371, 2.371, 2.371, 2.371, 1.547, 1.345, 1.345, 1.345, 1.345, 1.345, 1.345, 1.161, 1.161, 1.161, 0.9, 0.9, 0.9, 0.9, 0.9, 0.9  \\
+IN162-1 & 162 & 1.8, 1.8, 1.8, 1.75, 1.3, 1.3, 1.3, 1.3, 1.3, 1.3, 1.3, 1.3, 1.3, 1.3, 1.3, 1.3, 1.05, 1.05, 1.05, 1.05, 1.05, 1.05, 1.05, 1.05, 1.05, 0.9, 0.9, 0.9, 0.9, 0.9, 0.9, 0.9, 0.9, 0.9, 0.9, 0.9, 0.9, 0.9, 0.9, 0.9, 0.8, 0.8, 0.8, 0.8, 0.8, 0.8, 0.8, 0.8, 0.8, 0.8, 0.8, 0.8, 0.8, 0.8, 0.8, 0.8, 0.8, 0.8, 0.8, 0.8, 0.8, 0.8, 0.8, 0.8, 0.8, 0.8, 0.8, 0.8, 0.8, 0.8, 0.8, 0.75, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.65, 0.65, 0.65, 0.65, 0.65, 0.65, 0.65, 0.65, 0.65, 0.65, 0.65, 0.65, 0.65, 0.65, 0.65, 0.65, 0.65, 0.65, 0.65, 0.65, 0.65, 0.65, 0.65, 0.65, 0.65, 0.65, 0.65, 0.65, 0.65, 0.65, 0.65, 0.65, 0.65, 0.65, 0.65, 0.65, 0.65, 0.65, 0.65, 0.65, 0.65, 0.65, 0.65, 0.65, 0.65, 0.65, 0.65, 0.65, 0.65, 0.65, 0.65, 0.65, 0.65, 0.65, 0.55, 0.55, 0.55, 0.55, 0.55, 0.55, 0.55, 0.55, 0.55, 0.55, 0.55, 0.55, 0.55, 0.55, 0.55, 0.55, 0.55, 0.55, 0.55, 0.55, 0.55, 0.55, 0.55, 0.55, 0.55 \\
+\bottomrule
+\end{tabularx}
+
+\chapter{Packomania Vergelijking Tabellen} \label{append:packomania-tabellen}
+
+In deze tabellen wordt telkens het aantal cirkels in de kolom $N$ gegeven, de best gekende radius van op Packomania in kolom $Beste radius$ en de radius verkregen door mijn algoritme in kolom $Radius$.
+Ook wordt het absolute verschil van mijn oplossing ten opzichte van de best gekende radius in de kolom $Vergroting$ gegeven, en de procentuele vergroting in kolom $Vergroting (\%)$.
+Als laatste wordt de rekentijd die mijn algoritme nodig had om tot deze oplossing te komen gegeven in kolom $Tijd$.
+
+\section{Cirkels met gelijke grootte} \label{append:packomania-tabellen-gelijke-grootte}
+
+Merk op dat voor het circle-packing probleem met even grote cirkels enkel de oplossingen voor $N=3$ tot $N=100$ hier getoond worden.
+Dit is slechts een subset van alle gekende oplossingen.
+De volledige lijst van vergelijkingen voor dit probleem, meer dan 2500 vergelijkingen, kan u terug vinden op GitHub \cite{packomania-tables-github}.
+
+\equalTable{Packomania \ensuremath{r_i=1}}{0}{98} \label{table:packomania-equal}
+
+\section{Packomania Macht problemen} \label{append:packomania-tabellen-macht}
+
+\powerTable{Packomania \ensuremath{r_i=i}}{0}{196} \label{table:packomania-i}
+
+\powerTable{Packomania \ensuremath{r_i=i^{1/2}}}{196}{292} \label{table:packomania-i^1/2}
+
+\powerTable{Packomania \ensuremath{r_i=i^{-1/5}}}{444}{504} \label{table:packomania-i^-1/5}
+
+\powerTable{Packomania \ensuremath{r_i=i^{-1/2}}}{292}{388} \label{table:packomania-i^-1/2}
+
+\powerTable{Packomania \ensuremath{r_i=i^{-2/3}}}{388}{444} \label{table:packomania-i^-2/3}
+
+Opmerking: Een oplossing voor 56 cirkels, met raddii $r_i=i^{-2/3}$ miste op de Packomania website op het moment van het schrijven van deze thesis.
+
+\section{Packomania Benchmark problemen} \label{append:packomania-tabellen-benchmark}
+
+\benchmarkTable{Packomania Benchmark Instances}{0}{1000}
+
+\chapter{Extra packing figuren} \label{append:extra-packing-figuren}
+
+//TODO Update deze afbeeldingen
+
+\section{Gelijke grootte cirkels}
+
+\begin{figure}
+  \centering
+  \includegraphics[width=0.65\textwidth]{packing-even-groot-500.png}
+  \caption{Packing voor 500 even grote cirkels} \label{fig:packing-even-groot-500} 
+\end{figure}
+
+\begin{figure}
+  \centering
+  \includegraphics[width=0.65\textwidth]{packing-even-groot-2000.png}
+  \caption{Packing voor 2000 even grote cirkels} \label{fig:packing-even-groot-2000} 
+\end{figure}
+
+\section{Packomania Machten}
+
+\begin{figure}
+  \centering
+  \includegraphics[width=0.65\textwidth]{packing-neg1div5-1000.png}
+  \caption{Packing voor 1000 cirkels met verdeling $r_i=i^{-1/5}$} \label{fig:packing-neg1div5-1000} 
+\end{figure}
+
+//TODO: Meer afbeeldingen van machten packings
+
+% Bibliography
 
 \bibliography{thesis}
 \bibliographystyle{plain}
