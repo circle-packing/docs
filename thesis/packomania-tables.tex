@@ -1,0 +1,88 @@
+% ---------- Titelblad Masterproef Faculteit Wetenschappen -----------
+% Dit document is opgesteld voor compilatie met pdflatex.  Indien je
+% wilt compileren met latex naar dvi/ps, dien je de figuren naar
+% (e)ps-formaat om te zetten.
+%                           -- december 2012
+% -------------------------------------------------------------------
+\RequirePackage{fix-cm}
+\documentclass[12pt,a4paper,oneside]{book}
+
+% --------------------- In te laden pakketten -----------------------
+% Deze kan je eventueel toevoegen aan de pakketten die je al inlaadt
+% als je dit titelblad integreert met de rest van thesis.
+% -------------------------------------------------------------------
+\usepackage{graphicx,xcolor,textpos}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{helvet}
+\usepackage{amsmath}
+\usepackage{listings}
+\usepackage{hyperref}
+\usepackage[hypcap]{caption}
+\usepackage{color}
+\usepackage{longtable}
+\usepackage{booktabs}
+\usepackage{pgfplotstable}
+\usepackage{needspace}
+\usepackage[toc,page]{appendix}
+
+% -------------------- Pagina-instellingen --------------------------
+% Indien je deze wijzigt, zal het titelblad ook wijzigen.  Dit dien je
+% dan manueel aan te passen.
+% --------------------------------------------------------------------
+\topmargin -10mm
+\textwidth 160truemm
+\textheight 240truemm
+\oddsidemargin 0mm
+\evensidemargin 0mm
+
+% Eigen instellingen
+\input{packoTables}
+\renewcommand{\contentsname}{Inhoud}
+\renewcommand{\listfigurename}{Lijst van figuren}
+\renewcommand{\listtablename}{Lijst van tabellen}
+\renewcommand{\chaptername}{Hoofdstuk}
+
+\begin{document}
+
+\chapter{Packomania Even-grote cirkels}
+
+\equalTable{Packomania \ensuremath{r_i=1}}{0}{1000000} \label{append:packomania-equal}
+
+\chapter{Packomania \ensuremath{r_i=i}}
+
+\powerTable{Packomania \ensuremath{r_i=i}}{0}{196} \label{table:packomania-1}
+
+\chapter{Packomania \ensuremath{r_i=i^{1/2}}}
+
+\powerTable{Packomania \ensuremath{r_i=i^{1/2}}}{196}{292}
+
+\chapter{Packomania \ensuremath{r_i=i^{-1/5}}}
+
+\powerTable{Packomania \ensuremath{r_i=i^{-1/5}}}{444}{504}
+
+\chapter{Packomania \ensuremath{r_i=i^{-1/2}}}
+
+\powerTable{Packomania \ensuremath{r_i=i^{-1/2}}}{292}{388}
+
+\chapter{Packomania \ensuremath{r_i=i^{-2/3}}}
+
+\powerTable{Packomania \ensuremath{r_i=i^{-2/3}}}{388}{444}
+
+\chapter{Packomania Benchmark Instances}
+
+\benchmarkTable{Packomania Benchmark Instances}{0}{1000}
+
+\chapter{Grotere aantallen cirkels}
+
+\bigTable{Grotere aantallen gelijke cirkels}{0}{153}
+
+\bigTable{Groteren aantallen cirkels: \ensuremath{r_i = i^{1/2}}}{153}{306}
+
+\bigTable{Groteren aantallen cirkels: \ensuremath{r_i = i^{-1/2}}}{306}{459}
+
+\bigTable{Groteren aantallen cirkels: \ensuremath{r_i = i^{-2/3}}}{459}{612}
+
+\bigTable{Groteren aantallen cirkels: \ensuremath{r_i = i^{-1/5}}}{612}{765}
+
+\end{document}

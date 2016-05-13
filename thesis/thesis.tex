@@ -11,6 +11,7 @@
 % Deze kan je eventueel toevoegen aan de pakketten die je al inlaadt
 % als je dit titelblad integreert met de rest van thesis.
 % -------------------------------------------------------------------
+\usepackage[dutch]{babel}
 \usepackage{graphicx,xcolor,textpos}
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
@@ -20,6 +21,12 @@
 \usepackage{hyperref}
 \usepackage[hypcap]{caption}
 \usepackage{color}
+\usepackage{longtable}
+\usepackage{booktabs}
+\usepackage{pgfplotstable}
+\usepackage{needspace}
+\usepackage[toc,page]{appendix}
+\usepackage{ltablex}
 
 % -------------------- Pagina-instellingen --------------------------
 % Indien je deze wijzigt, zal het titelblad ook wijzigen.  Dit dien je
@@ -45,6 +52,9 @@
 \setlength{\TPVertModule}{1mm}
 
 % Eigen instellingen
+%\setdefaultlanguage{dutch}
+\input{packoTables}
+\graphicspath{{images/}}
 \renewcommand{\contentsname}{Inhoud}
 \renewcommand{\listfigurename}{Lijst van figuren}
 \renewcommand{\listtablename}{Lijst van tabellen}
@@ -53,8 +63,9 @@
 \renewcommand{\sectionautorefname}{sectie}
 \renewcommand{\subsectionautorefname}{sectie}
 \renewcommand{\figureautorefname}{figuur}
+\renewcommand{\tableautorefname}{tabel}
 \newcommand{\lstnumberautorefname}{lijn}
-
+\renewcommand{\appendixautorefname}{bijlage}
 
 \lstset{frame=tb,
   language=Java,
@@ -73,6 +84,40 @@
   tabsize=4,
   escapechar=|
 }
+
+% begin appendix autoref patch [\autoref subsections in appendix](http://tex.stackexchange.com/questions/149807/autoref-subsections-in-appendix)
+\usepackage{etoolbox}
+\makeatletter
+\patchcmd{\hyper@makecurrent}{%
+    \ifx\Hy@param\Hy@chapterstring
+        \let\Hy@param\Hy@chapapp
+    \fi
+}{%
+    \iftoggle{inappendix}{%true-branch
+        % list the names of all sectioning counters here
+        \@checkappendixparam{chapter}%
+        \@checkappendixparam{section}%
+        \@checkappendixparam{subsection}%
+        \@checkappendixparam{subsubsection}%
+        \@checkappendixparam{paragraph}%
+        \@checkappendixparam{subparagraph}%
+    }{}%
+}{}{\errmessage{failed to patch}}
+
+\newcommand*{\@checkappendixparam}[1]{%
+    \def\@checkappendixparamtmp{#1}%
+    \ifx\Hy@param\@checkappendixparamtmp
+        \let\Hy@param\Hy@appendixstring
+    \fi
+}
+\makeatletter
+
+\newtoggle{inappendix}
+\togglefalse{inappendix}
+
+\apptocmd{\appendix}{\toggletrue{inappendix}}{}{\errmessage{failed to patch}}
+\apptocmd{\subappendices}{\toggletrue{inappendix}}{}{\errmessage{failed to patch}}
+% end appendix autoref patch
 
 \begin{document}
 
@@ -181,14 +226,24 @@ Voorafgaande schriftelijke toestemming van de promotor(en) is eveneens vereist v
 \addcontentsline{toc}{chapter}{Voorwoord}
 
 Het circle-packing probleem bestaat er uit om een aantal cirkels, met gekende radii, in een zo klein mogelijke container te plaatsen.
+<<<<<<< HEAD
 De vorm van deze container kan verschillen, maar meestal is het een driehoek, rechthoek of cirkel.
 In deze thesis stel ik een nieuwe heuristiek voor het plaatsen van cirkels in een cirkel, gebaseerd op het \textit{best-fit}-principe.
 Het is een constructieve heuristiek waarin stapsgewijs telkens de best-passende cirkel geplaatst zal worden.
 Alle broncode is beschikbaar op GitHub \cite{circle-packing-github}
+=======
+De vorm van deze container kan verschillen, meestal is het een driehoek, rechthoek of cirkel.
+In deze thesis stel ik een nieuwe \textit{best-fit} gebaseerde heuristiek voor voor het plaatsen van cirkels in een cirkel.
+Het is een constructieve heuristiek waarin stapsgewijs telkens de \textit{best-passende} cirkel geplaatst zal worden.
+Alle code is beschikbaar op GitHub \cite{circle-packing-github}
+>>>>>>> master
 
 Hoewel dit probleem wiskunig relatief eenvoudig voor te stellen is, is het uitwerken van een computioneel exacte oplossing wél een uitdaging.
 Bestaande implementaties zijn niet tijds-geoptimaliseerd, en vragen dus veel berekeningstijd. 
 In deze thesis stek ik heuristiek voor die het mogelijk maakt zéér snel oplossingen te genereren.
+
+Dit werk werd gedaan als master proef voor de \textit{Master of Science in de toegepaste informatica} te KU Leuven onder de CODeS onderzoeksgroep.
+Het hield 18 studiepunten in van deze éénjarige master.
 
 Ik wil hierbij Patrick De Causmaeker bedanken voor alle hulp en ondersteuning bij het ontwerpen van deze heuristiek en verwezenlijken van dit werk.
 Ook wil ik Jim Bollansée, Marie Julia Bollansée en Pieter Van de Walle bedanken voor hun hulp bij het schrijven van deze tekst.
@@ -208,12 +263,53 @@ Ook wil ik Jim Bollansée, Marie Julia Bollansée en Pieter Van de Walle bedanke
 \chapter*{Abstract}
 \addcontentsline{toc}{chapter}{Abstract}
 
-TODO
-
 %  In een beknopte tekst van maximum 2 pagina’s worden de belangrijkste
 %  doelstellingen en besluiten geformuleerd, zowel in het Nederlands als in het
 %  Engels. Zulke samenvattingen kunnen worden gebruikt in wetenschappelijke
 %  verslagen van het departement of de faculteit. Het Engels moet vlekkeloos zijn.
+
+Het circle-packing probleem bestaat er uit om een aantal cirkels, met gekende radii, in een zo klein mogelijke container te plaatsen.
+De vorm van deze container kan verschillen, meestal is het een driehoek, rechthoek of cirkel.
+In deze thesis stel ik een nieuwe \textit{best-fit} gebaseerde heuristiek voor voor het plaatsen van cirkels in een cirkel.
+Het is een constructieve heuristiek waarin stapsgewijs telkens de \textit{best-passende} cirkel geplaatst zal worden.
+
+Wiskundig is dit een relatief eenvoudig probleem om voor te stellen, maar computationeel is het zeer zwaar om exact op te lossen.
+Bestaande pogingen om dit probleem op te lossen vragen zeer veel tijd om het te berekenen.
+In deze thesis stel ik een nieuwe heuristiek voor die het mogelijk maakt zéér snel oplossingen te genereren.
+
+Oplossingen gegenereerd door het algoritme uit deze thesis hebben een iets grotere omschreven cirkel.
+In vergelijking met de best gekende oplossingen zijn de oplossingen uit deze thesis gemiddeld minder dan 6\% groter.
+Dit is een zeer aanvaardbare uitbreiden van de omschreven cirkel, toch als je in rekening brengt dat deze oplossingen veel sneller bekomen zijn.
+Bestaande pogingen vragen uren en soms dagen tijd voor slechts tientallen cirkels te plaatsen.
+De heuristiek voorgesteld in deze thesis lost deze problemen op in slechts milliseconden.
+
+Daarbovenop maakt deze heuristiek het mogelijk om problemen op te lossen die voorheen niet mogelijk waren.
+Problemen met duizenden cirkels zouden met voorgaande pogingen onrealistisch veel tijd vragen, tientallen cirkels vragen al zeer veel tijd.
+Dit soort problemen kunnen wel opgelost worden met deze nieuwe heuristiek.
+
+\newpage
+
+\chapter*{Abstract (English)}
+\addcontentsline{toc}{chapter}{Abstract (English)}
+
+The circle-packing problem consists of packing a number of circles, with given radii, in a as small as possible container.
+The shape of this container can differ, mostly triangular, rectangular or circular.
+In this thesis I propose a new \textit{best-fit} based heuristic to solve the problem of packing circles in a circle.
+It's a new constructive heuristic that builds a solution step-by-step by iteratively placing the circle that \textit{fits best}.
+
+Mathematically this is a relatively simple problem to model, but computationally it is very complex to solve.
+Existing methods to solve this problem are very time consuming.
+In this thesis I propose a new heuristic that can solve the problem very fast.
+
+Solution generated by the algorithm proposed in this thesis will result in a slight increase of radius of the circumscribed circle.
+Compared to the best-known solutions this method results in a radius that is on average less then 6\% larger.
+This is a very acceptable increase when considering that the results are computed much faster.
+Existing solution require hours or days to compute a solution for just tens of circles.
+The heuristic in this thesis will give a solution in just milliseconds for the same problems.
+
+On top of that this new heuristic allows us to solve problems that weren't possible before.
+Problems with thousands of circles would take an unrealistic amount of time for older algorithms.
+However for this new heuristic these problems aren't out of scope.
 
 \newpage
 
@@ -239,7 +335,12 @@ Het \textit{circle-packing} probleem bestaat uit het plaatsen van $n$ cirkels in
 Het is de bedoeling om voor de gegeven cirkels de coordinaten van de middelpunten te vinden zodat de cirkels niet overlappen en de radius van de omsluitende cirkel zo klein mogelijk is.
 
 Circle-packing is zowel theoretisch als praktisch een zeer interessant probleem.
+<<<<<<< HEAD
 Het kan gebruikt worden om verschillende \textit{real-world} problemen op te lossen, zoals het plaatsen van zendmasten, stockage van cilindrische voorwerpen of bijvoorbeeld en het combineren van verschillende kabels. //TODO voeg referenties toe voor deze gebruiken
+=======
+Het kan gebruikt worden om verschillende \textit{real-world} problemen op te lossen, zoals het plaatsen van zendmasten, stokage van cilindrische voorwerpen, en het combineren van verschillende kabels. 
+% //TODO voeg referenties toe voor deze gebruiken
+>>>>>>> master
 
 Mathematisch is het probleem redelijk eenvoudig als een optimalisatieprobleem te omschrijven:
 
@@ -250,7 +351,7 @@ Mathematisch is het probleem redelijk eenvoudig als een optimalisatieprobleem te
 & \text{onderhevig aan}
 & & x_i^2 + y_i^2 \leq (r-r_i)^2, 
 & & &i = {1,...,n}\\
-&&& (x_i - x_j)^2 + (y_i + y_j)^2 \geq (r_i + r_j)^2,
+&&& (x_i - x_j)^2 + (y_i - y_j)^2 \geq (r_i + r_j)^2,
 & & &i \neq j
 \end{aligned}
 \end{equation*}
@@ -262,23 +363,36 @@ Wanneer alle cirkels dezelfde grootte hebben, wordt meestal $r_i$ gelijk aan $1$
 Het circle-packing probleem voor andere containers heeft gelijkaardige, relatief eenvoudige, wiskundige omschrijvingen.
 
 Hoewel dit wiskundig eenvoudig te omschrijven is, blijft het toch een zeer moeilijk probleem om exact op te lossen.
+<<<<<<< HEAD
 Het is een NP-moeilijk probleem.
 Er is reeds veel onderzoek gebeurd naar het oplossen van het circle-packing probleem voor zowel cirkels van gelijke grootte, als voor cirkels van verschillende grootte.
+=======
+Er is reeds veel onderzoek gebeurd naar het oplossen van het circle-packing probleem voor zowel cirkels van gelijke gootte, als voor cirkels van verschillende grootte.
+>>>>>>> master
 In \cite{graham1996repeated} en \cite{lubachevsky1997curved} probeert men vaste patronen te vinden die een optimale packing van cirkels met gelijke grootte geeft.
 In \cite{graham1998dense} en \cite{wang2002improved} worden fysisch geïnspireerde simulaties gebruikt om packing te bekomen.
 In \cite{george1995packing} worden verschillende meta-heuristieken, waaronder een genetisch algoritme, uitgeprobeerd en vergeleken.
 Zij ondervinden dat dit genetisch algoritme, alsook een quasi-random techniek, in vergelijking met de andere uitgeprobeerde meta-heuristieken, de beste resultaten geven. // QUESTION: wat zijn "de beste" in deze context? Snelheid? Precisie? Efficientie?
 In \cite{hifi2004approximate} en \cite{hifi2004simulated} worden respectievelijk een genetisch en een simulated-annealing algoritme voorgesteld.
 Een recentere poging is het Monotonic Basin Hopping algoritme voorgesteld in \cite{grosso2010}.
+<<<<<<< HEAD
 Hierin beschrijven ze dat er te veel lokale optima zijn voor een eenvoudige multi-start behandeling, en stellen een variant voor waarin ze op een slimme manier de beginpunten proberen genereren.
 Ook meer recent zijn \cite{jors2011} (2011), \cite{ye2013iterated} (2013) en cite{zeng2016iterated} (2016).
 Zij gebruiken de combinatorische eigenschappen van circle-packing in combinatie met een zoekmethode zoals \textit{tabu-search} en \textit{iterated local search} om een goede volgorde te vinden waarin de cirkels geplaatst worden.
+=======
+Hierin beschrijven de auteurs dat er te veel lokale optima zijn voor een eenvoudige multi-start behandeling, en stellen een variant voor waarin ze op een slimme manier de begin punten proberen genereren.
+Ook meer recent zijn \cite{jors2011} (2011), \cite{ye2013iterated} (2013) en \cite{zeng2016iterated} (2016).
+Hierin worden de combinatorische eigenschappen van circle-packing in combinatie met een zoekmethode zoals \textit{tabu-search} en \textit{iterated local search} gebruikt om een goede volgorde te vinden waarin de cirkels geplaatst worden.
+>>>>>>> master
 In \cite{jors2011} plaatsen ze zo één voor één elke cirkel en berekend een \textit{non-linear optimizer} hiervoor telkens een lokaal extremum voor de \textit{packing}.
 
 Constructieve algoritmen voor het oplossen van circle-packings zijn veel minder onderzocht.
 Een constructief algoritme is een algoritme dat, beginnende van een zekere begin situatie, stapsgewijs de oplossing uitbreidt tot een volledige oplossing bekomen is.
 Eén van de weinige constructieve methoden wordt beschreven in \cite{akeb2006basic}, waar ze een alternatieve vorm van het \textit{circle-packing} probleem oplossen: de grootte van de container ligt vast, en er moeten zo veel mogelijk cirkels van gelijke grootte in de container geplaatst worden.
 In \cite{hifi2004approximate} wordt er een aanpassing gedaan op de klassieke bottom-left-first heuristiek, voor het plaatsen van rechthoeken.
+Deze heuristiek plaats rechthoeken zo ver mogelijk in de linker beneden hoek.
+Dit is een zeer eenvoudige heuristiek die redelijk goede resultaten geeft.
+Zij hebben deze dan aangepast om cirkels in een rechthoek te plaatsen.
 
 Hoewel veel van deze oplossingen zeer goede packings maken, en regelmatig hun voorgangers verbeteren, vragen ze veel rekentijd en beperken ze zich tot een klein aantal cirkels.
 Voor slechts tientallen cirkels kan de nodige rekentijd oplopen tot tientallen uren.
@@ -304,16 +418,29 @@ Hier vergelijk ik de packings met de best gekende resultaten zoals gerapporteerd
 De Packomania website verzameld alle best gekende oplossingen voor verschillende circle-packing problemen.
 Ik vergelijk de omtrek van de verkregen omcirkel en de nodige tijd om de packing te berekenen van mijn eigen heuristiek met de best gekende oplossingen op de Packomania website.
 Ook toon ik resultaten voor packings voor veel meer cirkels dan getoond op de Packomania website.
-In \autoref{chap:opmerkingen-en-verder-werk} bespreek ik mogelijke verbeteringen en ideeën voor verdere uitbreidingen en onderzoek.
-Ook geef ik enkele bedenkingen over implementatie en conceptuele details van de heuristiek zoals hij nu is.
+In \autoref{chap:bedenkingen} bespreek ik enkele bedenkingen die ik heb bij de heuristiek en zijn implementatie.
+In \autoref{chap:verder-werk} bespreek ik mogelijke verbeteringen en ideeën voor verder onderzoek.
 In \autoref{chap:handleiding-visualisaties} wordt kort verduidelijkt hoe de visualisaties te interpreteren die doorheen deze thesis gebruikt worden.
+Maar eerst worden enkele termen die gebruikt worden in de verdere tekst, sommige uniek voor voor deze heuristiek, en definities gegeven in \autoref{chap:definities}.
 
-// TODO: Vraag voor Patrick: Is het nodig sommige termen te verduidelijken? De termen: NP-Moeilijk, meta-heuristiek, genetisch algoritme, quasi-random techniek, simulated-annealing, tabu-search, bottom-left-first heuristiek, 
-// TODO: Vraag voor Patrick: Is het nodig de aangehaalde papers verder te verduidelijk? Of zijn de zeer korte besprekingen zoals ze nu zijn genoeg?
+% // TODO: Is het nodig sommige termen te verduidelijken? De termen: NP-Moeilijk, meta-heuristiek, genetisch algoritme, quasi-random techniek, simulated-annealing, tabu-search, bottom-left-first heuristiek -> Ja. TODO
+% TODO: Vraag voor Patrick: Is het nodig de aangehaalde papers verder te verduidelijk? Of zijn de zeer korte besprekingen zoals ze nu zijn genoeg? -> Korte zijn genoeg
+
+\chapter{Definities en termen} \label{chap:definities}
+
+\textbf{Cirkel} In de literatuur rond \textit{circle-packing} en deze thesis wordt het woord "cirkel" of "circle" gebruikt, maar eigenlijk zou het correcter zijn om "schijf" te gebruiken.
+Er is dus ook een overlap tussen cirkels wanneer een cirkel volledig omringd is door een andere.
+Voor twee cirkels met radii $r_a, r_b$ en coordinaten  $(x_a,y_a), (x_b,y_b)$ is er een overlap wanneer $r_a + r_b > \sqrt{(x_a-x_b)^2 + (y_a-y_b)^2}$. 
+
+\textbf{Packing} of \textbf{Plaatsing} Is een collectie cirkels met elks een toegewezen positie. Een packing is correct wanneer er geen overlap is tussen de cirkels in de packing.
+
+\textbf{Holes} Is één van de concepten uniek aan deze heuristiek. Op een \textit{high-level} niveau is dit een plek tussen drie cirkels waar nog een andere cirkel kan geplaatst worden. Dit wordt in diep detail uitgelegd in \autoref{sec:holes}.
+
+\textbf{Shell} Is het tweede concept uniek aan deze heuristiek. Dit is, op \textit{high-level} niveau, de collectie cirkels die aan de buitenkant van een packing liggen. Dit wordt verder verduidelijkt in \autoref{sec:shell}.
 
 \chapter{Handleiding voor het lezen van de visualisaties} \label{chap:handleiding-visualisaties}
 
-Doorheen deze thesis zal ik gebruik maken visualisaties gegenereerd door de java implementatie van het algoritme.
+Doorheen deze thesis zal ik gebruik maken van visualisaties gegenereerd door de java implementatie van het algoritme.
 Dit om de concepten grafisch te verduidelijken.
 Twee voorbeelden van zulke visualisaties zijn \autoref{fig:handleiding-visualisatie-1} en \autoref{fig:handleiding-visualisatie-2}.
 
@@ -350,12 +477,17 @@ Op beide figuren kan je ook de omcirkel zien.
 In dit hoofdstuk bespreek ik de werking van de heuristiek.
 Eerst geef ik een korte beschrijving van het basis idee van het algoritme, gevolgd door de structuur van de code.
 Vervolgens leg ik stelselmatig de volledige werking uit, alle veronderstellingen die gemaakt worden en implementatie details waar nodig.
-De volledige implementatie is beschikbaar op GitHub \cite{circle-packing-github} en is gebeurt in Java.
+De volledige implementatie is beschikbaar op GitHub \cite{circle-packing-github} en is gebeurd in Java.
+
+Om het algoritme zeer snel te maken worden enkele veronderstellingen gemaakt omtrent de nodige overlap checks bij elke stap.
+Deze veronderstellingen zijn niet theoretisch bewezen, maar wel empirisch getest.
+Voor de meeste verdelingen van cirkels lijken ze goed stand te houden, maar er zijn nog enkele \textit{edge-cases} waarin er toch nog fouten gebeuren.
+Deze problemen worden besproken in \autoref{chap:bedenkingen} en de snelheid en kwaliteit van de oplossingen wordt verder besproken in \autoref{chap:resultaten}.
 
 \section{Basis idee}
 
 Het basis idee van de heuristiek is om stelselmatig een packing op te bouwen, door telkens cirkels te zoeken die het best passen.
-Bij elke stap wordt telkens eerst een plek gekozen wordt om een cirkel te plaatsen (in een hole, of op de shell, later hier meer over).
+Bij elke stap wordt telkens eerst een plek gekozen om een cirkel te plaatsen (in een hole, of op de shell, later hier meer over).
 Hier wordt dan de best-passende cirkel geplaatst.
 Eenmaal een cirkel geplaatst is wordt deze nooit meer verplaatst.
 Dit laat toe om intelligente structuren op te bouwen en deze op een zeer efficiënte manier te gebruiken.
@@ -373,7 +505,7 @@ Op deze manier word een volledige packing opgebouwd voor alle cirkels.
 
 \section{Structuur}
 
-De implementatie van het algoritme bevat enkele belangrijke classen die regelmatig zullen terug komen in de verdere uit, vooral in code fragmenten:
+De implementatie van het algoritme bevat enkele belangrijke (programmeer-)klassen die regelmatig zullen terug komen in de verdere uit, vooral in code fragmenten:
 
 \begin{itemize} 
 \item Cirkel (Circle)
@@ -647,7 +779,7 @@ Bij het plaatsen van een cirkel in een gat wordt een zo groot mogelijke cirkel g
 Dit is bij wijze van spreken de best-passende cirkel, vandaar \textit{best-fit}.
 Meer uitleg over hoe bepaald wordt of een cirkel past vind je in \autoref{subsec:bepalen-of-een-cirkel-past-in-hole}.
 Hier wordt het proces om te vinden \textit{welke} cirkel past verder verduidelijkt.
-Er wordt logaritmisch gezocht door de lijst van cirkels om te bepalen welke cirkel de grootste is die past.
+Er wordt binair gezocht door de lijst van cirkels om te bepalen welke cirkel de grootste is die past.
 Onderstaande code verduidelijkt dit proces.
 
 \begin{lstlisting}
@@ -668,7 +800,7 @@ Location findBestFitFor(Hole hole, List<Circle> sortedBigToSmall) {
 		return new Location(biggestPos, biggestCir);
 	}
 
-	// Logaritmisch zoeken
+	// Binair zoeken
 	Circle cir = null;
 	Vector2 pos = null;
 	while (lower - upper > 1) {
@@ -716,9 +848,10 @@ Het is echter wel mogelijk om te bepalen of een cirkel past.
 
 Dit gebeurt door de cirkel die we willen testen te plaatsen in het gat.
 Eerst wordt de cirkel tegen twee van de cirkels in het gat geplaatst, met een cirkel-cirkel intersectie zoals beschreven in \autoref{sec:een-cirkel-tegen-twee-andere-plaatsen}.
-Een cirkel-cirkel intersectie heeft natuurlijk altijd twee punten.
+Deze cirkel-cirkel intersectie heeft natuurlijk altijd twee punten.
 Hiervan moet er één gekozen worden.
-Door systematisch de gaten op te bouwen, wordt verzekerd dat telkens het punt in het gat gekozen wordt.
+De implementatie zorgt er voor dat de cirkels die het gat definieren telkens tegen de klok gesorteerd zijn (ten op zichte van het middelpunt van deze deze drie cirkels).
+Dit maakt het mogelijk telkens het juiste punt te kiezen.
 Eenmaal dit punt bepaald is word de cirkel op deze plek gezet.
 Dan wordt gekeken of deze cirkel wel effectief in het gat geplaatst is, en of deze niet overlapt met de derde cirkel die het gat definieert.
 
@@ -747,7 +880,7 @@ Dit voorkomt dat de geplaatste cirkel buiten het gat geplaatst wordt, en dus zek
 Op \autoref{code:try-fit-derde-overlap} wordt dan de overlap met de derde gat-definiërende cirkel nagekeken.
 Er kan geen overlap zijn met de eerste twee, de methode $getMountPositionFor$ plaatst de cirkel zodanig dat deze de twee andere cirkels raakt, maar niet overlapt.
 Indien de cirkel in het gat past, en dus alle checks doorstaat, wordt de positie voor deze cirkel terug gegeven.
-De solver zal deze cirkel kan plaatsen in zijn oplossing.
+De solver zal deze cirkel dan plaatsen in zijn oplossing.
 
 Het is niet nodig om na te gaan of er overlap is met andere cirkels in de oplossing.
 Als er met een andere overlap zou zijn, moet dit zijn omdat de cirkel buiten het gat geplaatst is, of er is ook overlap met één van de cirkels in het gat zelf.
@@ -765,7 +898,7 @@ De eerste en laatste cirkel in de lijst grenzen ook aan elkaar in de shell.
 De heuristiek voorgesteld in deze thesis probeert steeds eerst alle gaten op te vullen.
 Maar wanneer er geen cirkels meer over zijn die klein genoeg zijn om te passen in gaten, word er een cirkel op de shell geplaatst.
 Op de shell worden alle posities tegen twee cirkels van de shell overwogen.
-Dit is een goede heuristiek voor de optimale positie, beperkt het aantal mogelijke posities voor de geplaatste cirkel enorm en maakt het algoritme dus zeer snel.
+Dit is een goede heuristiek voor de optimale positie, beperkt het aantal mogelijke posities voor de geplaatste cirkel enorm en maakt het algoritme dus zeer snel (zie \autoref{chap:resultaten} voor een vergelijking in snelheid).
 Er wordt steeds een cirkel zo dicht mogelijk bij het centrum van de huidige tussen-oplossing geplaatst.
 Dit om het uitbreiden van de omcirkel zo min mogelijk te houden.
 
@@ -775,11 +908,11 @@ De twee cirkels waarvoor het middelpunt het dichtst bij het centrum van de huidi
 Dan wordt er gezocht naar een zo groot mogelijke cirkel die daar past op de shell.
 Indien geen enkele cirkel past wordt één van de twee kandidaat cirkels verwijderd uit de shell.
 Welke verwijderd wordt verduidelijkt in \autoref{sec:bepalen-of-een-cirkel-past-op-de-shell}.
-Dit zorgt er voor dat de shell veranderd en \textit{groeit} naar buiten.
+Dit zorgt er voor dat de shell verandert en \textit{groeit} naar buiten.
 In de volgende stap van het algoritme zal dan ook een andere positie voor een cirkel uitgeprobeerd worden.
 Indien er wel een cirkel past wordt deze toegevoegd aan de shell, en geeft deze aanleiding tot een nieuw gat.
 Dit gat zal vervolgens opgevuld worden indien mogelijk, zoals beschreven in \autoref{sec:holes}.
-Op \autoref{fig:plaats-op-shell-simpel} wordt getoond hoe de packing veranderd wanneer een cirkel geplaatst wordt op de shell.
+Op \autoref{fig:plaats-op-shell-simpel} wordt getoond hoe de packing verandert wanneer een cirkel geplaatst wordt op de shell.
 Eerst wordt een packing zonder gaten getoond en vervolgens de packing nadat een cirkel op de shell geplaatst is.
 Hierop is duidelijk te zien hoe de shell aangepast is geweest, en deze plaatsing geleid heeft tot een nieuw gat.
 Zoals eerder gezegd is het mogelijk dat op een positie op de shell de grootste cirkel niet past.
@@ -819,7 +952,7 @@ Het algoritme vind deze twee of drie cirkels.
 Het is eenvoudig in te zien dat deze drie cirkels aan de buitenkant van een (tussen-)oplossing zullen liggen.
 Dit is ook net wat de shell is, de cirkels aan de buitenkant van een oplossing.
 Het is dus mogelijk om in elke stap van de solver de omcirkel zeer efficient te berekenen.
-De complexiteit is dan slechts lineair in de omtrek van de huidige (tussen-)oplossing, en niet in het totaal aantal cirkels in de oplossing.
+De complexiteit is dan slechts lineair in het aantal cirkels op de shell in huidige (tussen-)oplossing, wat slechts een subset is van totaal aantal cirkels in de oplossing.
 Aangezien de omcirkel regelmatig moet herberekend worden doorheen het algoritme is dit een zeer interessante optimalisatie.
 
 \subsection{Bepalen of een cirkel past op de shell} \label{sec:bepalen-of-een-cirkel-past-op-de-shell}
@@ -835,7 +968,7 @@ Het is niet nodig andere cirkels, die niet op de shell zitten, na te kijken voor
 Een nieuwe cirkel wordt steeds op de shell geplaatst zodanig dat als er overlap zou zijn met cirkels in de oplossing, minstens één van die cirkels op de shell ligt.
 Doordat ik geen exacte definitie van de shell heb, ze is enkel gedefinieerd door het algoritme dat ze opbouwt, is het niet mogelijk om hier een echt bewijs van te geven.
 Uit empirische tests lijkt dit echter wel te kloppen.
-Verdere bedenkingen hierbij kan u terug vinden in \autoref{chap:opmerkingen-en-verder-werk}.
+Verdere bedenkingen hierbij kan u terug vinden in \autoref{chap:bedenkingen}.
 Om deze overlappings-test zeer snel te kunnen uitvoeren worden eerst cirkels dicht bij nagekeken.
 Er staat ook een limiet op het aantal cirkels die getest worden.
 Uit tests, tot 5000 cirkels, blijkt dat drie cirkels aan elke kant van de shell nakijken genoeg is.
@@ -862,7 +995,7 @@ for (int i = 1; i <= checkRadius; ++i) {
 \end{lstlisting}
 
 Er wordt dus om te beurt links en rechts van de huidige positie op de shell nakeken voor overlap.
-Indien er overlap gevonden is, wordt bijgehouden aan welke kant van de shell dit gebeurt is.
+Indien er overlap gevonden is, wordt bijgehouden aan welke kant van de shell dit gebeurd is.
 $toRemove$ is dus uiteindelijk $first$ of $secons$, wat aan geeft of er aan de kant van de eerste cirkel, of van de tweede cirkel, overlap voorkomt.
 $toRemove$ kan ook $null$ zijn indien er geen overlap is.
 Deze informatie wordt dan gebruikt door de solver om te bepalen of de cirkel geplaatst kan worden ($toRemove = null$), of dat de shell aangepast moet worden.
@@ -870,7 +1003,7 @@ Meer informatie hierover in \autoref{sec:een-cirkel-plaatsen-op-de-shell}
 
 \subsection{Een cirkel plaatsen op de shell} \label{sec:een-cirkel-plaatsen-op-de-shell}
 
-Om een cirkel te plaatsen op de shell wordt eerst de grootste cirkel is die past op de shell logaritmisch gezocht in de lijst van nog-te-plaatsen cirkels.
+Om een cirkel te plaatsen op de shell wordt eerst de grootste cirkel is die past op de shell binair gezocht in de lijst van nog-te-plaatsen cirkels.
 Dit gebeurt op analoge manier als het zoeken naar de grootste cirkel die past in een gat, zoals beschreven in \autoref{sec:grootste-cirkel-zoeken-die-past-in-een-hole}.
 Indien er een cirkel gevonden wordt die past op de shell wordt de shell uitgebreid met deze cirkel.
 De cirkel wordt dan tussen de cirkels, waartegen hij geplaatst is, gezet in de shell.
@@ -880,11 +1013,11 @@ Ook zorgt dit er voor dat een nieuw gat gemaakt wordt waar mogelijk kleinere cir
 
 Een laatste check die gebeurt is om na te gaan of door het plaatsen van de cirkel de shell nog juist gevormd is.
 Indien een cirkel geplaatst wordt zodat de cirkels niet meer met de klok mee gesorteerd zijn, zou dit er voor kunnen zorgen dat foutieve plaatsingen voorkomen.
-Om dit te verzekeren wordt de gerichte hoek tussen de geplaatste cirkel en de cirkels waartegen hij geplaatst is nagekeken.
+Om dit te voorkomen wordt de gerichte hoek tussen de geplaatste cirkel en de cirkels waartegen hij geplaatst is nagekeken.
 Indien deze hoek negatief is wordt de shell hier voor aangepast.
 Dit wordt getoond in \autoref{fig:plaats-op-shell-hoek}.
 Het eerste deel toont de configuratie waarop een cirkel geplaatst zal worden.
-Het laatste deel de toteindelijke configuratie van de shell.
+Het laatste deel de uiteindelijke configuratie van de shell.
 Het middelste deel toont met een zwarte lijn het deel van de shell dat verwijderd is om er voor te zorgen dat deze kloksgewijs gesorteerd blijft.
 Op \autoref{fig:plaats-op-shell-hoek-fout}  wordt getoond wat er kan gebeuren als deze check niet gebeurt.
 
@@ -905,21 +1038,533 @@ Op \autoref{fig:plaats-op-shell-hoek-fout}  wordt getoond wat er kan gebeuren al
 Dit hoofdstuk gaf een volledig overzicht van de nieuwe constructieve heuristiek.
 Waar nodig werd het uitleg verduidelijkt met code uit de implementatie.
 Er werden ook de verschillende veronderstellingen geformuleerd die gebruikt worden om het algoritme zeer snel te maken.
-Zie ook \autoref{chap:opmerkingen-en-verder-werk} voor verdere bedenkingen hieromtrent.
+Zie ook \autoref{chap:bedenkingen} voor verdere bedenkingen hieromtrent.
+
+
+\chapter{Bedenkingen bij implementatie} \label{chap:bedenkingen}
+
+\section{Precisie}
+
+De implementatie gebruikt $double$ variabelen.
+Ook geeft de methode gebruikt om cirkels tegen elkaar te plaatsen, beschreven in \autoref{sec:een-cirkel-tegen-twee-andere-plaatsen}, geen exacte oplossing.
+Hierdoor wordt er doorheen het algoritme een kleine fout opgebouwd.
+Deze fout uit zich in een kleine overlap in de uiteindelijke verkregen packing.
+Deze overlap blijft echter beperkt tot $10^{-15}$ vierkante eenheden voor de grootste packings.
+
+Dit is een inherent probleem van werken in eindige precisie.
+Andere algoritmen hebben dus te kampen met het zelfde probleem, hoewel er niet altijd aandacht aan wordt besteed in de gepubliceerde papers.
+In \cite{akeb2006basic}, \cite{ye2013iterated} en \cite{m2013packing} worden resultaten verkregen met een precisie van respectievelijk $10^{-10}$, $10^{-28}$ en $10^{-7}$.
+
+%\cite{akeb2006basic} -> $10^{-10}$.
+%\cite{ye2013iterated} -> $10^{-28}$.
+%\cite{m2013packing}  -> $10^{-7}$.
+
+Aangezien de vergelijkingen in \autoref{chap:resultaten} tot een precisie van $10^{-10}$ gebeuren heeft dit verder geen impact op de resultaten.
+
+\section{Veronderstellingen}
+
+Zoals eerder vermeld worden er, bij de gaten en shell, enkele veronderstellingen gedaan om het algoritme zeer snel te laten verlopen.
+Deze veronderstellingen lijken voor de meeste problemen correct te zijn.
+Er zijn echter sommige problemen, vooral als er gewerkt wordt met zeer hoge aantallen cirkels (duizenden), dat er toch nog fouten kunnen gebeuren.
+Dit uit zich dan in packings met een grote overlap.
+
+Uit huidige tests lijkt er vooral een probleem met de gaten, de shell heeft voor zover mijn huidige tests uitwijzen geen problemen.
+Doordat de cirkels die een gat definiëren niet altijd aan elkaar raken kan het gebeuren, als twee gaten naast elkaar staan, er toch nog een overlap is.
+
+Een voorstel om dit op te lossen is een gat niet op te delen in drie gaten als er een cirkel in geplaatst wordt, maar slechts in twee.
+Eén van die gaten bestaat dan uit meer dan drie cirkels.
+Zo is het wel mogelijk om altijd aaneensluitende cirkels een gat te laten bepalen.
 
 \chapter{Resultaten} \label{chap:resultaten}
 
+In dit hoofdstuk worden de verkregen packings vergeleken met de best gekende packings, zoals gerapporteerd op de Packomania website \cite{packomania}.
+Packomania is een website die de best gekende oplossingen voor verschillende circle-packing problemen verzameld.
+Deze vergelijking wordt gemaakt op zowel de verkregen radius van de omschreven cirkel, als ook de tijd nodig om tot deze packing te komen indien deze gekend is.
+De nodige rekentijd voor deze algoritmen is echter niet altijd even makkelijk te vinden.
+Veel van de packings op Packomania hebben geen bijhorende publicatie.
+Het gebruikte algoritme en de nodige tijd om de packing te bekomen is dus niet gekend, enkel de verkregen omschreven cirkel en coördinaten van de packing.
+De vergelijking in tijd zal dus een zeer ruwe vergelijking zijn gebaseerd op slechts enkele papers.
 
-\chapter{Opmerkingen en verder werk} \label{chap:opmerkingen-en-verder-werk}
+Ook geef ik resultaten voor packings met veel meer cirkels dan deze geraporteerd op Packomania.
+Hiervoor heb ik geen andere resultaten gevonden in de literatuur om met te vergelijken.
 
-// TODO Bespreking van verbeteringen/andere mogelijke strategieën/losse eindjes
-// TODO Bedenkingen bij veronderstellingen in het algorime, deze lijken te kloppen maar hebben geen bewijs.
-// TODO verder uitweiden over clockwise/counterclockwise en dat hier tussen gewisseld wordt voor een stabielere fout?
+Packomania heeft resultaten voor verschillende verdelingen van cirkels.
+Deze verdelingen zijn als volgt:
+
+\begin{itemize}
+	\item $r_i=1$ (alle cirkels gelijke grootte)
+	\item $r_i=i$
+	\item $r_i=i^{1/2}$
+	\item $r_i=i^{-1/5}$
+	\item $r_i=i^{-1/2}$
+	\item $r_i=i^{-2/3}$
+\end{itemize}
+
+Hierbij zijn er telkens $N$ cirkels in het probleem, en is $i \in (1,2,...,N)$.
+De verhouding tussen enkele van deze verdelingen worden verduidelijk in \autoref{fig:packomania-verdelingen}.
+
+\begin {figure}
+	\centering
+	\resizebox {0.8\columnwidth} {!} {
+		\begin{tikzpicture}
+			\begin{axis}[ xlabel=$i$, ylabel=radius, domain=1:50 ]
+				\addplot[green]{x^(-1/5)};
+				\addlegendentry{$x^{-1/5}$}
+				
+				\addplot[blue]{x^(-1/2)};
+				\addlegendentry{$x^{-1/2}$}
+				
+				\addplot[red]{x^(-2/3)};
+				\addlegendentry{$x^{-2/3}$}
+			\end{axis}
+		\end{tikzpicture}
+	}
+	\caption{Packomania verdelingen}
+	\label{fig:packomania-verdelingen}
+\end {figure}
+
+Al deze berekeningen zijn uitgevoerd op een Mid 2009 Macbook-Pro 15 inc met een 2.8Ghz Core 2 Duo processor en 4GB ram.
+
+\section{Packomania vergelijking}
+
+\subsection{Even grote cirkels}
+
+In \autoref{fig:vergelijking-even-grote-cirkels} wordt de procentuele vergroting weergegeven voor packings met $N$ cirkels van gelijke grootte.
+Er wordt een volledig beeld gegeven, als ook een detail-beeld waar vergrotingen boven de 1,5\% niet worden getekend.
+Deze vergroting is ten opzichte van de best gekende oplossing op de Packomania website.
+Tabellen die mijn resultaten met de best gekende vergelijken kan u terug vinden in \autoref{append:packomania-tabellen-gelijke-grootte}.
+
+\begin {figure}
+	\centering
+	\resizebox {0.8\columnwidth} {!} {
+		\begin{tikzpicture}
+			\begin{axis}[xlabel=Aantal Cirkels, ylabel=\% Vergroting]
+				\addplot table [x=N, y=Increase, col sep=comma]{csv/Equal size Packomania problems comparison.csv};
+				\addlegendentry{Gelijke grootte}
+			\end{axis}
+		\end{tikzpicture}
+	}
+	\resizebox {0.8\columnwidth} {!} {
+		\begin{tikzpicture}
+			\begin{axis}[xlabel=Aantal Cirkels, ylabel=\% Vergroting, ymin=0, ymax=1.5]
+				\addplot table [x=N, y=Increase, col sep=comma]{csv/Equal size Packomania problems comparison.csv};
+				\addlegendentry{Gelijke grootte}
+			\end{axis}
+		\end{tikzpicture}
+	}
+	\caption{Vergelijking van packings van even grote cirkels}
+	\label{fig:vergelijking-even-grote-cirkels}
+\end {figure}
+
+Gemiddeld geeft mijn algoritme een resultaat dat $0,79\%$ groter is dan de het best gekende resultaat voor problemen met cirkels van gelijke grootte.
+Er is echter een duidelijke neerwaartse trend.
+Voor problemen met meer dan 1000 cirkels is de gemiddelde vergroting nog slechts 0,48\%.
+Voor meer dan 2000 cirkels nog 0,39\% en voor meer dan 3000 nog 0,32\%.
+Problemen met een groter aantal cirkels geven duidelijk een beter resultaat.
+
+Dit komt mogelijk omdat hoe meer cirkels er zijn, hoe moeilijker het probleem wordt.
+Hierdoor zullen de best-gekende oplossingen voor problemen met zulke grote aantallen cirkels minder dicht bij de absolute optimale oplossing liggen.
+Omdat mijn algoritme enkel nieuwe cirkels tegen twee reeds geplaatste cirkels plaats, hebben al mijn oplossingen voor dit probleem een duidelijke structuur.
+Deze structuur is een zeshoekige structuur.
+Dit wordt geïllustreerd in \autoref{fig:packing-even-groot-50}.
+Dit is een zeer eenvoudige structuur, maar lijkt toch redelijk goed de best gekende oplossingen te benaderen.
+Meer figuren hiervan vind u terug in \autoref{append:extra-packing-figuren}.
+
+Nodige tijd blijft onder 10 milliseconden tot $N=100$.
+Tot 500 cirkels blijft de nodige rekentijd onder 100 milliseconden.
+De rekentijd loopt pas op tot één seconde bij 2200 cirkels, en slechts 3,5 seconden voor 5000 cirkels.
+
+Zoals eerder vermeld zijn vergelijkingen in nodige rekentijd moeilijk te vinden.
+In \cite{grosso2010} worden echter tijden gerapporteerd van 110 seconden voor 30 cirkels (mijn algoritme vroeg hier minder dan een millisecond tijd), en 15311 seconden (meer dan 4 uur) voor 100 cirkels (mijn algoritme vroeg hier 7 milliseconden).
+Zij halen resultaten die zeer dicht bij de best gekende liggen (soms de beste).
+
+Zelfs de constructieve algoritmen beschreven in \cite{akeb2006basic} en \cite{hifi2004approximate} vragen meerdere seconden, en soms minuten, om te berekenen.
+Hun resultaten zijn echter moeilijk te vergelijking omdat \cite{akeb2006basic} een alternatieve versie van circle-packing oplost, en \cite{hifi2004approximate} packings maakt in rechthoeken.
+
+\begin{figure}
+  \centering
+  \includegraphics[width=0.65\textwidth]{packing-even-groot-50.png}
+  \caption{Packing voor 50 even grote cirkels} \label{fig:packing-even-groot-50} 
+\end{figure}
+
+\subsubsection{Bespreking}
+
+Over het algemeen zijn dit goede resultaten.
+Ze liggen redelijk dicht bij de best gekende oplossing, maar hebben een duidelijk en eenvoudig patroon.
+Dit patroon kan je eenvoudig genereren met een ander algoritme, en dus zijn dit zeker niet de meest indrukwekkende resultaat.
+Het probleem waar alle cirkels een gelijke grootte hebben is dan ook niet de kracht van mijn algoritme.
+Aangezien elke cirkel even groot is, zal er nooit een cirkel gevonden worden dat in een gat past.
+Ook is dit het eenvoudigste probleem.
+Het feit dat er resultaten zijn tot 5000 cirkels, waar voor problemen met verschillende radii slechts tot maximum 200 cirkels opgelost zijn, wijst hier op.
+Hoewel mijn algoritme dus relatief goede resultaten geeft voor dit probleem, zijn de resultaten die volgen interessanter.
+
+\subsection{Packomania Benchmark}
+
+Packomania geeft ook resultaten voor enkele benchmark instanties geïntroduceerd door WenQi Huang in verscheidene papers, en samengevat in \cite{huang2006new}.
+De radii van de cirkels in deze benchmark instanties kan u terug vinden in \autoref{append:packomania-benchmark-verdelingen}.
+Een eerste set verdelingen (met prefix $NR$) heeft tussen 10 en 60 cirkels per probleem, een tweede set (met prefix $IN$) tussen 9 en 28 cirkels met nog één probleem van 162 cirkels.
+In elke verdeling zitten cirkels met verschillende raddii, maar ook cirkels met gelijke raddii.
+
+In \autoref{fig:vergelijking-packomania-benchmark} wordt de procentuele vergroting van de oplossing verkregen met mijn algoritme, vergelijken met de best gekende oplossing.
+Gemiddeld geeft mijn algoritme een resultaat dat $5,94\%$ groter is dan de best gekende resultaten.
+Door het zeer gelimiteerd aantal instanties is er echter geen duidelijke trend te zien zoals bij packings voor cirkels met gelijke grootte, en de Packomania Macht problemen.
+
+\begin {figure}
+	\centering
+	\resizebox {0.8\columnwidth} {!} {
+		\begin{tikzpicture}
+			\begin{axis}[xlabel=Aantal Cirkels, ylabel=\% Vergroting]
+				\addplot table [x=N, y=Increase, col sep=comma,
+						skip coords between index={24}{1000}
+					]{csv/IN NR Packomania problems comparison.csv};
+				\addlegendentry{NR}
+
+				\addplot table [x=N, y=Increase, col sep=comma,
+						skip coords between index={0}{24}
+					]{csv/IN NR Packomania problems comparison.csv};
+				\addlegendentry{IN}
+			\end{axis}
+		\end{tikzpicture}
+	}
+	\caption{Vergelijking van Packomania Benchmark problemen}
+	\label{fig:vergelijking-packomania-benchmark}
+\end {figure}
+
+Nodige rekentijd is voor al deze problemen ook slechts enkele milliseconden.
+In \cite{ye2013iterated} worden deze problemen opgelost in tijden tussen 1 second voor 10 cirkels, en meer dan 2 uur voor 60 cirkels.
+Ook in \cite{huang2013tabu} kan de nodige tijd oplopen tot meerdere uren voor de grotere problemen.
+Zelfs de kleinere problemen (10 tot 15 cirkels) vragen soms meerdere minuten om te berekenen.
+Dit in vergelijking met mijn algoritme dat slechts enkele milliseconden nodig heeft voor elk probleem.
+
+\subsubsection{Bespreking}
+
+Over het algemeen zijn dit goede resultaten.
+Gemiddeld is er slechts een $5,94\%$ vergroting van de radius van de omschreven cirkel, met slechts 3 problemen die meer dan $10\%$ vergroting hebben.
+Er zijn echter ook 2 problemen die even goed opgelost worden dan de best gekende!
+
+Dit zijn dus goede resultaten, maar het aantal probleem instanties blijft zeer beperkt.
+In de volgende sectie wordt de kracht van het algoritme veel duidelijker met meer cirkel-verdelingen.
+
+\subsection{Packomania Machten}
+
+Packomania rapporteert ook resultaten voor verschillende verdelingen met een vaste structuur: $r_i=i^X$.
+Hier is X steeds een andere macht.
+Deze problemen neem ik onder één noemer: de \textit{Packomania macht} problemen.
+Tabellen die mijn resultaten met de best gekende vergelijken kan u terug vinden in \autoref{append:packomania-tabellen-macht}.
+
+In \autoref{fig:vergelijking-packomania-macht} worden voor al deze macht problemen de procentuele vergroting getoond.
+Dit is de omtrek van de omschreven cirkel verkregen uit mijn algoritme ten opzichte van de best gekende oplossing.
+
+\begin {figure}
+	\centering
+	\resizebox {0.8\columnwidth} {!} {
+		\begin{tikzpicture}
+			\begin{axis}[xlabel=Aantal Cirkels, ylabel=\% Vergroting, no markers]
+				\addplot+[line width=1, opacity=0.5] table [x=N, y=Increase, col sep=comma,
+							skip coords between index={196}{10000}
+						]{csv/Power Packomania Problems Comparison.csv};
+				\addlegendentry{$r_i = i$}
+
+				\addplot+[line width=1, opacity=0.5] table [x=N, y=Increase, col sep=comma,
+							skip coords between index={0}{196},
+							skip coords between index={292}{10000}
+						]{csv/Power Packomania Problems Comparison.csv};
+				\addlegendentry{$r_i = i^{1/2}$}
+
+				\addplot+[line width=1, opacity=0.5] table [x=N, y=Increase, col sep=comma,
+							skip coords between index={0}{444},
+							skip coords between index={504}{10000}
+						]{csv/Power Packomania Problems Comparison.csv};
+				\addlegendentry{$r_i = i^{-1/5}$}
+
+				\addplot+[line width=1, opacity=0.5] table [x=N, y=Increase, col sep=comma,
+							skip coords between index={0}{292},
+							skip coords between index={388}{10000}
+						]{csv/Power Packomania Problems Comparison.csv};
+				\addlegendentry{$r_i = i^{-1/2}$}
+
+				\addplot+[green, line width=1, opacity=0.5] table [x=N, y=Increase, col sep=comma,
+							skip coords between index={0}{388},
+							skip coords between index={444}{10000}
+						]{csv/Power Packomania Problems Comparison.csv};
+				\addlegendentry{$r_i = i^{-2/3}$}
+			\end{axis}
+		\end{tikzpicture}
+	}
+	\caption{Vergelijking van Packomania Macht problemen}
+	\label{fig:vergelijking-packomania-macht}
+\end {figure}
+
+Gemiddeld geeft mijn algoritme een resultaat dat $5,61\%$ groter is dan de best gekende resultaten voor deze problemen.
+Ook is er duidelijk een neerwaartse trend.
+Problemen met een groter aantal cirkel lijken dichter bij de best gekende oplossing te liggen.
+
+In volgende tabel worden de gemiddelde vergroting per macht probleem weergegeven:
+
+\begin{tabularx}{\textwidth}{ l c c }
+\caption{Packomania Machten gemiddelde vergroting}
+\\\toprule
+Probleem & Aantal cirkels & \% Vergroting \\
+\midrule
+\endhead
+$r_i = i$ & 5 tot 200 & 5,41\% \\
+$r_i = i^{1/2}$ & 5 tot 100 & 6,42\% \\
+$r_i = i^{-1/2}$ & 5 tot 100 & 4,77\% \\
+$r_i = i^{-2/3}$  & 5 tot 60 & 2,78\% \\
+$r_i = i^{-1/5}$ & 5 tot 64 & 8,88\% \\
+\bottomrule
+\end{tabularx}
+
+Nodige rekentijd is voor al deze problemen slechts enkele milliseconden voor mijn algoritme, rekentijd in de literatuur loopt op tot 6 uur in \cite{jors2011}, tot 7 uur in \cite{lopez2013packing} en zelfs meer dan een volledige dag (27 uur) in \cite{zeng2016iterated}, voor slechts 30 cirkels.
+Het snelste andere algoritme, tot zover ik weet, werd gegeven in \cite{ye2013iterated}.
+Zij hadden tijden tussen 1 seconden voor 5 cirkels, en 1 uur voor 30 cirkels.
+Zij hadden echter geen goed stopping-criteria, en deze tijd was dus de tijd nodig alvorens ze hun beste oplossing vonden, maar hun algoritme bleef ongeacht meer dan 2,5 uur zoeken.
+
+In \autoref{fig:packing-neg1div2-1000} wordt een packing getoond voor het $r_i = i^{-1/2}$ probleem.
+Meer afbeeldingen van packings vind u terug in \autoref{append:extra-packing-figuren}
+
+\begin{figure}
+  \centering
+  \includegraphics[width=0.65\textwidth]{packing-neg1div2-1000.png}
+  \caption{Packing voor 1000 cirkels met verdeling $r_i=i^{-1/2}$} \label{fig:packing-neg1div2-1000} 
+\end{figure}
+
+\subsubsection{Bespreking}
+
+Deze resultaten zijn volgens mij zeer indrukwekkend.
+Resultaten voor de problemen $r_i = i$, $r_i = i^{1/2}$, $r_i = i^{-1/2}$ en $r_i = i^{-2/3}$ blijven steeds onder 10\% vergroting tegenover de best gekende.
+Enkel het probleem $r_i = i^{-1/5}$ heeft enkele uitschieters tot maximum 13,45\% vergroting.
+Dit laatste resultaat komt waarschijnlijk omdat $r_i = i^{-1/5}$ het probleem is waarin de cirkels het minst verschillen van grootte (zie \autoref{fig:packomania-verdelingen}).
+Dit zorgt er voor dat het algoritme minder gebruik kan maken van gaten, aangezien meestal enkel de kleinere cirkels gaten zullen opvullen.
+Het probleem met het meeste verschil in radii, $r_i = i^{-2/3}$, heeft dan ook de beste resultaten.
+Met maximum 4,77\% vergroting en gemiddeld slechts 2,78\%.
+
+Ook is er een duidelijke neerwaartse trend in de vergroting van de omschreven cirkel als het aantal cirkels groter wordt.
+Dit komt doordat het algoritme dan meer keuzemogelijkheden heeft in elke stap.
+Hierdoor zal het algoritme vaker gaten kunnen opvullen, en een dichtere shell opbouwen.
+Hier zie je duidelijk de kracht van het algoritme als deze genoeg verschillende cirkels heeft om uit te kiezen.
+
+Bovendien worden deze resultaten zeer snel bekomen.
+Waar andere algoritmen uit de literatuur uren nodig hebben, vraagt mijn algoritme slechts milliseconden.
+
+Dit zijn denk ik de meest indrukwekkende resultaten, en tonen het best de kracht van het algoritme.
+
+\section{Grotere aantallen cirkels}
+
+Het algoritme uit deze thesis laat ook toe om problemen met veel grotere aantallen cirkels op te lossen.
+Resultaten voor cirkels tussen 1000 en 14000 cirkels kan je vinden in \autoref{append:packomania-tabellen-groter-aantal-cirkels}.
+Ik heb geen andere methoden gevonden die problemen met zo'n grote aantallen cirkels kunnen oplossen.
+De verkregen radii van de omschreven cirkel kan ik dus niet vergelijken.
+
+De nodige tijd om deze problemen op te lossen blijft ook beperkt.
+Problemen tot 1400 cirkels blijft onder één seconde.
+Problemen tot 9000 cirkels onder 10 seconden, en 14000 cirkels vragen minden dan één minuut tijd.
+
+Bij deze grote aantallen cirkels komen echter wel enkele problemen naar boven, zoals beschreven in \autoref{chap:bedenkingen}.
+Ook was het niet mogelijk op mijn computer om problemen met meer dan 14000 cirkels op te lossen.
+Bij het nakijken van de oplossing wordt een recursief algoritme gebruikt op de volledige lijst cirkels.
+Dit geeft een \textit{stack-overflow} en heb ik nog niet kunnen oplossen.
+
+Mits de resterende problemen met overlap voor sommige van deze problemen met grote aantallen cirkels, zijn dit interessante resultaten.
+Zelfs voor duizenden cirkels kan het algoritme een resultaat geven in enkele seconden.
+Dit is, voor zover ik weet, niet mogelijk met andere algoritmen in aanvaardbare tijd, laat staan in enkele seconden.
+
+\section{Conclusie}
+
+In dit hoofdstuk heb ik oplossingen verkregen door mijn algoritme vergeleken met de best gekende packings.
+Ook heb ik de nodige rekentijd vergeleken met enkele andere algoritmen.
+
+De oplossingen verkregen met mijn nieuwe constructieve heuristiek hebben een gemiddeld minder dan 6\% grotere omschreven cirkel.
+Dit lijkt mij een zeer aanvaardbare vergroting van de omschreven cirkel, rekening houdend dat het algoritme deze problemen in slechts milliseconden op lost.
+Zelfs de grootste problemen, bestaande uit duizenden cirkels, kunnen in slechts enkele seconden opgelost worden.
+Ook is er een interessante neerwaartse trend in de vergroting van de radius van de bekomen omschreven cirkel.
+Dit toont de kracht van het algoritme wanneer het meer cirkels heeft met verschillende radii om uit te kiezen.
+
+Bovendien laat het algoritme toe om problemen met veel grotere aantallen cirkels in aanvaardbare tijd op te lossen.
+Iets dat, voor zover ik zeet, geen enkel ander algoritme mogelijk maakt binnen aanvaardbare tijd, laat staan binnen enkele seconden.
+
+\chapter{Verder werk} \label{chap:verder-werk}
+
+In dit hoofdstuk geef ik enkele voorstellen voor verdere uitwerkingen van het algoritme.
+Mogelijke verbeteringen, zowel in snelheid als kwaliteit van uitkomsten.
+Dit zijn mogelijke ideeën om in de toekomst op verder te werken.
+
+\section{Constante-tijd omschreven cirkel}
+
+In het algoritme bij het plaatsen op de shell wordt gebruik gemaakt van de omschreven cirkel van de huidige tussen-oplossing.
+Deze omschreven cirkel wordt berekend in lineaire tijd ten opzichte van het aantal cirkels op de shell.
+Dit geeft dan de kleinst mogelijke omschreven cirkel van de huidige oplossing.
+
+Het is echter mogelijk om in constante tijd een omschreven cirkel te berekenen.
+Simpelweg door, telkens er een cirkel geplaatst wordt buiten de huidige omschreven cirkel, een nieuwe te berekenen die rond de oude omcirkel en deze nieuwe cirkel past.
+Dit kan zeer eenvoudig in constante tijd, maar geeft niet de kleinst-mogelijke omschreven cirkel voor de packing.
+Deze constante-tijd omschreven cirkel is mogelijk wel goed genoeg als benadering, en kan een grote snelheids-winst geven voor zeer grote packings.
+
+\section{Best-Fit}
+
+Het algoritme is gebaseerd op een \textit{best-fit} principe.
+Met andere woorden in elke stap wordt de best-bassende cirkel gekozen.
+Wat de best-passende cirkel is is echter moeilijk te bepalen.
+In de huidige implementatie worden er daarom enkele keuzes gemaakt, gebaseerd op bestaande heuristieken en intuïtie.
+Hier kunnen echter andere keuzes gemaakt worden, die mogelijk tot betere resultaten zullen leiden.
+
+Eén zo'n alternatieve keuze is bij het plaatsen op de shell.
+Nu worden de nieuwe cirkels zo dicht mogelijk bij het huidige middelpunt geplaatst.
+Dit omdat de omschreven cirkel dan zo weinig mogelijk uitgebreid moet worden.
+Maar wat als, wanneer we geen cirkel meer binnen de huidige omcirkel kunnen plaatsen, we de cirkel zo ver mogelijk van het middelpunt plaatsen (maar wel nog tegen twee cirkels op de shell)?
+Dit zal er voor zorgen dat de omschreven cirkel veel verder uitgebreid zal worden.
+Het zal er ook voor zorgen dat de omcirkel veel minder vaak uitgebreid moet worden, omdat hij in grotere stappen uitbreid.
+Mogelijk geeft dit aanleiding tot betere en misschien snellere packings omdat de omschreven cirkel minder vaak herberekend moet worden.
 
 \chapter{Conclusie} \label{chap:conclusie}
 
+In deze thesis heb ik een nieuwe constructieve heuristiek voorgesteld.
+Deze is gebaseerd op het \textit{best-fit} principe, waarbij in elke stap de beste cirkel gekozen wordt om aan de oplossing toe te voegen.
+Deze keuze werd gebaseerd op twee concepten: \textit{gaten} en de \textit{shell}.
+Eerst werden de gaten opgevuld, en dan cirkels geplaatst aan de buitenkant van de tussen-oplossing, op de shell.
+Door enkele veronderstellingen te maken over het aantal cirkels die getest moeten worden voor overlap bij elke plaatsing, kan het algoritme zeer snel relatief goede packings genereren.
+Ik heb resultaten getoond, vergeleken met de best-gekende packings voor een groot aantal cirkel-verdelingen, die aantonen dat het algoritme packings maakt die gemiddeld slechts 5\% groter zijn.
+Deze packings werden gegenereerd in een fractie van de tijd die andere, state-of-the-art algoritmen nodig hebben (milliseconden tegenover uren).
+
+Ik denk dus dat ik zeker geslaagd ben in mijn opzet.
+Een constructief algoritme maken dat in real-time goede packings kan maken voor het zeer moeilijke \textit{cirkel-packing} probleem.
+
+% // TODO ALGEMEEN: Minder informele termen? Omcirkel->omschreven cirkel
+
+% // TODO ALGEMEEN: Voeg echte definities toe, bv bij Hole echt een hoofding "Definitie" en dan het gat definieren. Ook voor shell, omcirkel.
 
 \newpage
+
+% Appendixes
+
+\appendix
+
+\chapter{Packomania Benchmark Verdelingen} \label{append:packomania-benchmark-verdelingen}
+
+\begin{tabularx}{\textwidth}{ l c X }
+\caption{Packomania Benchmark Verdelingen}
+\\\toprule
+Instantie & N & Radii \\
+\midrule
+\endhead
+NR10-1 & 10 & 10, 12, 15, 20, 21, 30, 30, 30, 40, 50 \\
+NR11-1 & 11 & 8.4, 11, 10, 10.5, 12, 14, 15, 20, 20, 25, 25 \\
+NR12-1 & 12 & 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22 \\
+NR14-1 & 14 & 11, 14, 15, 16, 17, 19, 23, 27, 31, 35, 36, 37, 38, 40 \\
+NR15-1 & 15 & 3, 3, 4, 4, 4.5, 6, 7.5, 8, 9, 10, 11, 12, 13, 14, 15 \\
+NR15-2 & 15 & 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15 \\
+NR16-1 & 16 & 13, 14, 15, 15, 17, 19, 23, 26, 27, 27, 32, 37, 38, 47, 57, 63 \\
+NR16-2 & 16 & 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36 \\
+NR17-1 & 17 & 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 10, 10, 10, 15, 15, 20, 25 \\
+NR18-1 & 18 & 12, 14, 16, 23, 25, 26, 27, 28, 33, 35, 47, 49, 53, 53, 55, 60, 67, 71 \\
+NR20-1 & 20 & 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30, 32, 34, 36, 38, 40, 42 \\
+NR20-2 & 20 & 6, 8, 9, 12, 12, 15, 16, 18, 20, 21, 24, 24, 27, 28, 30, 32, 33, 36, 40, 44 \\
+NR21-1 & 21 & 10, 15, 16, 17, 17, 18, 21, 22, 23, 25, 26, 31, 33, 34, 37, 37, 38, 39, 40, 42, 45 \\
+NR23-1 & 23 & 14, 14, 16, 18, 18, 21, 22, 23, 26, 28, 28, 32, 34, 34, 36, 37, 39, 41, 45, 48, 49, 49, 51 \\
+NR24-1 & 24 & 9, 10, 11, 13, 13, 16, 17, 17, 18, 19, 19, 20, 20, 20, 21, 22, 23, 23, 24, 25, 30, 31, 32, 82 \\
+NR25-1 & 25 & 14, 17, 22, 26, 26, 27, 28, 29, 29, 30, 31, 32, 33, 34, 34, 34, 34, 35, 37, 37, 37, 47, 52, 53, 55 \\
+NR26-1 & 26 & 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47,48, 49, 50, 51, 52, 53, 54, 55, 56 \\
+NR26-2 & 26 & 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57,58, 59, 60, 61, 62, 63, 64,65, 66 \\
+NR27-1 & 27 & 17, 21, 25, 26, 26, 27, 27, 28, 29, 33, 33, 34, 35, 35, 35, 37, 40, 42, 43, 44, 45, 49, 53, 55, 55, 55, 63 \\
+NR30-1 & 30 & 5, 8, 10, 10, 12, 14, 15, 16, 18, 20, 20, 20, 20, 20, 22, 24, 25, 26, 30, 30, 30, 30, 35, 40,40, 45, 48, 50, 55, 60 \\
+NR30-2 & 30 & 6, 8, 8, 10, 12, 13, 14, 16, 18, 18, 20, 22, 23, 24, 25, 27, 28, 29,31, 33, 33, 35, 37, 38, 39,41, 43, 43, 48, 53 \\
+NR40-1 & 40 & 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47,48, 49, 50, 51, 52, 53, 54,55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70 \\
+NR50-1 & 50 & 18, 18, 19, 19, 19, 19, 21, 21, 24, 25, 25, 30, 31, 31, 33, 33, 36,36, 40, 42, 43, 46, 46, 47,49, 49, 49, 50, 50, 54, 56, 56, 57, 57, 58, 58, 59, 59, 59, 61, 62,63, 63, 64, 65, 68, 78, 79,80, 86 \\
+NR60-1 & 60 & 35, 35, 35, 36, 37, 37, 38, 38, 39, 39, 40, 41, 41 ,42, 42, 42, 42,42, 44, 44, 45, 45, 46,46,47, 48, 48, 49, 50, 50, 54, 54, 57, 57, 59, 60,60, 71, 71, 71,72, 72, 74, 74, 76, 77, 77,79, 79, 80, 82, 82, 85, 86, 89, 90, 94, 95, 96, 100 \\
+
+IN9-1 & 9 & 10, 10, 10, 10, 4.1415, 4.1415, 4.1415, 4.1415, 4.1415 \\
+IN10-1 & 10 & 50, 40, 32, 31.5, 20, 20, 20, 11, 10, 10 \\
+IN10-2 & 10 & 50, 40, 30, 30, 30, 21, 20, 15, 12, 10 \\
+IN11-1 & 11 & 20, 19, 18, 17, 16, 15, 14, 13, 12, 11, 10 \\
+IN11-2 & 11 & 25, 25, 20, 20, 15, 14, 12, 11, 10.5, 10, 8.4 \\
+IN12-1 & 12 & 100, 100, 100, 48.26, 48.26, 48.26, 23.72, 23.72, 23.72, 23.72, 23.72, 23.72 \\
+IN14-1 & 14 & 40, 38, 37, 36, 35, 31, 27, 23, 19, 17, 16, 15, 14, 11 \\
+IN15-1 & 15 & 15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1 \\
+IN16-1 & 16 & 36, 35, 34, 33, 32, 31, 30, 29, 28, 27, 26, 25, 24, 23 ,22, 21 \\
+IN17-1 & 17 & 25, 20, 15, 15, 10, 10, 10, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5 \\
+IN17-2 & 17 & 100, 100, 100, 100, 41.415, 41.415, 41.415, 41.415, 41.415, 20, 20, 20, 20, 20, 20, 20, 20 \\
+IN25-1 & 25 & 10, 10, 10, 3.533, 3.533, 3.533, 3.533, 3.533, 3.533, 2.3, 2.3, 2.3, 1.8, 1.8, 1.8, 1.8, 1.8, 1.8, 1.547, 1.08, 1.08, 1.08, 1.08, 1.08, 1.08 \\
+IN28-1 & 28 & 10, 10, 10, 4.826, 4.826, 4.826, 2.371, 2.371, 2.371, 2.371, 2.371, 2.371, 1.547, 1.345, 1.345, 1.345, 1.345, 1.345, 1.345, 1.161, 1.161, 1.161, 0.9, 0.9, 0.9, 0.9, 0.9, 0.9  \\
+IN162-1 & 162 & 1.8, 1.8, 1.8, 1.75, 1.3, 1.3, 1.3, 1.3, 1.3, 1.3, 1.3, 1.3, 1.3, 1.3, 1.3, 1.3, 1.05, 1.05, 1.05, 1.05, 1.05, 1.05, 1.05, 1.05, 1.05, 0.9, 0.9, 0.9, 0.9, 0.9, 0.9, 0.9, 0.9, 0.9, 0.9, 0.9, 0.9, 0.9, 0.9, 0.9, 0.8, 0.8, 0.8, 0.8, 0.8, 0.8, 0.8, 0.8, 0.8, 0.8, 0.8, 0.8, 0.8, 0.8, 0.8, 0.8, 0.8, 0.8, 0.8, 0.8, 0.8, 0.8, 0.8, 0.8, 0.8, 0.8, 0.8, 0.8, 0.8, 0.8, 0.8, 0.75, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.65, 0.65, 0.65, 0.65, 0.65, 0.65, 0.65, 0.65, 0.65, 0.65, 0.65, 0.65, 0.65, 0.65, 0.65, 0.65, 0.65, 0.65, 0.65, 0.65, 0.65, 0.65, 0.65, 0.65, 0.65, 0.65, 0.65, 0.65, 0.65, 0.65, 0.65, 0.65, 0.65, 0.65, 0.65, 0.65, 0.65, 0.65, 0.65, 0.65, 0.65, 0.65, 0.65, 0.65, 0.65, 0.65, 0.65, 0.65, 0.65, 0.65, 0.65, 0.65, 0.65, 0.65, 0.55, 0.55, 0.55, 0.55, 0.55, 0.55, 0.55, 0.55, 0.55, 0.55, 0.55, 0.55, 0.55, 0.55, 0.55, 0.55, 0.55, 0.55, 0.55, 0.55, 0.55, 0.55, 0.55, 0.55, 0.55 \\
+\bottomrule
+\end{tabularx}
+
+\chapter{Packomania Vergelijking Tabellen} \label{append:packomania-tabellen}
+
+In deze tabellen wordt telkens het aantal cirkels in de kolom $N$ gegeven, de best gekende radius van op Packomania in kolom $Beste radius$ en de radius verkregen door mijn algoritme in kolom $Radius$.
+Ook wordt het absolute verschil van mijn oplossing ten opzichte van de best gekende radius in de kolom $Vergroting$ gegeven, en de procentuele vergroting in kolom $Vergroting (\%)$.
+Als laatste wordt de rekentijd die mijn algoritme nodig had om tot deze oplossing te komen gegeven in kolom $Tijd$.
+
+\section{Cirkels met gelijke grootte} \label{append:packomania-tabellen-gelijke-grootte}
+
+Merk op dat voor het circle-packing probleem met even grote cirkels enkel de oplossingen voor $N=3$ tot $N=100$ hier getoond worden.
+Dit is slechts een subset van alle gekende oplossingen.
+De volledige lijst van vergelijkingen voor dit probleem, meer dan 2500 vergelijkingen, kan u terug vinden op GitHub \cite{packomania-tables-github}.
+
+\equalTable{Packomania \ensuremath{r_i=1}}{0}{98} \label{table:packomania-equal}
+
+\section{Packomania Macht problemen} \label{append:packomania-tabellen-macht}
+
+\powerTable{Packomania \ensuremath{r_i=i}}{0}{196} \label{table:packomania-i}
+
+\powerTable{Packomania \ensuremath{r_i=i^{1/2}}}{196}{292} \label{table:packomania-i^1/2}
+
+\powerTable{Packomania \ensuremath{r_i=i^{-1/5}}}{444}{504} \label{table:packomania-i^-1/5}
+
+\powerTable{Packomania \ensuremath{r_i=i^{-1/2}}}{292}{388} \label{table:packomania-i^-1/2}
+
+\powerTable{Packomania \ensuremath{r_i=i^{-2/3}}}{388}{444} \label{table:packomania-i^-2/3}
+
+Opmerking: Een oplossing voor 56 cirkels, met raddii $r_i=i^{-2/3}$ miste op de Packomania website op het moment van het schrijven van deze thesis.
+
+\section{Packomania Benchmark problemen} \label{append:packomania-tabellen-benchmark}
+
+\benchmarkTable{Packomania Benchmark Instances}{0}{1000}
+
+\section{Grotere aantallen cirkels} \label{append:packomania-tabellen-groter-aantal-cirkels}
+
+Enkel de resultaten voor meer dan 1000 cirkels wordt hier getoond.
+De volledige lijst van grotere problemen, van 100 cirkels tot 14000 cirkels, kan je terug vinden op GitHub \cite{packomania-tables-github}.
+
+\bigTable{Grotere aantallen gelijke cirkels}{130}{153}
+
+\bigTable{Groteren aantallen cirkels: \ensuremath{r_i = i^{1/2}}}{283}{306}
+
+\bigTable{Groteren aantallen cirkels: \ensuremath{r_i = i^{-1/2}}}{436}{459}
+
+\bigTable{Groteren aantallen cirkels: \ensuremath{r_i = i^{-2/3}}}{589}{612}
+
+\bigTable{Groteren aantallen cirkels: \ensuremath{r_i = i^{-1/5}}}{742}{765}
+
+\chapter{Extra packing figuren} \label{append:extra-packing-figuren}
+
+//TODO Update deze afbeeldingen
+
+\section{Gelijke grootte cirkels}
+
+\begin{figure}
+  \centering
+  \includegraphics[width=0.65\textwidth]{packing-even-groot-500.png}
+  \caption{Packing voor 500 even grote cirkels} \label{fig:packing-even-groot-500} 
+\end{figure}
+
+\begin{figure}
+  \centering
+  \includegraphics[width=0.65\textwidth]{packing-even-groot-2000.png}
+  \caption{Packing voor 2000 even grote cirkels} \label{fig:packing-even-groot-2000} 
+\end{figure}
+
+\section{Packomania Machten}
+
+\begin{figure}
+  \centering
+  \includegraphics[width=0.65\textwidth]{packing-neg1div5-1000.png}
+  \caption{Packing voor 1000 cirkels met verdeling $r_i=i^{-1/5}$} \label{fig:packing-neg1div5-1000} 
+\end{figure}
+
+//TODO: Meer afbeeldingen van machten packings
+
+% Bibliography
 
 \bibliography{thesis}
 \bibliographystyle{plain}
