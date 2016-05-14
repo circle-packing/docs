@@ -942,18 +942,18 @@ Aangezien de omcirkel regelmatig moet worden herberekend  doorheen het algoritme
 \subsection{Bepalen of een cirkel past op de \textit{shell}} \label{sec:bepalen-of-een-cirkel-past-op-de-shell}
 
 Om te bepalen of een cirkel op de \textit{shell} past plaatsen we de cirkel eerst tegen twee cirkels op de \textit{shell}.
-Dit gebeurt op de zelfde manier als het plaatsen van een cirkel tegen twee cirkels van een \textit{hole}.
-De exacte methode is reeds uitgelegd in \autoref{sec:een-cirkel-tegen-twee-andere-plaatsen}.
+Dit gebeurt op dezelfde manier als het plaatsen van een cirkel tegen twee cirkels van een \textit{hole}.
+De exacte methode is reeds uiteengezet in \autoref{sec:een-cirkel-tegen-twee-andere-plaatsen}.
 Eenmaal deze positie gekend is, wordt er nagekeken of dit niet tot overlap leidt.
 Indien er overlap is is het niet mogelijk om de cirkel daar op de \textit{shell} te plaatsen, en wordt er informatie terug gegeven over welke cirkel op de \textit{shell} voor problemen zorgt.
 
 Om na te gaan of er overlap is, worden er systematisch een aantal cirkels op de \textit{shell} nagekeken.
-Het is niet nodig andere cirkels, die niet op de \textit{shell} zitten, na te kijken voor overlap.
-Een nieuwe cirkel wordt steeds op de \textit{shell} geplaatst zodanig dat als er overlap zou zijn met cirkels in de oplossing, minstens één van die cirkels op de \textit{shell} ligt.
-Doordat ik geen exacte definitie van de \textit{shell} heb, ze is enkel gedefinieerd door het algoritme dat ze opbouwt, is het niet mogelijk om hier een echt bewijs van te geven.
-Uit empirische tests blijkt dit echter wel te kloppen.
+Het is niet nodig andere cirkels, die niet op de \textit{shell} zitten, na te kijken voor overlap. %CMT - Aangeven waarom precies - Ik heb de volgende zin herschreven om aan te geven dat dat dat de verklaring is?%
+Dat is zo omdat, een nieuwe cirkel steeds op de \textit{shell} geplaatst wordt. Als er overlap zou zijn met cirkels in de oplossing, dan ligt minstens één van die cirkels op de \textit{shell}.
+Omdat ik geen exacte wiskundige definitie van de \textit{shell} heb (aangezien ze enkel is gedefinieerd door het algoritme dat ze opbouwt) is het niet mogelijk om hier een echt bewijs van te geven. %CMT - dit is ook weer vaag gedefiniëerd. Niet helemaal duidelijk wat je tracht te zeggen - kan ook aan m'n gebrek aan achtergrond liggen, maar ik zou het proberen te verhelderen. Bedoel je: er is geen wiskundige "definitie" (als in: formule) die sluitend kan bewezen worden? Maar je hebt dat algoritme al wel, da's toch al "50% wiskundige formule", neen?%
+Uit empirische tests blijkt de verwachting omtrent deze overlappingen echter wel te kloppen.
 Verdere bedenkingen hierbij kan u terug vinden in \autoref{chap:bedenkingen}.
-Om deze overlappings-test zeer snel te kunnen uitvoeren worden eerst cirkels dichtbij nagekeken.
+Om deze overlappingstest zo snel mogelijk te kunnen uitvoeren worden eerst cirkels dichtbij nagekeken.
 Er staat ook een limiet op het aantal cirkels die getest worden.
 Uit tests, tot 5000 cirkels, blijkt dat drie cirkels aan elke kant van de \textit{shell} nakijken genoeg is.
 Voor de meeste gevallen is één cirkel nakijken genoeg, maar sommige randgevallen (wanneer meerdere kleine cirkels dichtbij elkaar staan op de \textit{shell}) vragen deze extra checks.
@@ -982,23 +982,22 @@ Er wordt dus om te beurt links en rechts van de huidige positie op de \textit{sh
 Indien er overlap gevonden is, wordt bijgehouden aan welke kant van de \textit{shell} dit gebeurd is.
 $toRemove$ is dus uiteindelijk $first$ of $second$, wat aan geeft of er aan de kant van de eerste cirkel, of van de tweede cirkel, overlap voorkomt.
 $toRemove$ kan ook $null$ zijn indien er geen overlap is.
-Deze informatie wordt dan gebruikt door de \textit{solver} om te bepalen of de cirkel geplaatst kan worden ($toRemove = null$), of dat de \textit{shell} aangepast moet worden.
-Meer informatie hierover in \autoref{sec:een-cirkel-plaatsen-op-de-shell}
+Deze informatie wordt dan gebruikt door de \textit{solver} om te bepalen of de cirkel geplaatst kan worden ($toRemove = null$), of dat de \textit{shell} aangepast moet worden. Deze stap wordt hieronder besproken in \autoref{sec:een-cirkel-plaatsen-op-de-shell}.
 
 \subsection{Een cirkel plaatsen op de \textit{shell}} \label{sec:een-cirkel-plaatsen-op-de-shell}
 
-Om een cirkel te plaatsen op de \textit{shell} wordt eerst de grootste cirkel die past op de \textit{shell} binair gezocht in de lijst van nog-te-plaatsen cirkels.
-Dit gebeurt op analoge manier als het zoeken naar de grootste cirkel die past in een \textit{hole}, zoals beschreven in \autoref{sec:grootste-cirkel-zoeken-die-past-in-een-hole}.
+Om een cirkel te op de \textit{shell} plaatsen wordt eerst de grootste cirkel die op de \textit{shell} past binair %CMT Wat is "binair zoeken", term wordt nergens uitgelegd% gezocht in de lijst van nog-te-plaatsen cirkels.
+De gebruikte methode is vergelijkbaar met het zoeken naar de grootste cirkel die past in een \textit{hole}, zoals beschreven in \autoref{sec:grootste-cirkel-zoeken-die-past-in-een-hole}.
 Indien er een cirkel gevonden wordt die past op de \textit{shell} wordt de \textit{shell} uitgebreid met deze cirkel.
-De cirkel wordt dan tussen de cirkels, waartegen hij geplaatst is, gezet in de \textit{shell}.
+De cirkel wordt dan tussen de cirkels, waartegen hij geplaatst is, in de \textit{shell} geplaatst.
 Dit wordt geïllustreerd in \autoref{fig:plaats-op-shell-simpel}, \autoref{fig:plaats-op-shell-kleiner}.
 De gele lijn (die de \textit{shell} voorstelt, zoals beschreven in \autoref{chap:handleiding-visualisaties}) wordt uitgebreid met een extra punt.
-Ook zorgt dit er voor dat een nieuwe \textit{hole} gemaakt wordt waar mogelijk kleinere cirkels in passen.
+Dit zorgt er ook voor dat een nieuwe \textit{hole} gemaakt wordt waar mogelijk kleinere cirkels in passen.
 
-Een laatste check die gebeurt is om na te gaan of door het plaatsen van de cirkel de \textit{shell} nog juist gevormd is.
+Een laatste check die gebeurt gaat na of er door het plaatsen van de cirkel de \textit{shell} nog juist gevormd is.
 Indien een cirkel geplaatst wordt zodat de cirkels niet meer met de klok mee gesorteerd zijn, zou dit er voor kunnen zorgen dat foutieve plaatsingen voorkomen.
 Om dit te voorkomen wordt de gerichte hoek tussen de geplaatste cirkel en de cirkels waartegen hij geplaatst is nagekeken.
-Indien deze hoek negatief is wordt de \textit{shell} hiervoor aangepast.
+Indien deze hoek negatief is wordt de \textit{shell} hieraan aangepast.
 Dit wordt getoond in \autoref{fig:plaats-op-shell-hoek}.
 Het eerste deel toont de configuratie waarop een cirkel geplaatst zal worden.
 Het laatste deel de uiteindelijke configuratie van de \textit{shell}.
@@ -1031,39 +1030,39 @@ Zie ook \autoref{chap:bedenkingen} voor verdere bedenkingen hieromtrent.
 
 De implementatie gebruikt $double$ variabelen.
 Ook geeft de methode gebruikt om cirkels tegen elkaar te plaatsen, beschreven in \autoref{sec:een-cirkel-tegen-twee-andere-plaatsen}, geen exacte oplossing.
-Hierdoor wordt er doorheen het algoritme een kleine fout opgebouwd.
-Deze fout uit zich in een kleine overlap in de uiteindelijke verkregen \textit{packing}.
+Hierdoor wordt er doorheen het algoritme een kleine fout opgebouwd. %CMT - is de fout cumulatief? Hoe komt dat? Illustreer adhv. code?%
+Deze fout uit zich in een kleine overlap in de uiteindelijke verkregen \textit{packing}. %CMT - overlap zit WAAR? - wat overlapt?%
 Deze overlap blijft echter beperkt tot $10^{-15}$ vierkante eenheden voor de grootste \textit{packings}.
 
 Dit is een inherent probleem van werken in eindige precisie.
 Andere algoritmen hebben dus te kampen met het zelfde probleem, hoewel er niet altijd aandacht aan wordt besteed in de gepubliceerde papers.
-In \cite{akeb2006basic}, \cite{ye2013iterated} en \cite{m2013packing} worden resultaten verkregen met een precisie van respectievelijk $10^{-10}$, $10^{-28}$ en $10^{-7}$.
+In \cite{akeb2006basic}, \cite{ye2013iterated} en \cite{m2013packing} worden resultaten verkregen met een precisie van respectievelijk $10^{-10}$, $10^{-28}$ en $10^{-7}$. %CMT - is het mogelijk om uw algoritme zo te bouwen dat je snelheid kunt opofferen aan precisie die béter is dan de andere voorbeelden?%
 
 %\cite{akeb2006basic} -> $10^{-10}$.
 %\cite{ye2013iterated} -> $10^{-28}$.
 %\cite{m2013packing}  -> $10^{-7}$.
 
-Aangezien de vergelijkingen in \autoref{chap:resultaten} tot een precisie van $10^{-10}$ gebeuren heeft dit verder geen impact op de resultaten.
+Aangezien de vergelijkingen in \autoref{chap:resultaten} tot een precisie van $10^{-10}$ gebeuren heeft dit verder geen impact op de resultaten. %CMT - da's natuurlijk een nogal brute bewering. Wélke resultaten?%
 
 \section{Veronderstellingen}
 
-Zoals eerder vermeld worden er, bij de \textit{holes} en \textit{shell}, enkele veronderstellingen gedaan om het algoritme zeer snel te laten verlopen.
+Zoals eerder vermeld worden er, bij de \textit{holes} en \textit{shell}, enkele veronderstellingen gedaan om het algoritme zeer snel te laten werken.
 Deze veronderstellingen lijken voor de meeste problemen correct te zijn.
-Er zijn echter sommige problemen, vooral als er gewerkt wordt met zeer hoge aantallen cirkels (duizenden), dat er toch nog fouten kunnen gebeuren.
-Dit uit zich dan in \textit{packings} met een grote overlap.
+Er zijn echter sommige problemen, vooral als er gewerkt wordt met zeer hoge aantallen cirkels (duizenden), die wél significante fouten kunnen opleveren.
+Deze uiten zich dan in \textit{packings} met een grote overlap.
 
 Uit huidige tests blijkt er vooral een probleem met de \textit{holes}, de \textit{shell} heeft voor zover mijn huidige tests uitwijzen geen problemen.
 Doordat de cirkels die een \textit{hole} definiëren niet altijd aan elkaar raken kan het gebeuren dat er toch nog een overlap is, als twee \textit{holes} naast elkaar staan.
 
 Een voorstel om dit op te lossen is een \textit{hole} niet op te delen in drie \textit{holes} als er een cirkel in geplaatst wordt, maar slechts in twee.
 Eén van die \textit{holes} bestaat dan uit meer dan drie cirkels.
-Zo is het wel mogelijk om altijd aaneensluitende cirkels een \textit{hole} te laten bepalen.
+Zo is het wel mogelijk om altijd aaneensluitende cirkels een \textit{hole} te laten bepalen. %CMT - is er een reden waarom je dat niet geprobeerd hebt? Grote ingreep in het algoritme?%
 
 \chapter{Resultaten} \label{chap:resultaten}
 
-In dit hoofdstuk worden de verkregen \textit{packings} vergeleken met de best gekende \textit{packings}, zoals gerapporteerd op de Packomania website \cite{packomania}.
+In dit hoofdstuk worden de verkregen \textit{packings} vergeleken met %de best% een reeks gekende %CMT - ik kwam die "best bekende" formulering in het begin ook al tegen. Is een vreemde formulering - uit het Engels vertaald? Best(e) bekende in welke zin? De snélste, de precieste? Schrijf anders gewoon "met een reeks bekende"% \textit{packings}, zoals gerapporteerd op de Packomania website \cite{packomania}.
 Packomania is een website die de best gekende oplossingen voor verschillende \textit{circle-packing} problemen verzamelt.
-Deze vergelijking wordt gemaakt op zowel de verkregen radius van de omschreven cirkel, als ook de tijd nodig om tot deze \textit{packing} te komen indien deze gekend is.
+De oplossingen worden onderling vergeleken, op zowel de verkregen radius van de omschreven cirkel, als ook de tijd nodig om tot deze \textit{packing} te komen indien deze gekend is. %CMT - hier haalt ge het aaan hoe ze vergeleken worden. Ik zou niet "best bekende" schrijven in uw tekst, gewoon bekende.%
 De nodige rekentijd voor deze algoritmen is echter niet altijd even makkelijk te vinden.
 Veel van de \textit{packings} op Packomania hebben geen bijhorende publicatie.
 Het gebruikte algoritme en de nodige tijd om de \textit{packing} te bekomen is dus niet gekend, enkel de verkregen omschreven cirkel en coördinaten van de \textit{packing}.
@@ -1107,15 +1106,15 @@ De verhouding tussen enkele van deze verdelingen worden verduidelijk in \autoref
 	\label{fig:packomania-verdelingen}
 \end {figure}
 
-Al deze berekeningen zijn uitgevoerd op een Mid 2009 Macbook-Pro 15 inc met een 2.8Ghz Core 2 Duo processor en 4GB ram.
+Al deze berekeningen zijn uitgevoerd op een Mid 2009 Macbook-Pro 15 inch met een 2.8Ghz Core 2 Duo processor en 4GB ram.
 
 \section{Packomania vergelijking}
 
 \subsection{Cirkels met gelijke grootte}
 
 In \autoref{fig:vergelijking-even-grote-cirkels} wordt de procentuele vergroting weergegeven voor \textit{packings} met $N$ cirkels van gelijke grootte.
-Er wordt een volledig beeld gegeven, als ook een detail-beeld waar vergrotingen boven de 1,5\% niet worden getekend.
-Deze vergroting is ten opzichte van de best gekende oplossing op de Packomania website.
+Er wordt een volledig beeld gegeven, als ook een gedetailleerder beeld waar vergrotingen boven de 1,5\% niet worden weergegeven.
+Deze vergroting is afgemeten ten opzichte van de best gekende oplossing op de Packomania website.
 Tabellen die mijn resultaten vergeleken met de best gekende tonen kan u terug vinden in \autoref{append:packomania-tabellen-gelijke-grootte}.
 
 \begin {figure}
@@ -1154,12 +1153,12 @@ Dit wordt geïllustreerd in \autoref{fig:packing-even-groot-50}.
 Dit is een zeer eenvoudige structuur, maar benaderd redelijk goed de best gekende oplossingen.
 Meer figuren hiervan vindt u terug in \autoref{append:extra-packing-figuren}.
 
-Nodige tijd blijft onder 10 milliseconden tot $N=100$.
+De benodigde tijd %CMT - tijd voor wat?% blijft onder 10 milliseconden tot $N=100$.
 Tot 500 cirkels blijft de nodige rekentijd onder 100 milliseconden.
 De rekentijd loopt pas op tot één seconde bij 2200 cirkels, en slechts 3,5 seconden voor 5000 cirkels.
 
-Zoals eerder vermeld zijn vergelijkingen in nodige rekentijd moeilijk te vinden.
-In \cite{grosso2010} worden echter tijden gerapporteerd van 110 seconden voor 30 cirkels (mijn algoritme vroeg hier minder dan een milliseconde tijd), en 15311 seconden (meer dan 4 uur) voor 100 cirkels (mijn algoritme vroeg hier 7 milliseconden).
+Zoals eerder vermeld zijn vergelijkingen van berekeningstijden moeilijk te vinden.
+In \cite{grosso2010} worden echter tijden gerapporteerd van 110 seconden voor 30 cirkels (mijn algoritme gebruikte hier minder dan een milliseconde), en 15311 seconden (meer dan 4 uur) voor 100 cirkels (mijn algoritme gebruikte voor hetzelfde probleem 7 milliseconden).
 Zij halen resultaten die zeer dichtbij de best gekende liggen (soms de beste).
 
 Zelfs de constructieve algoritmen beschreven in \cite{akeb2006basic} en \cite{hifi2004approximate} vragen meerdere seconden, en soms minuten, om te berekenen.
@@ -1171,7 +1170,7 @@ Hun resultaten zijn echter moeilijk te vergelijken omdat \cite{akeb2006basic} ee
   \caption{\textit{Packing} voor 500 even grote cirkels} \label{fig:packing-even-groot-500} 
 \end{figure}
 
-\subsubsection{Bespreking}
+\subsubsection{Bespreking} %CMT - ge hebt een sectie verder NOG eens een "bespreking", die op dezelfde manier begint?%
 
 Over het algemeen zijn dit goede resultaten.
 Ze liggen redelijk dichtbij de best gekende oplossing, maar hebben een duidelijk en eenvoudig patroon.
@@ -1184,7 +1183,7 @@ Hoewel mijn algoritme dus relatief goede resultaten geeft voor dit probleem, zij
 
 \subsection{Packomania Benchmark}
 
-Packomania geeft ook resultaten voor enkele benchmark instanties geïntroduceerd door WenQi Huang in verscheidene papers, en samengevat in \cite{huang2006new}.
+Packomania geeft ook resultaten voor enkele benchmark instanties. Deze benchmarks werden geïntroduceerd door WenQi Huang in verscheidene papers, en samengevat in \cite{huang2006new}.
 De radii van de cirkels in deze benchmark instanties kan u terug vinden in \autoref{append:packomania-benchmark-verdelingen}.
 Een eerste set verdelingen (met prefix $NR$) heeft tussen 10 en 60 cirkels per probleem, een tweede set (met prefix $IN$) tussen 9 en 28 cirkels met nog één probleem van 162 cirkels.
 In elke verdeling zitten cirkels met verschillende raddii, maar ook cirkels met gelijke raddii.
@@ -1214,11 +1213,11 @@ Door het zeer gelimiteerd aantal instanties is er echter geen duidelijke trend t
 	\label{fig:vergelijking-packomania-benchmark}
 \end {figure}
 
-Nodige rekentijd is voor al deze problemen ook slechts enkele milliseconden.
+De benodigde rekentijd bedraagt voor al deze problemen ook slechts enkele milliseconden.
 In \cite{ye2013iterated} worden deze problemen opgelost in tijden tussen 1 seconde voor 10 cirkels, en meer dan 2 uur voor 60 cirkels.
 Ook in \cite{huang2013tabu} kan de nodige tijd oplopen tot meerdere uren voor de grotere problemen.
-Zelfs de kleinere problemen (10 tot 15 cirkels) vragen soms meerdere minuten om te berekenen.
-Dit in vergelijking met mijn algoritme dat slechts enkele milliseconden nodig heeft voor elk probleem.
+Zelfs de kleinere problemen (10 tot 15 cirkels) kunnen slechts meerdere minuten worden berekend.
+Mijn algoritme heeft, in vergelijking, slechts enkele miliseconden nodig voor hetzelfde probleem.
 
 \subsubsection{Bespreking}
 
@@ -1226,18 +1225,18 @@ Over het algemeen zijn dit goede resultaten.
 Gemiddeld is er slechts een $5,94\%$ vergroting van de radius van de omschreven cirkel, met slechts 3 problemen die meer dan $10\%$ vergroting hebben.
 Er zijn echter ook 2 problemen die even goed opgelost worden dan de best gekende!
 
-Dit zijn dus goede resultaten, maar het aantal probleem instanties blijft zeer beperkt.
-In de volgende sectie wordt de kracht van het algoritme veel duidelijker met meer cirkel-verdelingen.
+Dit zijn dus goede resultaten, maar het aantal probleeminstanties blijft zeer beperkt.
+In de volgende sectie wordt de kracht van dit nieuwe algoritme duidelijker met meer cirkel-verdelingen.
 
 \subsection{Packomania Machten}
 
 Packomania rapporteert ook resultaten voor verschillende verdelingen met een vaste structuur: $r_i=i^X$.
 Hier is X steeds een andere macht.
-Deze problemen neem ik onder één noemer: de \textit{Packomania macht} problemen.
+Deze problemen verzamelen ik onder één noemer: de \textit{Packomania macht} problemen.
 Tabellen die mijn resultaten met de best gekende vergelijken kan u terug vinden in \autoref{append:packomania-tabellen-macht}.
 
 In \autoref{fig:vergelijking-packomania-macht} worden voor al deze macht problemen de procentuele vergroting getoond.
-Dit is de omtrek van de omschreven cirkel verkregen uit mijn algoritme ten opzichte van de best gekende oplossing.
+Dit is de omtrek van de omschreven cirkel verkregen uit mijn algoritme ten opzichte van de best gekende oplossingen.
 
 \begin {figure}
 	\centering
@@ -1299,7 +1298,7 @@ $r_i = i^{-1/5}$ & 5 tot 64 & 8,88\% \\
 \bottomrule
 \end{tabularx}
 
-Nodige rekentijd is voor al deze problemen slechts enkele milliseconden voor mijn algoritme, rekentijd in de literatuur loopt op tot 6 uur in \cite{jors2011}, tot 7 uur in \cite{lopez2013packing} en zelfs meer dan een volledige dag (27 uur) in \cite{zeng2016iterated}, voor slechts 30 cirkels.
+Nodige rekentijd is voor al deze problemen slechts enkele milliseconden voor mijn algoritme, terwijl de rekentijd voor de implementaties in de literatuur oploopt op tot 6 uur in \cite{jors2011}, tot 7 uur in \cite{lopez2013packing} en zelfs meer dan een volledige dag (27 uur) in \cite{zeng2016iterated}, voor slechts 30 cirkels.
 Het snelste andere algoritme, tot zover ik weet, werd gegeven in \cite{ye2013iterated}.
 Zij hadden tijden tussen 1 seconden voor 5 cirkels, en 1 uur voor 30 cirkels.
 Zij hadden echter geen goed stopping-criteria, en deze tijd was dus de tijd nodig alvorens ze hun beste oplossing vonden, maar hun algoritme bleef ongeacht meer dan 2,5 uur zoeken.
@@ -1323,10 +1322,10 @@ Dit zorgt er voor dat het algoritme minder gebruik kan maken van \textit{holes},
 Het probleem met het meeste verschil in radii, $r_i = i^{-2/3}$, heeft dan ook de beste resultaten.
 Met maximum 4,77\% vergroting en gemiddeld slechts 2,78\%.
 
-Ook is er een duidelijke neerwaartse trend in de vergroting van de omschreven cirkel als het aantal cirkels groter wordt.
+Ook is er een duidelijke neerwaartse trend zichtbaar in de vergroting van de omschreven cirkel als het aantal cirkels groter wordt.
 Dit komt doordat het algoritme dan meer keuzemogelijkheden heeft in elke stap.
 Hierdoor zal het algoritme vaker \textit{holes} kunnen opvullen, en een dichtere \textit{shell} opbouwen.
-Hier zie je duidelijk de kracht van het algoritme als deze genoeg verschillende cirkels heeft om uit te kiezen.
+Hier zie je duidelijk de kracht van het algoritme als dit genoeg verschillende cirkels heeft om uit te kiezen.
 
 Bovendien worden deze resultaten zeer snel bekomen.
 Waar andere algoritmen uit de literatuur uren nodig hebben, vraagt mijn algoritme slechts milliseconden.
@@ -1341,13 +1340,13 @@ Ik heb geen andere methoden gevonden die problemen met zo'n grote aantallen cirk
 De verkregen radii van de omschreven cirkel kan ik dus niet vergelijken.
 
 De nodige tijd om deze problemen op te lossen blijft ook beperkt.
-Problemen tot 1400 cirkels blijft onder één seconde.
+Problemen tot 1400 cirkels blijven onder één seconde.
 Problemen tot 9000 cirkels onder 10 seconden, en 14000 cirkels vragen minder dan één minuut tijd.
 
 Bij deze grote aantallen cirkels komen echter wel enkele problemen naar boven, zoals beschreven in \autoref{chap:bedenkingen}.
 Ook was het niet mogelijk op mijn computer om problemen met meer dan 14000 cirkels op te lossen.
 Bij het nakijken van de oplossing wordt een recursief algoritme gebruikt op de volledige lijst cirkels.
-Dit geeft een \textit{stack-overflow} en heb ik nog niet kunnen oplossen.
+Dit geeft een \textit{stack-overflow} en heb ik nog niet kunnen oplossen. %CMT - mogelijk pistes voor oplossingen?%
 
 Mits de resterende problemen met overlap voor sommige van deze problemen met grote aantallen cirkels, zijn dit interessante resultaten.
 Zelfs voor duizenden cirkels kan het algoritme een resultaat geven in enkele seconden.
@@ -1359,18 +1358,20 @@ In dit hoofdstuk heb ik oplossingen verkregen door mijn algoritme vergeleken met
 Ook heb ik de nodige rekentijd vergeleken met enkele andere algoritmen.
 
 De oplossingen verkregen met mijn nieuwe constructieve heuristiek hebben een gemiddeld minder dan 6\% grotere omschreven cirkel.
-Dit lijkt mij een zeer aanvaardbare vergroting van de omschreven cirkel, rekening houdend dat het algoritme deze problemen in slechts milliseconden op lost.
+Dit lijkt mij een zeer aanvaardbare vergroting van de omschreven cirkel, rekening houdend met het feit dat het nieuwe algoritme deze problemen in slechts milliseconden op lost.
 Zelfs de grootste problemen, bestaande uit duizenden cirkels, kunnen in slechts enkele seconden opgelost worden.
 Ook is er een interessante neerwaartse trend in de vergroting van de radius van de bekomen omschreven cirkel.
 Dit toont de kracht van het algoritme wanneer het meer cirkels heeft met verschillende radii om uit te kiezen.
 
 Bovendien laat het algoritme toe om problemen met veel grotere aantallen cirkels in aanvaardbare tijd op te lossen.
-Iets dat, voor zover ik zeet, geen enkel ander algoritme mogelijk maakt binnen aanvaardbare tijd, laat staan binnen enkele seconden.
+Iets dat, voor zover ik zeet, geen enkel ander algoritme mogelijk maakt binnen aanvaardbare tijd, laat staan binnen enkele seconden. %CMT - beetje maf dat krék dezelfde zin vier paragrafen hoger er ook al staat. Misschien voor de schoonheid hetschrijven. Anders allemaal copy-paste.%
+
+%CMT - ik zou nog aangeven  - je zegt "indrukwekkende resultaten", klinkt een beetje als uzelf bewierroken. Je kan wel aangeven: een compleet andere aanpak met dit algoritme dan gangbaar in de literatuur. Slechts kleine vergroting van omcirkel / verlies preciesie, maar grote snelheidswinst. Als je een scenario zou kunnen aangeven waarin dat interessant is (versus de gevestigde oplossingen) denk ik dat dat goed zou zijn om kort toe te lichten%
 
 \chapter{Verder werk} \label{chap:verder-werk}
 
 In dit hoofdstuk geef ik enkele voorstellen voor verdere uitwerkingen van het algoritme.
-Mogelijke verbeteringen, zowel in snelheid als kwaliteit van uitkomsten.
+Mogelijke verbeteringen, zowel in snelheid als kwaliteit (de grootte van de bekomen omcirkel) van uitkomsten. %CMT - hier ook weer vergelijkbare opmerking als eerder al: ik denk dat je kwaliteit hier helderder moet definieren. Ik ga ervan uit dat je hier "kleinere omsluitende cirkel" bedoelt, maar zet dat er dan bij tussen haakjes, minstens. - In de inleiding staat dat wel, denk ik, maar bijvoorbeeld in de defintie van "packing" aan het begin van je tekst geef je dat niet aan (wel wanneer ze correct is, maar niet - kleinere packings zijn betere packints).%
 Dit zijn mogelijke ideeën om in de toekomst op verder te werken.
 
 \section{Constante-tijd omschreven cirkel}
@@ -1392,9 +1393,9 @@ Wat de best-passende cirkel is is echter moeilijk te bepalen.
 In de huidige implementatie worden er daarom enkele keuzes gemaakt, gebaseerd op bestaande heuristieken en intuïtie.
 Hier kunnen echter andere keuzes gemaakt worden, die mogelijk tot betere resultaten zullen leiden.
 
-Eén zo'n alternatieve keuze is bij het plaatsen op de \textit{shell}.
+Eén voorbeeld van een alternatieve keuze is bij het plaatsen van een cirkel op de \textit{shell}.
 Nu worden de nieuwe cirkels zo dicht mogelijk bij het huidige middelpunt geplaatst.
-Dit omdat de omschreven cirkel dan zo weinig mogelijk uitgebreid moet worden.
+Dit gebeurt omdat de omschreven cirkel dan zo weinig mogelijk uitgebreid moet worden.
 Maar wat als, wanneer we geen cirkel meer binnen de huidige omcirkel kunnen plaatsen, we de cirkel zo ver mogelijk van het middelpunt plaatsen (maar wel nog tegen twee cirkels op de \textit{shell})?
 Dit zal er voor zorgen dat de omschreven cirkel veel verder uitgebreid zal worden.
 Het zal er ook voor zorgen dat de omcirkel veel minder vaak uitgebreid moet worden, omdat hij in grotere stappen uitbreidt.
@@ -1404,18 +1405,18 @@ Mogelijk geeft dit aanleiding tot betere en misschien snellere \textit{packings}
 
 In deze thesis heb ik een nieuwe constructieve heuristiek voorgesteld.
 Deze is gebaseerd op het \textit{best-fit} principe, waarbij in elke stap de beste cirkel gekozen wordt om aan de oplossing toe te voegen.
-Deze keuze werd gebaseerd op twee concepten: \textit{holes} en de \textit{shell}.
+Deze nieuwe heuristiek gebruikt twee nieuwe concepten: \textit{holes} en de \textit{shell}.
 Eerst werden de \textit{holes} opgevuld, en dan cirkels geplaatst aan de buitenkant van de tussen-oplossing, op de \textit{shell}.
 Door enkele veronderstellingen te maken over het aantal cirkels die getest moeten worden voor overlap bij elke plaatsing, kan het algoritme zeer snel relatief goede \textit{packings} genereren.
-Ik heb resultaten getoond, vergeleken met de best-gekende \textit{packings} voor een groot aantal cirkel-verdelingen, die aantonen dat het algoritme \textit{packings} maakt die gemiddeld slechts 5\% groter zijn.
+Ik heb resultaten getoond, vergeleken met de best-gekende \textit{packings} voor een groot aantal cirkel-verdelingen, die aantonen dat het algoritme \textit{packings} maakt die gemiddeld slechts 5\% groter zijn. %CMT - ik zou hier geen nummerkes vermelden. Schrijf gewoon: goede resultate behaalt tegenover bestaande implmentaties%
 Deze \textit{packings} werden gegenereerd in een fractie van de tijd die andere, state-of-the-art algoritmen nodig hebben (milliseconden tegenover uren).
 
-% // TODO: Extra speculatie over gebruik van mijn algoritme?
+% // TODO: Extra speculatie over gebruik van mijn algoritme? - ja, dat zette ik ook al in mijn opmerkingen
 
 Ik denk dus dat ik zeker geslaagd ben in mijn opzet.
 Een constructief algoritme maken dat in real-time goede \textit{packings} kan maken voor het zeer moeilijke \textit{cirkel-packing} probleem.
 
-% // TODO ALGEMEEN: Minder informele termen? Omcirkel->omschreven cirkel
+% // TODO ALGEMEEN: Minder informele termen? Omcirkel->omschreven cirkel < Bwa. Ik dacht dat omcirkel echt een woord was, maar ge hebt dat verzonnen ofwa?
 
 % // TODO ALGEMEEN: Voeg echte definities toe, bv bij Hole echt een hoofding "Definitie" en dan het gat definieren. Ook voor shell, omcirkel.
 
