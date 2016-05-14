@@ -900,8 +900,8 @@ Op \autoref{fig:plaats-op-shell-simpel} wordt getoond hoe de \textit{packing} ve
 Eerst wordt een \textit{packing} zonder \textit{holes} getoond en vervolgens de \textit{packing} nadat een cirkel op de \textit{shell} geplaatst is.
 Hierop is duidelijk te zien hoe de \textit{shell} aangepast werd, en deze plaatsing geleid heeft tot een nieuwe \textit{hole}.
 Zoals eerder aangegeven is het mogelijk dat de grootste cirkel niet past op een positie op de \textit{shell}.
-Dit wordt geïllustreerd in \autoref{fig:plaats-op-shell-kleiner}.
-Het is ook mogelijk dat geen enkele cirkel nog past op de \textit{shell}, zoals getoond in \autoref{fig:plaats-op-shell-geen-enkele-past}. %En wat gebeurt er dan? Is "plaatsen op de shell" niet uw laatste optie in het algoritme?%
+Het algoritme zal dan proberen een (beschikbare) kleinere cirkel op de \textit{shell} te plaatsen, dit wordt geïllustreerd in \autoref{fig:plaats-op-shell-kleiner}.
+Het is ook mogelijk dat geen enkele cirkel nog past op de \textit{shell}, zoals getoond in \autoref{fig:plaats-op-shell-geen-enkele-past}. %CMT: En wat gebeurt er dan? Is "plaatsen op de shell" niet uw laatste optie in het algoritme?%
 
 \begin{figure}
   \centering
@@ -925,16 +925,16 @@ Het is ook mogelijk dat geen enkele cirkel nog past op de \textit{shell}, zoals 
 
 \subsection{Slim de omcirkel berekenen gebaseerd op de \textit{shell}}
 
-Bij het kiezen van de kandidaat cirkels om een cirkel tegen te plaatsen op de \textit{shell} wordt gebruik gemaakt van de omcirkel van de huidige tussen-oplossing.
+Bij het kiezen van de kandidaatcirkels om een cirkel tegen te plaatsen op de \textit{shell} wordt gebruik gemaakt van de omcirkel van de huidige tussen-oplossing.
 Zoals eerder vermeld kan voor elke (tussen-)oplossing de omcirkel berekend worden.
 Dit gebeurt door een aangepaste versie van het Welz algoritme voor de omcirkel van punten beschreven in \cite{welzl1991smallest}.
-De implementatie is gebaseerd op de implementatie in \cite{sunshine2008welzl}.
+De gebruikte implementatie is gebaseerd op de implementatie in \cite{sunshine2008welzl}.
 Het is een recursief algoritme dat in lineaire tijd de omcirkel kan berekenen.
-Het idee is dat de omcirkel van een aantal cirkels (of punten) volledig gedefinieerd is door maximum drie cirkels.
+Het basisidee bestaat eruit dat de omcirkel van een aantal cirkels (of punten) volledig gedefinieerd is door maximum van drie cirkels.
 Het algoritme vindt deze twee of drie cirkels.
 
-Het is eenvoudig in te zien dat deze drie cirkels aan de buitenkant van een (tussen-)oplossing zullen liggen.
-Dit is ook net wat de \textit{shell} is, de cirkels aan de buitenkant van een oplossing.
+Het is intuitief te begrijpen dat deze drie cirkels aan de buitenkant van een (tussen-)oplossing zullen liggen.
+Dat is ook net waaruit de \textit{shell} bestaat, de cirkels aan de buitenkant van een oplossing.
 Het is dus mogelijk om in elke stap van de \textit{solver} de omcirkel zeer efficiënt te berekenen.
 De complexiteit is dan slechts lineair in het aantal cirkels op de \textit{shell} in huidige (tussen-)oplossing, wat slechts een subset is van het totaal aantal cirkels in de oplossing.
 Aangezien de omcirkel regelmatig moet herberekend worden doorheen het algoritme is dit een zeer interessante optimalisatie.
