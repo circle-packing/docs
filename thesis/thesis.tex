@@ -1167,8 +1167,8 @@ Hun resultaten zijn echter moeilijk te vergelijken omdat \cite{akeb2006basic} ee
 
 \begin{figure}
   \centering
-  \includegraphics[width=0.65\textwidth]{packing-even-groot-50.png}
-  \caption{\textit{Packing} voor 50 even grote cirkels} \label{fig:packing-even-groot-50} 
+  \includegraphics[width=0.65\textwidth]{packing-even-groot-500.png}
+  \caption{\textit{Packing} voor 500 even grote cirkels} \label{fig:packing-even-groot-500} 
 \end{figure}
 
 \subsubsection{Bespreking}
@@ -1410,6 +1410,8 @@ Door enkele veronderstellingen te maken over het aantal cirkels die getest moete
 Ik heb resultaten getoond, vergeleken met de best-gekende \textit{packings} voor een groot aantal cirkel-verdelingen, die aantonen dat het algoritme \textit{packings} maakt die gemiddeld slechts 5\% groter zijn.
 Deze \textit{packings} werden gegenereerd in een fractie van de tijd die andere, state-of-the-art algoritmen nodig hebben (milliseconden tegenover uren).
 
+% // TODO: Extra speculatie over gebruik van mijn algoritme?
+
 Ik denk dus dat ik zeker geslaagd ben in mijn opzet.
 Een constructief algoritme maken dat in real-time goede \textit{packings} kan maken voor het zeer moeilijke \textit{cirkel-packing} probleem.
 
@@ -1418,6 +1420,11 @@ Een constructief algoritme maken dat in real-time goede \textit{packings} kan ma
 % // TODO ALGEMEEN: Voeg echte definities toe, bv bij Hole echt een hoofding "Definitie" en dan het gat definieren. Ook voor shell, omcirkel.
 
 \newpage
+
+% Bibliography
+
+\bibliography{thesis}
+\bibliographystyle{plain}
 
 % Appendixes
 
@@ -1522,36 +1529,108 @@ De volledige lijst van grotere problemen, van 100 cirkels tot 14000 cirkels, kan
 
 \chapter{Extra \textit{packing} figuren} \label{append:extra-packing-figuren}
 
-//TODO Update deze afbeeldingen
+% gelijke grootte
 
-\section{Gelijke grootte cirkels}
+\begin{figure}
+  \centering
+  \includegraphics[width=0.65\textwidth]{packing-even-groot-50.png}
+  \caption{\textit{Packing} voor 50 cirkels met gelijke grootte}
+\end{figure}
 
 \begin{figure}
   \centering
   \includegraphics[width=0.65\textwidth]{packing-even-groot-500.png}
-  \caption{\textit{Packing} voor 500 even grote cirkels} \label{fig:packing-even-groot-500} 
+  \caption{\textit{Packing} voor 500 cirkels met gelijke grootte}
 \end{figure}
 
 \begin{figure}
   \centering
   \includegraphics[width=0.65\textwidth]{packing-even-groot-2000.png}
-  \caption{\textit{Packing} voor 2000 even grote cirkels} \label{fig:packing-even-groot-2000} 
+  \caption{\textit{Packing} voor 2000 cirkels met gelijke grootte}
 \end{figure}
 
-\section{Packomania Machten}
+\begin{figure}
+  \centering
+  \includegraphics[width=0.65\textwidth]{packing-even-groot-5000.png}
+  \caption{\textit{Packing} voor 5000 cirkels met gelijke grootte}
+\end{figure}
+
+% Machten
+
+% 100
+\begin{figure}
+  \centering
+  \includegraphics[width=0.65\textwidth]{packing-1div2-100.png}
+  \caption{\textit{Packing} voor 100 cirkels met verdeling $r_i=i^{1/2}$}
+\end{figure}
+
+\begin{figure}
+  \centering
+  \includegraphics[width=0.65\textwidth]{packing-neg1div2-100.png}
+  \caption{\textit{Packing} voor 100 cirkels met verdeling $r_i=i^{-1/2}$}
+\end{figure}
+
+\begin{figure}
+  \centering
+  \includegraphics[width=0.65\textwidth]{packing-neg2div3-100.png}
+  \caption{\textit{Packing} voor 100 cirkels met verdeling $r_i=i^{-2/3}$}
+\end{figure}
+
+\begin{figure}
+  \centering
+  \includegraphics[width=0.65\textwidth]{packing-neg1div5-100.png}
+  \caption{\textit{Packing} voor 100 cirkels met verdeling $r_i=i^{-1/5}$}
+\end{figure}
+
+% 1000
+\begin{figure}
+  \centering
+  \includegraphics[width=0.65\textwidth]{packing-1div2-1000.png}
+  \caption{\textit{Packing} voor 1000 cirkels met verdeling $r_i=i^{1/2}$}
+\end{figure}
+
+\begin{figure}
+  \centering
+  \includegraphics[width=0.65\textwidth]{packing-neg1div2-1000.png}
+  \caption{\textit{Packing} voor 1000 cirkels met verdeling $r_i=i^{-1/2}$}
+\end{figure}
+
+\begin{figure}
+  \centering
+  \includegraphics[width=0.65\textwidth]{packing-neg2div3-1000.png}
+  \caption{\textit{Packing} voor 1000 cirkels met verdeling $r_i=i^{-2/3}$}
+\end{figure}
 
 \begin{figure}
   \centering
   \includegraphics[width=0.65\textwidth]{packing-neg1div5-1000.png}
-  \caption{\textit{Packing} voor 1000 cirkels met verdeling $r_i=i^{-1/5}$} \label{fig:packing-neg1div5-1000} 
+  \caption{\textit{Packing} voor 1000 cirkels met verdeling $r_i=i^{-1/5}$}
 \end{figure}
 
-//TODO: Meer afbeeldingen van machten packings
+%5000
+\begin{figure}
+  \centering
+  \includegraphics[width=0.65\textwidth]{packing-1div2-5000.png}
+  \caption{\textit{Packing} voor 5000 cirkels met verdeling $r_i=i^{1/2}$}
+\end{figure}
 
-% Bibliography
+\begin{figure}
+  \centering
+  \includegraphics[width=0.65\textwidth]{packing-neg1div2-5000.png}
+  \caption{\textit{Packing} voor 5000 cirkels met verdeling $r_i=i^{-1/2}$}
+\end{figure}
 
-\bibliography{thesis}
-\bibliographystyle{plain}
+\begin{figure}
+  \centering
+  \includegraphics[width=0.65\textwidth]{packing-neg2div3-5000.png}
+  \caption{\textit{Packing} voor 5000 cirkels met verdeling $r_i=i^{-2/3}$}
+\end{figure}
+
+\begin{figure}
+  \centering
+  \includegraphics[width=0.65\textwidth]{packing-neg1div5-5000.png}
+  \caption{\textit{Packing} voor 5000 cirkels met verdeling $r_i=i^{-1/5}$}
+\end{figure}
 
 \newpage
 
