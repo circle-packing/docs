@@ -474,7 +474,7 @@ Deze problemen worden besproken in \autoref{chap:bedenkingen} en de snelheid en 
 \section{Basis-idee}
 
 Het basis-idee van de heuristiek is om stelselmatig een \textit{packing} op te bouwen, door telkens cirkels uit een reeks gegeven cirkels te zoeken die het best passen.
-Bij elke stap wordt telkens eerst een plek gekozen om een cirkel te plaatsen in een \textit{hole}, of op de \textit{shell} (zie voor verdere informatie respectievelijk \label{sec:holes} en \autoref{sec:shell}).
+Bij elke stap wordt telkens eerst een plek gekozen om een cirkel te plaatsen in een \textit{hole}, of op de \textit{shell} (zie voor verdere informatie respectievelijk \autoref{sec:holes} en \autoref{sec:shell}).
 Hier wordt dan de best-passende cirkel geplaatst.
 Eenmaal een cirkel geplaatst is wordt deze nooit meer verplaatst.
 Dit laat toe om deze \textit{holes} en \textit{shell} efficiënt op te bouwen en gebruiken.
@@ -922,16 +922,14 @@ Dan zal de \textit{shell} uitgebreid worden naar buiten, en zal in de volgende s
 
 \begin{figure}
   \centering
-  \includegraphics[width=1.0\textwidth]{plaats-op-shell-kleiner.png}
-  \caption{Het plaatsen van een kleinere cirkel op de \textit{shell}} \label{fig:plaats-op-shell-kleiner} 
-  \caption*{Focus: midden bovenaan}
+  \includegraphics[width=1.0\textwidth]{plaats-op-shell-kleiner_arrow.png}
+  \caption{Het plaatsen van een kleinere cirkel op de \textit{shell}} \label{fig:plaats-op-shell-kleiner}
 \end{figure}
 
 \begin{figure}
   \centering
-  \includegraphics[width=1.0\textwidth]{plaats-op-shell-geen-enkele-past.png}
-  \caption{\textit{Shell} aanpassen als geen enkele cirkel past} \label{fig:plaats-op-shell-geen-enkele-past} 
-  \caption*{Focus: rechts onderaan}
+  \includegraphics[width=1.0\textwidth]{plaats-op-shell-geen-enkele-past_arrow.png}
+  \caption{\textit{Shell} aanpassen als geen enkele cirkel past} \label{fig:plaats-op-shell-geen-enkele-past}
 \end{figure}
 
 \subsection{Slim de omcirkel berekenen gebaseerd op de \textit{shell}}
@@ -1158,7 +1156,7 @@ Dit komt mogelijk omdat hoe meer cirkels er zijn, hoe moeilijker het probleem wo
 Hierdoor zullen de best gekende oplossingen voor problemen met zulke grote aantallen cirkels minder dichtbij de absolute optimale oplossing liggen.
 Omdat mijn algoritme enkel nieuwe cirkels tegen twee reeds geplaatste cirkels plaatst, hebben al mijn oplossingen voor dit probleem een duidelijke structuur.
 Deze structuur is een zeshoekige structuur.
-Dit wordt geïllustreerd in \autoref{fig:packing-even-groot-50}.
+Dit wordt geïllustreerd in \autoref{fig:packing-even-groot-500}.
 Dit is een zeer eenvoudige structuur, maar benaderd redelijk goed de best gekende oplossingen.
 Meer figuren hiervan vindt u terug in \autoref{append:extra-packing-figuren}.
 
