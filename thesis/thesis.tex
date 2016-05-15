@@ -233,7 +233,7 @@ Alle broncode is beschikbaar op GitHub \cite{circle-packing-github}
 
 Hoewel dit probleem wiskunig relatief eenvoudig voor te stellen is, is het uitwerken van een computioneel exacte oplossing wél een uitdaging.
 Bestaande implementaties zijn niet tijds-geoptimaliseerd, en vragen dus veel berekeningstijd. 
-In deze thesis stek ik heuristiek voor die het mogelijk maakt zéér snel oplossingen te genereren.
+In deze thesis stek ik een nieuwe heuristiek voor die het mogelijk maakt zéér snel oplossingen te genereren.
 
 Dit werk werd gedaan als master proef voor de \textit{Master of Science in de toegepaste informatica} te KU Leuven onder de CODeS onderzoeksgroep.
 Het hield 18 studiepunten in van deze éénjarige master.
@@ -277,7 +277,7 @@ Bestaande pogingen vragen uren en soms dagen tijd om slechts tientallen cirkels 
 De heuristiek voorgesteld in deze thesis lost deze problemen op in slechts milliseconden.
 
 Daarbovenop maakt deze heuristiek het mogelijk om nieuwe problemen op te lossen.
-Zou zouden problemen met duizenden cirkels zouden met voorgaande pogingen onrealistisch veel tijd vragen, tientallen cirkels vragen al zeer veel tijd.
+Zo zouden problemen met duizenden cirkels zouden met voorgaande pogingen onrealistisch veel tijd vragen, tientallen cirkels vragen al zeer veel tijd.
 Dit soort problemen kunnen wel opgelost worden met deze nieuwe heuristiek.
 
 \newpage
@@ -300,8 +300,8 @@ This is a very acceptable increase when considering that the results are compute
 Existing solution require hours or days to compute a solution for just tens of circles.
 The heuristic in this thesis will give a solution in just milliseconds for the same problems.
 
-On top of that this new heuristic allows us to solve new problems problems. 
-For example, problems with thousands of circles would take an unrealistic amount of time for older algorithms.
+On top of that this new heuristic allows us to solve new problems. 
+Problems with thousands of circles would take an unrealistic amount of time for older algorithms.
 However for this new heuristic these problems aren't out of scope.
 
 \newpage
@@ -322,10 +322,10 @@ However for this new heuristic these problems aren't out of scope.
 
 \chapter{Inleiding}
 
-In deze thesis stel ik een nieuwe heuristiek voor, gebaseerd op het \textit{best-fit}-principe, als oplossing voor \textit{circle-packing} probleem.
+In deze thesis stel ik een nieuwe heuristiek voor, gebaseerd op het \textit{best-fit}-principe, als oplossing voor het \textit{circle-packing} probleem.
 De heuristiek is specifiek ontworpen voor het sub-probleem van het plaatsen van cirkels in een cirkel.
 Het \textit{circle-packing} probleem bestaat uit het plaatsen van $n$ cirkels in een zo klein mogelijke cirkelvormige \textit{container}.
-Het is de bedoeling om voor de gegeven cirkels de coordinaten van de middelpunten te vinden zodat de cirkels niet overlappen en de radius van de omsluitende cirkel zo klein mogelijk is.
+Het is de bedoeling om voor de gegeven cirkels de coordinaten van de middelpunten te vinden zodat de cirkels niet overlappen en de radius van de omschreven cirkel zo klein mogelijk is.
 
 \textit{Circle-packing} is zowel theoretisch als praktisch een zeer interessant probleem.
 Het kan gebruikt worden om verschillende \textit{real-world} problemen op te lossen, zoals het plaatsen van zendmasten, stockage van cilindrische voorwerpen, en het combineren van verschillende kabels. 
@@ -359,10 +359,10 @@ In \cite{graham1996repeated} en \cite{lubachevsky1997curved} probeert men vaste 
 In \cite{graham1998dense} en \cite{wang2002improved} worden fysisch geïnspireerde simulaties gebruikt om \textit{packing} te bekomen.
 
 In \cite{george1995packing} worden verschillende meta-heuristieken, waaronder een genetisch algoritme, uitgeprobeerd en vergeleken.
-Zij ondervinden dat dit genetisch algoritme, alsook een quasi-random techniek, in vergelijking met de andere uitgeprobeerde meta-heuristieken, de beste resultaten geven. // QUESTION: wat zijn "de beste" in deze context? Snelheid? Precisie? Efficientie?
+Zij ondervinden dat dit genetisch algoritme, alsook een quasi-random techniek, in vergelijking met de andere uitgeprobeerde meta-heuristieken, resultaten met de kleinste omschreven cirkel geven.
 In \cite{hifi2004approximate} en \cite{hifi2004simulated} worden respectievelijk een genetisch en een simulated-annealing algoritme voorgesteld.
-Een recentere poging is het Monotonic Basin Hopping algoritme voorgesteld in \cite{grosso2010}.
 
+Een recentere poging is het Monotonic Basin Hopping algoritme voorgesteld in \cite{grosso2010}.
 Hierin beschrijven de onderzoekers dat er te veel lokale optima zijn voor een eenvoudige multi-start behandeling, en ze stellen als mogelijke oplossing een variant voor waarin ze op een slimme manier de beginpunten proberen genereren.
 Meer recent zijn \cite{jors2011} (2011), \cite{ye2013iterated} (2013) en \cite{zeng2016iterated} (2016).
 Zij gebruiken de combinatorische eigenschappen van circle-packing in combinatie met een zoekmethode zoals \textit{tabu-search} en \textit{iterated local search} om een goede volgorde te vinden waarin de cirkels geplaatst kunnen worden.
@@ -404,16 +404,16 @@ In \autoref{chap:bedenkingen} bespreek ik enkele bedenkingen die ik heb bij mijn
 In \autoref{chap:verder-werk} bespreek ik mogelijke verbeteringen en ideeën voor verder onderzoek.
 In \autoref{chap:handleiding-visualisaties} wordt kort verduidelijkt hoe de visualisaties, die doorheen deze thesis gebruikt worden, dienen geïnterpreteerd te worden.
 
-In het eerstvolgende hoofdstuk (\autoref{chap:definities}) worden echter eerst enkele termen die gebruikt worden in de verdere tekst, sommige uniek binnen  dit onderzoek, toegelicht. %/of thesis ipv onderzoek als vervanging van "heuristiek"? - In elke paragraaf staat enkele keren heuristiek, leest nogal vermoeiend.
+In het eerstvolgende hoofdstuk (\autoref{chap:definities}) worden echter eerst enkele termen die gebruikt worden in de verdere tekst, sommige uniek binnen  dit onderzoek, toegelicht.
 
-% // TODO: Is het nodig sommige termen te verduidelijken? De termen: NP-Moeilijk, meta-heuristiek, genetisch algoritme, quasi-random techniek, simulated-annealing, tabu-search, bottom-left-first heuristiek -> Ja. TODO (Dit is nog niet gebeurd?)
+% // TODO: Termen verduidelijken: meta-heuristiek, genetisch algoritme, quasi-random techniek, simulated-annealing, tabu-search, bottom-left-first heuristiek
 
 \chapter{Definities en termen} \label{chap:definities}
 
 \textbf{Cirkel}: In de literatuur rond \textit{circle-packing} en in deze thesis wordt het woord \textit{cirkel} of \textit{circle} gebruikt, maar eigenlijk zou het correcter zijn om \textit{schijf} te gebruiken. Dit geedft (onder andere) aan dat er dus ook een overlap tussen \textit{cirkel} is wanneer een cirkel volledig omringd is door een andere. 
 Voor twee cirkels met radii $r_a, r_b$ en coordinaten  $(x_a,y_a), (x_b,y_b)$ is er een overlap wanneer $r_a + r_b > \sqrt{(x_a-x_b)^2 + (y_a-y_b)^2}$. 
 
-\textbf{Packing}: Vertaald als \textbf{plaatsing}. En \textbf{packing is een collectie cirkels met elk een toegewezen positie. Een \textit{packing} is correct wanneer er geen overlap is tussen de cirkels in deze \textit{packing}.
+\textbf{Packing}: Vertaald als \textbf{plaatsing}. En \textbf{packing} is een collectie cirkels met elk een toegewezen positie. Een \textit{packing} is correct wanneer er geen overlap is tussen de cirkels in deze \textit{packing}. Een \textit{packing} is \textit{beter} dan een andere \textit{packing} wanneer deze een kleinere omschreven cirkel heeft.
 
 \textbf{Hole}: Eén van de concepten uniek aan deze heuristiek. Op een \textit{high-level} niveau is een \textbf{hole} een plek tussen drie cirkels waarin  een andere cirkel kan geplaatst worden. Dit concept wordt in gedetailleerd uitgelegd in \autoref{sec:holes}.
 
@@ -421,11 +421,13 @@ Voor twee cirkels met radii $r_a, r_b$ en coordinaten  $(x_a,y_a), (x_b,y_b)$ is
 
 \textbf{Solver}: Een programma dat, gegeven een aantal cirkels, een \textit{packing} maakt voor deze cirkels.
 
-\textbf{Omschreven cirkel} of \textbf{omcirkel}: De kleinst mogelijke cirkel (tenzij anders vermeld) waarvoor geldt dat alle cirkels in de \textit{packing} volledig in deze gegeven cirkel liggen.
+\textbf{Omschreven cirkel} of \textbf{omcirkel}: De kleinst mogelijke cirkel (tenzij anders vermeld) waarvoor geldt dat alle cirkels in de \textit{packing} volledig in deze cirkel liggen.
+
+\textbf{Binair zoeken}: Een klassieke zoektechniek die werkt op gesorteerde lijsten. Hierin wordt de lijst steeds in twee verdeeld door telkens het middelste element te testen. Er wordt dan verder gezocht in één van de twee delen, afhangende op het geteste element kleiner of groter is dan de gezochte waarde. Dit geeft een logaritmische complexiteit.
 
 \chapter{Handleiding voor het lezen van de visualisaties} \label{chap:handleiding-visualisaties}
 
-Doorheen deze thesis zal ik gebruik maken van visualisaties die gegenereerd door de implementatie (in Java) van het algoritme, ter illustratie van de besproken en onderzochte concepten.
+Doorheen deze thesis zal ik gebruik maken van visualisaties die gegenereerd zijn door de implementatie (in Java) van het algoritme, ter illustratie van de besproken en onderzochte concepten.
 Twee voorbeelden van zulke visualisaties zijn \autoref{fig:handleiding-visualisatie-1} en \autoref{fig:handleiding-visualisatie-2}.
 
 \begin{figure}
@@ -446,8 +448,9 @@ Deze figuren kan u op de volgende manier interpreteren:
 \item De \textbf{reeds geplaatste cirkels} worden getoond als \textbf{licht blauwe cirkels}.
 \item De \textbf{shell} is een \textbf{gele lijn} aan de buitenrand van de \textit{packing}. Deze verbindt de middelpunten van de cirkels op de \textit{shell}.
 \item De kleine \textbf{groene stippen} op de \textit{shell} geven de posities aan waarop mogelijk een cirkel geplaatst zal worden.
-\item \textbf{Holes} worden getoond als \textbf{rode driehoeken}. De hoekpunten liggen dichtbij %dichtbij klinkt nogal 'slaat er met uw klak naar' - schrijf gewoon "op"?% de middelpunten van de drie cirkels die de \textit{hole} definiëren.
-\item De \textbf{omcirkel} van de huidige \textit{packing} wordt getoond als een \textbf{groene cirkel}.
+\item \textbf{Holes} worden getoond als \textbf{rode driehoeken}. De hoekpunten liggen dichtbij de middelpunten van de drie cirkels die de \textit{hole} definiëren.
+
+\item De \textbf{omschreven cirkel} van de huidige \textit{packing} wordt getoond als een \textbf{groene cirkel}.
 \end{itemize}
 
 Op \autoref{fig:handleiding-visualisatie-1} is zijn er duidelijk drie \textit{holes} te zien.
@@ -464,21 +467,24 @@ Vervolgens leg ik stelselmatig de volledige werking uit, samen met alle veronder
 De volledige implementatie gebeurde in Java, en de broncode is beschikbaar op GitHub \cite{circle-packing-github}.
 
 Om het algoritme zeer snel te maken worden enkele veronderstellingen gemaakt omtrent de nodige overlap-checks bij elke stap.
-Deze veronderstellingen zijn niet theoretisch bewezen, maar wel empirisch getest. %Gebaseerd op eerder onderzoek? Of is dat uw empirische test? Is daar ook informatie over of resultaten van?%
+Deze veronderstellingen zijn niet theoretisch bewezen, maar wel zelf empirisch getest.
 Voor de meeste verdelingen van cirkels lijken deze veronderstellingen goed stand te houden, maar er zijn nog enkele \textit{edge-cases} waarin er toch nog fouten gebeuren.
 Deze problemen worden besproken in \autoref{chap:bedenkingen} en de snelheid en kwaliteit van de oplossingen wordt verder besproken in \autoref{chap:resultaten}.
 
 \section{Basis-idee}
 
-Het basis-idee van de heuristiek is om stelselmatig een \textit{packing} op te bouwen, door telkens cirkels %uit een reeks gegeven cirkels% te zoeken die het best passen.
-Bij elke stap wordt telkens eerst een plek gekozen om een cirkel te plaatsen (in een \textit{hole}, of op de \textit{shell}, zie voor verdere informatie: %verwijs naar juiste plek%).
+Het basis-idee van de heuristiek is om stelselmatig een \textit{packing} op te bouwen, door telkens cirkels uit een reeks gegeven cirkels te zoeken die het best passen.
+Bij elke stap wordt telkens eerst een plek gekozen om een cirkel te plaatsen in een \textit{hole}, of op de \textit{shell} (zie voor verdere informatie respectievelijk \label{sec:holes} en \autoref{sec:shell}).
 Hier wordt dan de best-passende cirkel geplaatst.
 Eenmaal een cirkel geplaatst is wordt deze nooit meer verplaatst.
-Dit laat toe om intelligente %intelligent in welke zin?% structuren op te bouwen en deze %gebruikt ge die structuur?% op een zeer efficiënte manier te gebruiken. %De clue is dus: wat is het voordeel van uw cirkels niet te verplaatsen in dit algoritme (versus wél) - in welke zin is dat efficient/intelligent? Snelheid?%
+Dit laat toe om deze \textit{holes} en \textit{shell} efficiënt op te bouwen en gebruiken.
+Als de cirkels wel nog verplaatst konden worden zou het veel moeilijker, en rekenintensiever, zijn om deze structuren op te bouwen.
+Dan zouden in elke stap alle cirkels met elkaar vergeleken moeten worden om, bijvoorbeeld, te vinden waar nog \textit{holes} zitten.
 
 Het algoritme bouwt dus cirkel per cirkel een \textit{packing} op.
-Dit gebeurt door in elke stap een positie te kiezen %random? Of hoe verloopt de keuze?%, en hierin een cirkel te proberen plaatsen.
-Indien er geen cirkel geplaatst kan worden, wordt de interne structuur van het probleem vernieuwd om over deze nieuwe informatie te reflecteren.
+Dit gebeurt door in elke stap een positie te kiezen, en hierin een cirkel te proberen plaatsen.
+Eerst worden alle gaten uitgeprobeerd, in de volgorde waarin ze aangemaakt zijn, dan wordt er gekeken naar een plek op de shell.
+Indien er geen cirkel geplaatst kan worden, wordt de interne structuur van het probleem vernieuwd om deze nieuwe informatie te reflecteren.
 Dit gebeurt op verschillende manieren voor de \textit{holes} en de \textit{shell}.
 Meer hierover vindt u terug in \autoref{sec:holes} en \autoref{sec:shell}.
 Als er wel een cirkel geplaatst kan worden dan wordt deze uit de lijst van nog-te-plaatsen cirkels verwijderd, en krijgt deze een permanente positie op de gekozen locatie.
@@ -516,7 +522,7 @@ Een $solution$ of oplossing is een lijst van cirkels met hun positie.
 Dit kan een tussenoplossing zijn, waarbij nog niet voor alle cirkels uit een gegeven probleem een positie bestaat.
 Ook geeft een solution geen garanties van correctheid, er kan dus bijvoorbeeld overlap zijn. De klasse voorziet echter functionaliteit om dit na te gaan.
 Dit is wat de \textit{solver} als output geeft.
-Een correcte \textit{solver} geeft natuurlijk wel altijd goede oplossingen. %Doet ge dan niet dubbel error-check? In solver en in solution?%
+Een correcte \textit{solver} geeft natuurlijk wel altijd goede oplossingen.
 
 Een $solver$ of oplosser is het object dat een \textit{packing} zoekt voor een gegeven probleem.
 Dit is dus het belangrijkste deel van de code, en hierin is de nieuwe heuristiek geïmplementeerd.
@@ -533,8 +539,8 @@ De \textit{solver} bevat een lijst van \textit{holes} en de \textit{shell}.
 Hij bevat ook een lijst van de nog te plaatsen cirkels en een tussen-oplossing met de cirkels die reeds een plaats gekregen hebben.
 Ook heeft hij een interne omcirkel voor deze oplossing.
 Een oplossing kan zelf ook een omcirkel berekenen, maar de \textit{solver} gebruikt een interne omcirkel die enkel vernieuwd wordt wanneer het nodig is.
-Bovendien heeft de \textit{solver} extra informatie die de oplossing niet heeft, waardoor deze omcirkel efficiënter berekend kan worden.  %Is dat niet min of meer duplicated functionality dan? Slecht in OOP, toch? Misschien extracten in nieuwe subclass "Omcirkel"?%
-Zie \autoref{sec:shell} voor meer uitleg hierover. %Ook raar dat er meer info over die omcirkel staat in het hoofdstuk "shell", die hebben toch niet noodzakelijk iets met elkaar te maken?%
+Bovendien heeft de \textit{solver} extra informatie die de oplossing niet heeft, waardoor deze omcirkel efficiënter berekend kan worden.
+Zie \autoref{sec:shell} voor meer uitleg hierover.
 
 In de implementatie ziet de code van de \textit{solver} er als volgt uit (vereenvoudigde versie):
 
@@ -644,7 +650,7 @@ Deze worden ook reeds aan de tussentijdse oplossing toegevoegd (vanaf \autoref{c
 Vervolgens wordt de positie berekend voor de derde aan de hand van een helper functie op \autoref{code:derde-grootste-positie-berekenen}.
 Deze helper functie komt regelmatig terug, en wordt verduidelijkt in \autoref{sec:een-cirkel-tegen-twee-andere-plaatsen}.
 
-In de initialisatie wordt ook het eerste \textit{hole} gemaakt, gedefinieerd door de eerste drie cirkels.
+In de initialisatie wordt ook de eerste \textit{hole} gemaakt, gedefinieerd door de eerste drie cirkels.
 Dit gat wordt toegevoegd aan de lijst van \textit{holes} in de \textit{solver} op \autoref{code:eerste-gat-maken}.
 Ook wordt de \textit{shell} aangemaakt, vanaf \autoref{code:initiele-shell-maken}.
 Deze wordt met de klok mee (gezien vanuit het centrum van de huidige \textit{packing}) bij gehouden.
@@ -652,7 +658,7 @@ Verdere uitleg hierover is te vinden in \autoref{sec:shell}.
 
 \section{Een cirkel tegen twee andere plaatsen} \label{sec:een-cirkel-tegen-twee-andere-plaatsen}
 
-In verschillende delen van de heuristiek %implementatie?% is het nodig om een cirkel $c_i$, met radius $r_i$, tegen twee andere cirkels te plaatsen.
+In verschillende delen van de implementatie is het nodig om een cirkel $c_i$, met radius $r_i$, tegen twee andere cirkels te plaatsen.
 Deze twee cirkels noemen we $c_g1, c_g2$, en hun radii $r_g1, r_g2$.
 Het punt waarop deze cirkel moet staan om beide andere cirkels te raken wordt bepaald door een eenvoudige cirkel-cirkel intersectie, tussen twee cirkels met hun middelpunt gelijk aan het middelpunt van de cirkels $c_g1$ en $c_g2$ en als radii $r_g1+r_i$ en $r_g2+r_i$:
 
@@ -698,13 +704,13 @@ Vector2 getMountPositionFor(Circle cir, Location first, Location second) {
 \end{lstlisting}
 
 In deze code wordt één van de intersectiepunten bepaald.
-Dit intersectiepunt is steeds het negatieve punt. %negatieve punt - verduidelijking nodig?%
-Als op \autoref{code:cirkel-cirkel-intersectie-neg} $+$ gebruikt wordt in plaats van $-$ kan het tweede punt bekomen worden.
-Het is ook mogelijk het andere intersectie punt te verkrijgen door de twee $location$ parameters om te wisselen.
-
-Het bekomen punt is steeds het punt dat aan uw linker kant zou liggen indien je wandelt van het centrum van de eerste cirkel naar het centrum van de tweede cirkel.
+Dit punt is het punt dat aan uw linker kant zou liggen indien je wandelt van het centrum van de eerste cirkel naar het centrum van de tweede cirkel.
 Dit is verduidelijkt in \autoref{fig:cirkel-cirkel-intersectie}, de onderste cirkel is de eerste, de bovenste cirkel de tweede.
 De pijl tussen deze cirkels geeft de \textit{wandel richting} aan.
+
+Ik noem dit intersectiepunt het \textit{negatieve punt}.
+Als op \autoref{code:cirkel-cirkel-intersectie-neg} $+$ gebruikt wordt in plaats van $-$ kan het tweede punt bekomen worden, het \textit{positieve punt}.
+Het is ook mogelijk het andere intersectie punt te verkrijgen door de twee $location$ parameters om te wisselen.
 
 \begin{figure}
   \centering
@@ -877,31 +883,36 @@ Dit is de buitenste laag van cirkels in een (tussen-)oplossing van de \textit{so
 Deze wordt in de implementatie simpelweg bijgehouden als een geordende lijst van cirkels.
 Cirkels die naast elkaar staan in de lijst, grenzen ook aan elkaar in de \textit{shell}.
 De cirkels in deze laag zijn met de klok mee gesorteerd, ten opzichte van het middelpunt van de omcirkel.
-De eerste en laatste cirkel in de lijst grenzen ook aan elkaar in de \textit{shell}. %Is dat noodzakelijk waar? Uw "shell-cirkel" is toch niet noodzakelijk altij helemaal "rond gevuld", ofwel?%
+De eerste en laatste cirkel in de lijst volgen elkaar ook op in de \textit{shell}.
 
 De heuristiek voorgesteld in deze thesis probeert steeds eerst alle \textit{holes} op te vullen.
 Maar wanneer er geen cirkels meer over zijn die klein genoeg zijn om te passen in \textit{holes}, word er een cirkel op de \textit{shell} geplaatst.
 Op de \textit{shell} worden alle posities tegen twee cirkels van de \textit{shell} overwogen.
-Dit is een goede heuristiek voor de optimale positie %ook rare formulering - je schrijft "optimale positie", maar het gaat over sneheid - dus het is eigenlijk een goede heuristiek voor een snel resultaat oid.% , want deze aanpak beperkt het aantal mogelijke posities voor de geplaatste cirkel enorm en maakt het algoritme dus zeer snel (zie \autoref{chap:resultaten} voor een vergelijking in snelheid).
+Deze aanpak beperkt het aantal mogelijke posities voor de geplaatste cirkel enorm en maakt het algoritme dus zeer snel (zie \autoref{chap:resultaten} voor een vergelijking in snelheid).
 Er wordt steeds een cirkel zo dicht mogelijk bij het centrum van de huidige tussen-oplossing geplaatst.
-Dit om het uitbreiden van de omcirkel zo min mogelijk te houden.
+Dit om het uitbreiden van de omschreven cirkel zo min mogelijk te houden.
 
-Eerst worden twee cirkels gekozen waartegen de nieuwe cirkelx geplaatst zal worden.
+Eerst worden twee cirkels gekozen waartegen de nieuwe cirkel geplaatst zal worden.
 Hiervoor wordt gekeken naar het middelpunt tussen alle cirkels die naast elkaar staan op de \textit{shell}.
-De twee cirkels waarvoor het middelpunt het dichtst bij het centrum van de huidige omcirkel ligt worden gekozen als kandidaten om de derde cirkel tegen te plaatsen.
+De twee cirkels waarvoor het middelpunt het dichtst bij het centrum van de huidige omschreven cirkel ligt worden gekozen als kandidaten om de derde cirkel tegen te plaatsen.
 Dan wordt er gezocht naar een zo groot mogelijke cirkel die daar past op de \textit{shell}.
+
 Indien geen enkele cirkel past wordt één van de twee kandidaat cirkels verwijderd uit de \textit{shell}.
 Welke verwijderd wordt is verduidelijkt in \autoref{sec:bepalen-of-een-cirkel-past-op-de-shell}.
 Dit zorgt er voor dat de \textit{shell} verandert en \textit{groeit} naar buiten.
 In de volgende stap van het algoritme zal dan ook een andere positie voor een cirkel uitgeprobeerd worden.
+
 Indien er wel een cirkel past wordt deze toegevoegd aan de \textit{shell}, en geeft deze aanleiding tot een nieuwe \textit{hole}.
 Deze \textit{hole} zal vervolgens opgevuld worden indien mogelijk, zoals beschreven in \autoref{sec:holes}.
 Op \autoref{fig:plaats-op-shell-simpel} wordt getoond hoe de \textit{packing} verandert wanneer een cirkel geplaatst wordt op de \textit{shell}.
 Eerst wordt een \textit{packing} zonder \textit{holes} getoond en vervolgens de \textit{packing} nadat een cirkel op de \textit{shell} geplaatst is.
 Hierop is duidelijk te zien hoe de \textit{shell} aangepast werd, en deze plaatsing geleid heeft tot een nieuwe \textit{hole}.
-Zoals eerder aangegeven is het mogelijk dat de grootste cirkel niet past op een positie op de \textit{shell}.
+
+Zoals eerder aangegeven is het mogelijk dat de grootste cirkel niet past op deze positie op de \textit{shell}.
 Het algoritme zal dan proberen een (beschikbare) kleinere cirkel op de \textit{shell} te plaatsen, dit wordt geïllustreerd in \autoref{fig:plaats-op-shell-kleiner}.
-Het is ook mogelijk dat geen enkele cirkel nog past op de \textit{shell}, zoals getoond in \autoref{fig:plaats-op-shell-geen-enkele-past}. %CMT: En wat gebeurt er dan? Is "plaatsen op de shell" niet uw laatste optie in het algoritme?%
+Het is ook mogelijk dat geen enkele cirkel past op de positie in de \textit{shell} die het dichts bij het centrum van de huidige omschreven cirkel ligt.
+Dit wordt getoond in \autoref{fig:plaats-op-shell-geen-enkele-past}.
+Dan zal de \textit{shell} uitgebreid worden naar buiten, en zal in de volgende stap van het algoritme een andere positie op de \textit{shell} uitgeprobeerd worden.
 
 \begin{figure}
   \centering
@@ -925,18 +936,18 @@ Het is ook mogelijk dat geen enkele cirkel nog past op de \textit{shell}, zoals 
 
 \subsection{Slim de omcirkel berekenen gebaseerd op de \textit{shell}}
 
-Bij het kiezen van de kandidaatcirkels om een cirkel tegen te plaatsen op de \textit{shell} wordt gebruik gemaakt van de omcirkel van de huidige tussen-oplossing.
+Bij het kiezen van de kandidaat-cirkels om een cirkel tegen te plaatsen op de \textit{shell} wordt gebruik gemaakt van de omschreven cirkel van de huidige tussen-oplossing.
 Zoals eerder vermeld kan voor elke (tussen-)oplossing de omcirkel berekend worden.
 Dit gebeurt door een aangepaste versie van het Welz algoritme voor de omcirkel van punten beschreven in \cite{welzl1991smallest}.
 De gebruikte implementatie is gebaseerd op de implementatie in \cite{sunshine2008welzl}.
 Het is een recursief algoritme dat in lineaire tijd de omcirkel kan berekenen.
-Het basisidee bestaat eruit dat de omcirkel van een aantal cirkels (of punten) volledig gedefinieerd is door maximum van drie cirkels.
-Het algoritme vindt deze twee of drie cirkels.
+Het basisidee bestaat eruit dat de omcirkel van een aantal cirkels (of punten) volledig gedefinieerd is door maximum drie van deze cirkels.
+Het algoritme vindt deze cirkels.
 
-Het is intuitief te begrijpen dat deze drie cirkels aan de buitenkant van een (tussen-)oplossing zullen liggen.
+Het is intuïtief te begrijpen dat deze drie cirkels aan de buitenkant van een (tussen-)oplossing zullen liggen.
 Dat is ook net waaruit de \textit{shell} bestaat, de cirkels aan de buitenkant van een oplossing.
 Het is dus mogelijk om in elke stap van de \textit{solver} de omcirkel zeer efficiënt te berekenen.
-De complexiteit is dan slechts lineair in %CMT - moet dat niet "met" - of "schaalt dan lineair met" zijn?% het aantal cirkels op de \textit{shell} in huidige (tussen-)oplossing, wat slechts een subset is van het totaal aantal cirkels in de oplossing.
+De complexiteit is dan slechts lineair in het aantal cirkels op de \textit{shell} in huidige (tussen-)oplossing, wat slechts een subset is van het totaal aantal cirkels in de oplossing.
 Aangezien de omcirkel regelmatig moet worden herberekend  doorheen het algoritme is dit een zeer interessante optimalisatie.
 
 \subsection{Bepalen of een cirkel past op de \textit{shell}} \label{sec:bepalen-of-een-cirkel-past-op-de-shell}
@@ -948,10 +959,10 @@ Eenmaal deze positie gekend is, wordt er nagekeken of dit niet tot overlap leidt
 Indien er overlap is is het niet mogelijk om de cirkel daar op de \textit{shell} te plaatsen, en wordt er informatie terug gegeven over welke cirkel op de \textit{shell} voor problemen zorgt.
 
 Om na te gaan of er overlap is, worden er systematisch een aantal cirkels op de \textit{shell} nagekeken.
-Het is niet nodig andere cirkels, die niet op de \textit{shell} zitten, na te kijken voor overlap. %CMT - Aangeven waarom precies - Ik heb de volgende zin herschreven om aan te geven dat dat dat de verklaring is?%
-Dat is zo omdat, een nieuwe cirkel steeds op de \textit{shell} geplaatst wordt. Als er overlap zou zijn met cirkels in de oplossing, dan ligt minstens één van die cirkels op de \textit{shell}.
-Omdat ik geen exacte wiskundige definitie van de \textit{shell} heb (aangezien ze enkel is gedefinieerd door het algoritme dat ze opbouwt) is het niet mogelijk om hier een echt bewijs van te geven. %CMT - dit is ook weer vaag gedefiniëerd. Niet helemaal duidelijk wat je tracht te zeggen - kan ook aan m'n gebrek aan achtergrond liggen, maar ik zou het proberen te verhelderen. Bedoel je: er is geen wiskundige "definitie" (als in: formule) die sluitend kan bewezen worden? Maar je hebt dat algoritme al wel, da's toch al "50% wiskundige formule", neen?%
-Uit empirische tests blijkt de verwachting omtrent deze overlappingen echter wel te kloppen.
+Het is niet nodig andere cirkels, die niet op de \textit{shell} zitten, na te kijken voor overlap.
+Dat is zo omdat, een nieuwe cirkel steeds op de \textit{shell} geplaatst wordt zodanig dat als er overlap zou zijn met cirkels in de oplossing, minstens één van die cirkels op de \textit{shell} ligt.
+Omdat ik geen exacte wiskundige definitie van de \textit{shell} heb (de \textit{shell} is enkel gedefinieerd door het algoritme dat ze opbouwt) is het niet mogelijk om hier een echt bewijs van te geven.
+Uit eigen empirische tests blijkt de verwachting omtrent deze overlappingen echter wel te kloppen.
 Verdere bedenkingen hierbij kan u terug vinden in \autoref{chap:bedenkingen}.
 Om deze overlappingstest zo snel mogelijk te kunnen uitvoeren worden eerst cirkels dichtbij nagekeken.
 Er staat ook een limiet op het aantal cirkels die getest worden.
@@ -986,10 +997,10 @@ Deze informatie wordt dan gebruikt door de \textit{solver} om te bepalen of de c
 
 \subsection{Een cirkel plaatsen op de \textit{shell}} \label{sec:een-cirkel-plaatsen-op-de-shell}
 
-Om een cirkel te op de \textit{shell} plaatsen wordt eerst de grootste cirkel die op de \textit{shell} past binair %CMT Wat is "binair zoeken", term wordt nergens uitgelegd% gezocht in de lijst van nog-te-plaatsen cirkels.
+Om een cirkel te op de \textit{shell} plaatsen wordt eerst de grootste cirkel die op de \textit{shell} past binair gezocht in de lijst van nog-te-plaatsen cirkels.
 De gebruikte methode is vergelijkbaar met het zoeken naar de grootste cirkel die past in een \textit{hole}, zoals beschreven in \autoref{sec:grootste-cirkel-zoeken-die-past-in-een-hole}.
 Indien er een cirkel gevonden wordt die past op de \textit{shell} wordt de \textit{shell} uitgebreid met deze cirkel.
-De cirkel wordt dan tussen de cirkels, waartegen hij geplaatst is, in de \textit{shell} geplaatst.
+De cirkel wordt dan tussen de cirkels, waartegen hij geplaatst is, in de \textit{shell} (voorgesteld als lijst) geplaatst.
 Dit wordt geïllustreerd in \autoref{fig:plaats-op-shell-simpel}, \autoref{fig:plaats-op-shell-kleiner}.
 De gele lijn (die de \textit{shell} voorstelt, zoals beschreven in \autoref{chap:handleiding-visualisaties}) wordt uitgebreid met een extra punt.
 Dit zorgt er ook voor dat een nieuwe \textit{hole} gemaakt wordt waar mogelijk kleinere cirkels in passen.
@@ -1030,19 +1041,16 @@ Zie ook \autoref{chap:bedenkingen} voor verdere bedenkingen hieromtrent.
 
 De implementatie gebruikt $double$ variabelen.
 Ook geeft de methode gebruikt om cirkels tegen elkaar te plaatsen, beschreven in \autoref{sec:een-cirkel-tegen-twee-andere-plaatsen}, geen exacte oplossing.
-Hierdoor wordt er doorheen het algoritme een kleine fout opgebouwd. %CMT - is de fout cumulatief? Hoe komt dat? Illustreer adhv. code?%
-Deze fout uit zich in een kleine overlap in de uiteindelijke verkregen \textit{packing}. %CMT - overlap zit WAAR? - wat overlapt?%
+Deze posities worden gebruikt om cirkels te plaatsen, en later worden tegen deze cirkels nieuwe cirkels geplaatst.
+Hierdoor wordt er doorheen het algoritme dus een kleine fout opgebouwd.
+Deze fout uit zich in een kleine overlap tussen cirkels in de uiteindelijke verkregen \textit{packing}.
 Deze overlap blijft echter beperkt tot $10^{-15}$ vierkante eenheden voor de grootste \textit{packings}.
 
 Dit is een inherent probleem van werken in eindige precisie.
 Andere algoritmen hebben dus te kampen met het zelfde probleem, hoewel er niet altijd aandacht aan wordt besteed in de gepubliceerde papers.
-In \cite{akeb2006basic}, \cite{ye2013iterated} en \cite{m2013packing} worden resultaten verkregen met een precisie van respectievelijk $10^{-10}$, $10^{-28}$ en $10^{-7}$. %CMT - is het mogelijk om uw algoritme zo te bouwen dat je snelheid kunt opofferen aan precisie die béter is dan de andere voorbeelden?%
+In \cite{akeb2006basic}, \cite{ye2013iterated} en \cite{m2013packing} worden resultaten verkregen met een precisie van respectievelijk $10^{-10}$, $10^{-28}$ en $10^{-7}$.
 
-%\cite{akeb2006basic} -> $10^{-10}$.
-%\cite{ye2013iterated} -> $10^{-28}$.
-%\cite{m2013packing}  -> $10^{-7}$.
-
-Aangezien de vergelijkingen in \autoref{chap:resultaten} tot een precisie van $10^{-10}$ gebeuren heeft dit verder geen impact op de resultaten. %CMT - da's natuurlijk een nogal brute bewering. Wélke resultaten?%
+Aangezien de vergelijkingen in \autoref{chap:resultaten} tot een precisie van $10^{-10}$ gebeuren heeft dit verder geen impact op deze resultaten.
 
 \section{Veronderstellingen}
 
@@ -1056,13 +1064,14 @@ Doordat de cirkels die een \textit{hole} definiëren niet altijd aan elkaar rake
 
 Een voorstel om dit op te lossen is een \textit{hole} niet op te delen in drie \textit{holes} als er een cirkel in geplaatst wordt, maar slechts in twee.
 Eén van die \textit{holes} bestaat dan uit meer dan drie cirkels.
-Zo is het wel mogelijk om altijd aaneensluitende cirkels een \textit{hole} te laten bepalen. %CMT - is er een reden waarom je dat niet geprobeerd hebt? Grote ingreep in het algoritme?%
+Zo is het wel mogelijk om altijd aaneensluitende cirkels een \textit{hole} te laten bepalen.
+Dit is een oplossing die mogelijk geëxploreerd kan worden in de toekomst, maar wegens tijdsbeperkingen geen deel is van deze thesis.
 
 \chapter{Resultaten} \label{chap:resultaten}
 
-In dit hoofdstuk worden de verkregen \textit{packings} vergeleken met %de best% een reeks gekende %CMT - ik kwam die "best bekende" formulering in het begin ook al tegen. Is een vreemde formulering - uit het Engels vertaald? Best(e) bekende in welke zin? De snélste, de precieste? Schrijf anders gewoon "met een reeks bekende"% \textit{packings}, zoals gerapporteerd op de Packomania website \cite{packomania}.
-Packomania is een website die de best gekende oplossingen voor verschillende \textit{circle-packing} problemen verzamelt.
-De oplossingen worden onderling vergeleken, op zowel de verkregen radius van de omschreven cirkel, als ook de tijd nodig om tot deze \textit{packing} te komen indien deze gekend is. %CMT - hier haalt ge het aaan hoe ze vergeleken worden. Ik zou niet "best bekende" schrijven in uw tekst, gewoon bekende.%
+In dit hoofdstuk worden de verkregen \textit{packings} vergeleken met een reeks gekende \textit{packings}, zoals gerapporteerd op de Packomania website \cite{packomania}.
+Packomania is een website die de beste oplossingen (in radius van omschreven cirkel) voor verschillende \textit{circle-packing} problemen probeert te verzamelen.
+De oplossingen worden onderling vergeleken, op zowel de verkregen radius van de omschreven cirkel, als ook de tijd nodig om tot deze \textit{packing} te komen indien deze gekend is.
 De nodige rekentijd voor deze algoritmen is echter niet altijd even makkelijk te vinden.
 Veel van de \textit{packings} op Packomania hebben geen bijhorende publicatie.
 Het gebruikte algoritme en de nodige tijd om de \textit{packing} te bekomen is dus niet gekend, enkel de verkregen omschreven cirkel en coördinaten van de \textit{packing}.
@@ -1153,7 +1162,7 @@ Dit wordt geïllustreerd in \autoref{fig:packing-even-groot-50}.
 Dit is een zeer eenvoudige structuur, maar benaderd redelijk goed de best gekende oplossingen.
 Meer figuren hiervan vindt u terug in \autoref{append:extra-packing-figuren}.
 
-De benodigde tijd %CMT - tijd voor wat?% blijft onder 10 milliseconden tot $N=100$.
+De benodigde tijd om tot een oplossing te komen blijft onder 10 milliseconden tot $N=100$.
 Tot 500 cirkels blijft de nodige rekentijd onder 100 milliseconden.
 De rekentijd loopt pas op tot één seconde bij 2200 cirkels, en slechts 3,5 seconden voor 5000 cirkels.
 
@@ -1170,7 +1179,7 @@ Hun resultaten zijn echter moeilijk te vergelijken omdat \cite{akeb2006basic} ee
   \caption{\textit{Packing} voor 500 even grote cirkels} \label{fig:packing-even-groot-500} 
 \end{figure}
 
-\subsubsection{Bespreking} %CMT - ge hebt een sectie verder NOG eens een "bespreking", die op dezelfde manier begint?%
+\subsubsection{Bespreking}
 
 Over het algemeen zijn dit goede resultaten.
 Ze liggen redelijk dichtbij de best gekende oplossing, maar hebben een duidelijk en eenvoudig patroon.
@@ -1221,7 +1230,7 @@ Mijn algoritme heeft, in vergelijking, slechts enkele miliseconden nodig voor he
 
 \subsubsection{Bespreking}
 
-Over het algemeen zijn dit goede resultaten.
+Ook deze resultaten zijn over het algemeen goed.
 Gemiddeld is er slechts een $5,94\%$ vergroting van de radius van de omschreven cirkel, met slechts 3 problemen die meer dan $10\%$ vergroting hebben.
 Er zijn echter ook 2 problemen die even goed opgelost worden dan de best gekende!
 
@@ -1364,14 +1373,14 @@ Ook is er een interessante neerwaartse trend in de vergroting van de radius van 
 Dit toont de kracht van het algoritme wanneer het meer cirkels heeft met verschillende radii om uit te kiezen.
 
 Bovendien laat het algoritme toe om problemen met veel grotere aantallen cirkels in aanvaardbare tijd op te lossen.
-Iets dat, voor zover ik zeet, geen enkel ander algoritme mogelijk maakt binnen aanvaardbare tijd, laat staan binnen enkele seconden. %CMT - beetje maf dat krék dezelfde zin vier paragrafen hoger er ook al staat. Misschien voor de schoonheid hetschrijven. Anders allemaal copy-paste.%
+Voor zover ik weet is er geen enkel ander algoritme dat dit mogelijk maakt voor cirkels met verschillende radii.
 
 %CMT - ik zou nog aangeven  - je zegt "indrukwekkende resultaten", klinkt een beetje als uzelf bewierroken. Je kan wel aangeven: een compleet andere aanpak met dit algoritme dan gangbaar in de literatuur. Slechts kleine vergroting van omcirkel / verlies preciesie, maar grote snelheidswinst. Als je een scenario zou kunnen aangeven waarin dat interessant is (versus de gevestigde oplossingen) denk ik dat dat goed zou zijn om kort toe te lichten%
 
 \chapter{Verder werk} \label{chap:verder-werk}
 
 In dit hoofdstuk geef ik enkele voorstellen voor verdere uitwerkingen van het algoritme.
-Mogelijke verbeteringen, zowel in snelheid als kwaliteit (de grootte van de bekomen omcirkel) van uitkomsten. %CMT - hier ook weer vergelijkbare opmerking als eerder al: ik denk dat je kwaliteit hier helderder moet definieren. Ik ga ervan uit dat je hier "kleinere omsluitende cirkel" bedoelt, maar zet dat er dan bij tussen haakjes, minstens. - In de inleiding staat dat wel, denk ik, maar bijvoorbeeld in de defintie van "packing" aan het begin van je tekst geef je dat niet aan (wel wanneer ze correct is, maar niet - kleinere packings zijn betere packints).%
+Mogelijke verbeteringen, zowel in snelheid als kwaliteit (de grootte van de bekomen omcirkel) van uitkomsten.
 Dit zijn mogelijke ideeën om in de toekomst op verder te werken.
 
 \section{Constante-tijd omschreven cirkel}
@@ -1408,8 +1417,9 @@ Deze is gebaseerd op het \textit{best-fit} principe, waarbij in elke stap de bes
 Deze nieuwe heuristiek gebruikt twee nieuwe concepten: \textit{holes} en de \textit{shell}.
 Eerst werden de \textit{holes} opgevuld, en dan cirkels geplaatst aan de buitenkant van de tussen-oplossing, op de \textit{shell}.
 Door enkele veronderstellingen te maken over het aantal cirkels die getest moeten worden voor overlap bij elke plaatsing, kan het algoritme zeer snel relatief goede \textit{packings} genereren.
-Ik heb resultaten getoond, vergeleken met de best-gekende \textit{packings} voor een groot aantal cirkel-verdelingen, die aantonen dat het algoritme \textit{packings} maakt die gemiddeld slechts 5\% groter zijn. %CMT - ik zou hier geen nummerkes vermelden. Schrijf gewoon: goede resultate behaalt tegenover bestaande implmentaties%
-Deze \textit{packings} werden gegenereerd in een fractie van de tijd die andere, state-of-the-art algoritmen nodig hebben (milliseconden tegenover uren).
+Ik heb resultaten getoond, vergeleken met \textit{packings} voor een groot aantal cirkel-verdelingen.
+Deze tonen aan dat het algoritme goede \textit{packings} maakt in vergelijking met bestaande algoritmen.
+Deze \textit{packings} werden gegenereerd in een fractie van de tijd die andere, state-of-the-art algoritmen, nodig hebben (milliseconden tegenover uren).
 
 % // TODO: Extra speculatie over gebruik van mijn algoritme? - ja, dat zette ik ook al in mijn opmerkingen
 
