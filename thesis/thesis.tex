@@ -1195,7 +1195,7 @@ Ook is dit het eenvoudigste probleem.
 Het feit dat er resultaten te vinden zijn tot 5000 cirkels op Packomania, maar problemen met verschillende radii slechts tot maximum 200 cirkels opgelost zijn, wijst hier op.
 Hoewel mijn algoritme dus relatief goede resultaten geeft voor dit probleem, zijn de resultaten die volgen interessanter.
 
-\subsection{Packomania Benchmark}
+\subsection{Packomania Benchmark} \label{sec:vergelijking-packomania-benchmark}
 
 Packomania geeft ook resultaten voor enkele benchmark instanties. Deze benchmarks werden geïntroduceerd door WenQi Huang in verscheidene papers, en samengevat in \cite{huang2006new}.
 De radii van de cirkels in deze benchmark instanties zijn terug te vinden in \autoref{append:packomania-benchmark-verdelingen}.
@@ -1350,7 +1350,7 @@ Dit zijn denk ik de meest indrukwekkende resultaten van deze thesis, en tonen he
 
 Het algoritme uit deze thesis laat ook toe om problemen met veel grotere aantallen cirkels op te lossen.
 Resultaten voor 1000 tot 14000 cirkels zijn te vinden in \autoref{append:packomania-tabellen-groter-aantal-cirkels}.
-Ik heb geen andere methoden gevonden die problemen met zo'n grote aantallen cirkels kunnen oplossen.
+Ik heb geen andere resultaten gevonden voor problemen met zo'n grote aantallen cirkels.
 De verkregen radii van de omschreven cirkel kan ik dus niet vergelijken.
 Ik heb echter wel de eigenaar van de Packomania website gecontacteerd om mijn resultaten aan zijn website toe te voegen.
 Zo kunnen in de toekomst andere resultaten vergeleken worden met die van mij.
@@ -1366,8 +1366,7 @@ Bij het nakijken van de oplossing wordt een recursief algoritme gebruikt op de v
 Dit geeft een \textit{stack-overflow} en heb ik nog niet kunnen oplossen. %CMT - mogelijk pistes voor oplossingen?%
 
 Ondanks de resterende problemen met overlap voor sommige van deze problemen met grote aantallen cirkels, zijn dit interessante resultaten.
-Zelfs voor duizenden cirkels kan het algoritme een resultaat geven in enkele seconden.
-Dit is, voor zover ik weet, niet mogelijk met andere algoritmen in aanvaardbare tijd, laat staan in enkele seconden.
+Dit is, voor zover ik weet, het eerste constructieve algoritme dat goede resultaten geeft voor kleine problemen (resultaten in \autoref{sec:vergelijking-packomania-benchmark} en \autoref{sec:vergelijking-packomania-machten}) en ook gebruikt kan worden om grotere problemen aan te pakken.
 
 \section{Conclusie}
 
@@ -1375,13 +1374,12 @@ In dit hoofdstuk heb ik oplossingen verkregen door mijn algoritme te vergelijken
 Ook heb ik de nodige rekentijd vergeleken met enkele andere algoritmen.
 
 De oplossingen verkregen met mijn nieuwe constructieve heuristiek hebben een gemiddeld minder dan 6\% grotere omschreven cirkel.
-Dit lijkt mij een zeer aanvaardbare vergroting van de omschreven cirkel, rekening houdend met het feit dat het nieuwe algoritme deze problemen in slechts milliseconden oplost.
+Dit lijkt mij een zeer aanvaardbare vergroting van de omschreven cirkel, rekening houdend met het feit dat mijn algoritme deze problemen in slechts milliseconden oplost.
 Zelfs de grootste problemen, bestaande uit duizenden cirkels, kunnen in slechts enkele seconden opgelost worden.
 Ook is er een interessante neerwaartse trend in de vergroting van de radius van de bekomen omschreven cirkel.
 Dit toont de kracht van het algoritme wanneer het meer cirkels heeft met verschillende radii om uit te kiezen.
 
-Bovendien laat het algoritme toe om problemen met veel grotere aantallen cirkels in aanvaardbare tijd op te lossen.
-Voor zover ik weet is er geen enkel ander algoritme dat dit mogelijk maakt voor cirkels met verschillende radii.
+Bovendien laat het algoritme toe om problemen met veel grotere aantallen cirkels, met verschillende radii, in aanvaardbare tijd op te lossen.
 
 \chapter{Verder werk} \label{chap:verder-werk}
 
@@ -1426,6 +1424,7 @@ Door enkele veronderstellingen te maken over het aantal cirkels die getest moete
 In deze thesis worden de resultaten voor een groot aantal cirkel-verdelingen getoond en vergeleken met gekende \textit{packings} uit de literatuur.
 Deze tonen aan dat het algoritme goede \textit{packings} maakt in vergelijking met bestaande algoritmen.
 Deze \textit{packings} werden gegenereerd in een fractie van de tijd die andere, \textit{state-of-the-art} algoritmen, nodig hebben (milliseconden tegenover uren).
+Ook is het mogelijk om dit zelfde algoritme, dat goed werkt voor kleine problemen, te gebruiken om problemen met veel meer cirkels op te lossen.
 
 % // TODO: Extra speculatie over gebruik van mijn algoritme? - ja, dat zette ik ook al in mijn opmerkingen
 
