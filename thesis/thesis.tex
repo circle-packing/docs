@@ -285,7 +285,7 @@ Dit soort problemen kunnen wel opgelost worden met deze nieuwe heuristiek.
 \addcontentsline{toc}{chapter}{Abstract (English)}
 
 The \textit{circle-packing} problem consists of packing a number of circles, with given radii, in a container that is as small as possible.
-The shape of this container can differ, but most often triangular, rectangular or circular.
+The shape of this container can differ, but is most often triangular, rectangular or circular.
 In this thesis I propose a new \textit{best-fit} based heuristic to solve the problem of packing circles in a circle.
 It's a new constructive heuristic that builds a solution step-by-step by iteratively placing the circle that \textit{fits best}.
 
@@ -465,7 +465,7 @@ Vervolgens leg ik stelselmatig de volledige werking uit, samen met alle veronder
 De volledige implementatie gebeurde in Java, en de broncode is beschikbaar op GitHub \cite{circle-packing-github}.
 
 Om het algoritme zeer snel te maken worden enkele veronderstellingen gemaakt omtrent de nodige overlap-checks bij elke stap.
-Deze veronderstellingen zijn niet theoretisch bewezen, maar wel zelf empirisch getest.
+Deze veronderstellingen zijn niet theoretisch bewezen, maar wel empirisch getest.
 Voor de meeste verdelingen van cirkels lijken deze veronderstellingen goed stand te houden, maar er zijn nog enkele \textit{edge-cases} waarin er toch nog fouten gebeuren.
 Deze problemen worden besproken in \autoref{chap:bedenkingen} en de snelheid en kwaliteit van de oplossingen wordt verder besproken in \autoref{chap:resultaten}.
 
@@ -1096,7 +1096,7 @@ Hierbij zijn er telkens $N$ cirkels in het probleem, en is $i \in (1,2,...,N)$.
 
 De laatste vier verdelingen hebben een vaste structuur: $r_i=i^X$.
 Hier is $X$ steeds een andere macht.
-Deze problemen verzamelen ik onder één noemer: de \textit{Packomania macht} problemen.
+Deze problemen verzamel ik onder één noemer: de \textit{Packomania macht} problemen.
 
 De verhouding tussen enkele van deze verdelingen worden verduidelijkt in \autoref{fig:packomania-verdelingen}.
 
@@ -1126,7 +1126,7 @@ Al deze berekeningen zijn uitgevoerd op een Mid 2009 Macbook-Pro 15 inch met een
 
 \subsection{Cirkels met gelijke grootte}
 
-In \autoref{fig:vergelijking-even-grote-cirkels} wordt de procentuele vergroting weergegeven voor \textit{packings} met $N$ cirkels van gelijke grootte.
+In \autoref{fig:vergelijking-even-grote-cirkels} wordt de procentuele vergroting van mijn oplossing ten opzichte van de best gekende weergegeven voor \textit{packings} met $N$ cirkels van gelijke grootte.
 Er wordt een volledig beeld gegeven, als ook een gedetailleerder beeld waar vergrotingen boven de 1,5\% niet worden weergegeven.
 Deze vergroting is afgemeten ten opzichte van de best gekende oplossing op de Packomania website.
 Tabellen die mijn resultaten vergeleken met de best gekende tonen zijn terug te vinden in \autoref{append:packomania-tabellen-gelijke-grootte}.
@@ -1157,15 +1157,14 @@ Gemiddeld geeft mijn algoritme een resultaat dat $0,79\%$ groter is dan het best
 Er is echter een duidelijke neerwaartse trend.
 Voor problemen met meer dan 1000 cirkels is de gemiddelde vergroting nog slechts 0,48\%.
 Voor meer dan 2000 cirkels nog 0,39\% en voor meer dan 3000 nog 0,32\%.
-Problemen met een groter aantal cirkels geven duidelijk een beter resultaat.
 
 Dit komt mogelijk omdat hoe meer cirkels er zijn, hoe moeilijker het probleem wordt.
-Hierdoor zullen de best gekende oplossingen voor problemen met zulke grote aantallen cirkels minder dichtbij de absolute optimale oplossing liggen.
+Hierdoor zullen de best gekende oplossingen voor problemen met zulke grote aantallen cirkels minder dicht bij de absolute optimale oplossing liggen.
 Omdat mijn algoritme enkel nieuwe cirkels tegen twee reeds geplaatste cirkels plaatst, hebben al mijn oplossingen voor dit probleem een duidelijke structuur.
 Deze structuur is een zeshoekige structuur.
 Dit wordt geïllustreerd in \autoref{fig:packing-even-groot-500}.
 Dit is een zeer eenvoudige structuur, maar benaderd redelijk goed de best gekende oplossingen.
-Meer figuren hiervan zijn terug te vinden in \autoref{append:extra-packing-figuren}.
+Meer figuren zijn terug te vinden in \autoref{append:extra-packing-figuren}.
 
 De benodigde tijd om tot een oplossing te komen blijft onder 10 milliseconden tot $N=100$.
 Tot 500 cirkels blijft de nodige rekentijd onder 100 milliseconden.
@@ -1238,7 +1237,7 @@ Mijn algoritme heeft slechts enkele miliseconden nodig voor dezelfde problemen.
 
 Ook deze resultaten zijn over het algemeen goed.
 Gemiddeld is er slechts een $5,94\%$ vergroting van de radius van de omschreven cirkel, met slechts 3 van de 38 problemen die meer dan $10\%$ vergroting hebben.
-Er zijn echter ook 2 problemen die even goed opgelost worden dan de best gekende.
+Er zijn echter ook 2 problemen die even goed opgelost worden als de best gekende.
 
 Dit zijn dus goede resultaten, maar het aantal probleeminstanties blijft zeer beperkt.
 In de volgende sectie wordt de kracht van dit nieuwe algoritme duidelijker met meer cirkel-verdelingen.
@@ -1353,6 +1352,9 @@ Het algoritme uit deze thesis laat ook toe om problemen met veel grotere aantall
 Resultaten voor 1000 tot 14000 cirkels zijn te vinden in \autoref{append:packomania-tabellen-groter-aantal-cirkels}.
 Ik heb geen andere methoden gevonden die problemen met zo'n grote aantallen cirkels kunnen oplossen.
 De verkregen radii van de omschreven cirkel kan ik dus niet vergelijken.
+Ik heb echter wel de eigenaar van de Packomania website gecontacteerd om mijn resultaten aan zijn website toe te voegen.
+Zo kunnen in de toekomst andere resultaten vergeleken worden met die van mij.
+Op het moment dat ik dit schrijf heb ik hier echter nog geen antwoord op gekregen.
 
 De nodige tijd om deze problemen op te lossen blijft ook beperkt.
 Problemen tot 1400 cirkels blijven onder één seconde.
@@ -1373,7 +1375,7 @@ In dit hoofdstuk heb ik oplossingen verkregen door mijn algoritme te vergelijken
 Ook heb ik de nodige rekentijd vergeleken met enkele andere algoritmen.
 
 De oplossingen verkregen met mijn nieuwe constructieve heuristiek hebben een gemiddeld minder dan 6\% grotere omschreven cirkel.
-Dit lijkt mij een zeer aanvaardbare vergroting van de omschreven cirkel, rekening houdend met het feit dat het nieuwe algoritme deze problemen in slechts milliseconden op lost.
+Dit lijkt mij een zeer aanvaardbare vergroting van de omschreven cirkel, rekening houdend met het feit dat het nieuwe algoritme deze problemen in slechts milliseconden oplost.
 Zelfs de grootste problemen, bestaande uit duizenden cirkels, kunnen in slechts enkele seconden opgelost worden.
 Ook is er een interessante neerwaartse trend in de vergroting van de radius van de bekomen omschreven cirkel.
 Dit toont de kracht van het algoritme wanneer het meer cirkels heeft met verschillende radii om uit te kiezen.
