@@ -5,7 +5,7 @@
 %                           -- december 2012
 % -------------------------------------------------------------------
 \RequirePackage{fix-cm}
-\documentclass[12pt,a4paper,oneside]{book}
+\documentclass[12pt,a4paper,twoside]{book}
 
 % --------------------- In te laden pakketten -----------------------
 % Deze kan je eventueel toevoegen aan de pakketten die je al inlaadt
@@ -27,6 +27,7 @@
 \usepackage{needspace}
 \usepackage[toc,page]{appendix}
 \usepackage{ltablex}
+\usepackage[all]{nowidow}
 
 % -------------------- Pagina-instellingen --------------------------
 % Indien je deze wijzigt, zal het titelblad ook wijzigen.  Dit dien je
@@ -231,7 +232,7 @@ In deze thesis stel ik een nieuwe heuristiek voor het plaatsen van cirkels in ee
 Het is een constructieve heuristiek waarin stapsgewijs telkens de best-passende cirkel geplaatst zal worden.
 Alle broncode is beschikbaar op GitHub \cite{circle-packing-github}
 
-Hoewel dit probleem wiskunig relatief eenvoudig voor te stellen is, is het uitwerken van een computioneel exacte oplossing wél een uitdaging.
+Hoewel dit probleem wiskundig relatief eenvoudig voor te stellen is, is het uitwerken van een computationeel exacte oplossing wél een uitdaging.
 Bestaande implementaties zijn niet tijds-geoptimaliseerd, en vragen dus veel berekeningstijd. 
 In deze thesis stel ik een nieuwe heuristiek voor die het mogelijk maakt zéér snel oplossingen te genereren.
 
@@ -273,7 +274,7 @@ In deze thesis stel ik een nieuwe heuristiek voor die het mogelijk maakt zéér 
 Oplossingen gegenereerd door het algoritme uit deze thesis hebben een omschreven cirkel die gemiddeld minder dan 6\% groter is in vergelijking met de best gekende oplossingen.
 Dit is een zeer aanvaardbare uitbreiding van de omschreven cirkel, toch als je in rekening brengt dat deze oplossingen veel sneller bekomen zijn.
 Bestaande pogingen vragen uren en soms dagen tijd om slechts tientallen cirkels te plaatsen.
-De heuristiek voorgesteld in deze thesis lost het probleen op in slechts enkele milliseconden.
+De heuristiek voorgesteld in deze thesis lost het probleem op in slechts enkele milliseconden.
 
 Daarbovenop maakt deze heuristiek het mogelijk om nieuwe problemen op te lossen.
 Zo zouden problemen met duizenden cirkels met voorgaande methoden onrealistisch veel tijd vragen, tientallen cirkels vragen al uren of dagen tijd.
@@ -312,6 +313,8 @@ However for this new heuristic these problems aren't out of scope.
 \addcontentsline{toc}{chapter}{Lijst van tabellen}
 
 \newpage
+\null
+\newpage
 
 % ----------------------- Eigenlijke thesis -----------------------
 % Vanaf de inleiding/het eerste hoofdstuk.
@@ -324,7 +327,7 @@ However for this new heuristic these problems aren't out of scope.
 In deze thesis stel ik een nieuwe heuristiek voor, gebaseerd op het \textit{best-fit}-principe, als oplossing voor het \textit{circle-packing} probleem.
 De heuristiek is specifiek ontworpen voor het sub-probleem van het plaatsen van cirkels in een cirkel.
 Het \textit{circle-packing} probleem bestaat uit het plaatsen van $n$ cirkels in een zo klein mogelijke cirkelvormige \textit{container}.
-Het is de bedoeling om voor de gegeven cirkels de coordinaten van de middelpunten te vinden zodat de cirkels niet overlappen en de radius van de omschreven cirkel zo klein mogelijk is.
+Het is de bedoeling om voor de gegeven cirkels de coördinaten van de middelpunten te vinden zodat de cirkels niet overlappen en de radius van de omschreven cirkel zo klein mogelijk is.
 
 \textit{Circle-packing} is zowel theoretisch als praktisch een zeer interessant probleem.
 Het kan gebruikt worden om verschillende \textit{real-world} problemen op te lossen, zoals het plaatsen van zendmasten, stockage van cilindrische voorwerpen, en het combineren van verschillende kabels. 
@@ -345,8 +348,8 @@ Mathematisch is het probleem redelijk eenvoudig als een optimalisatieprobleem te
 \end{equation*}
 
 Hierin is $r_i$ de radius, en $(x_i,y_i)$ de coördinaten van het centrum van cirkel $i$.
-Hierbij wordt verondersteld dat de omcirkel het nulpunt als middelpunt heeft.
-De eerste formule verzekert dat de cirkels in de omcirkel liggen, en de tweede dat ze elkaar niet overlappen.
+Hierbij wordt verondersteld dat de omschreven cirkel het nulpunt als middelpunt heeft.
+De eerste formule verzekert dat de cirkels in de omschreven cirkel liggen, en de tweede dat ze elkaar niet overlappen.
 Wanneer alle cirkels dezelfde grootte hebben, wordt meestal $r_i$ gelijk aan $1$ genomen.
 Het \textit{circle-packing} probleem voor andere containers heeft gelijkaardige, relatief eenvoudige, wiskundige omschrijvingen.
 
@@ -409,7 +412,7 @@ In het eerstvolgende hoofdstuk (\autoref{chap:definities}) worden echter eerst e
 \chapter{Definities en termen} \label{chap:definities}
 
 \textbf{Cirkel}: In de literatuur rond \textit{circle-packing} en in deze thesis wordt het woord \textit{cirkel} of \textit{circle} gebruikt, maar eigenlijk zou het correcter zijn om \textit{schijf} te gebruiken. Dit geeft (onder andere) aan dat er een overlap tussen cirkels is wanneer een cirkel volledig omringd is door een andere.
-Voor twee cirkels met radii $r_a, r_b$ en coordinaten  $(x_a,y_a), (x_b,y_b)$ is er een overlap wanneer $r_a + r_b > \sqrt{(x_a-x_b)^2 + (y_a-y_b)^2}$. 
+Voor twee cirkels met radii $r_a, r_b$ en coördinaten  $(x_a,y_a), (x_b,y_b)$ is er een overlap wanneer $r_a + r_b > \sqrt{(x_a-x_b)^2 + (y_a-y_b)^2}$. 
 
 \textbf{Packing}: Vertaald als \textbf{plaatsing}. Een \textbf{packing} is een collectie cirkels met elk een toegewezen positie. Een \textit{packing} is correct wanneer er geen overlap is tussen de cirkels in deze \textit{packing}.
 
@@ -478,7 +481,7 @@ Eenmaal een cirkel geplaatst is wordt deze nooit meer verplaatst.
 Dit laat toe om deze \textit{holes} en \textit{shell} efficiënt op te bouwen en gebruiken.
 Als de cirkels wel nog verplaatst konden worden zou het veel moeilijker, en rekenintensiever, zijn om deze structuren op te bouwen.
 Dan zouden in elke stap alle cirkels met elkaar vergeleken moeten worden om, bijvoorbeeld, te vinden waar nog \textit{holes} zitten.
-Zie \autoref{chap:resultaten} voor verdere bespreking van de efficientie van mijn algoritme.
+Zie \autoref{chap:resultaten} voor verdere bespreking van de efficiëntie van mijn algoritme.
 
 Het algoritme bouwt dus cirkel per cirkel een \textit{packing} op.
 Dit gebeurt door in elke stap een positie te kiezen, en hierin een cirkel proberen te plaatsen.
@@ -527,7 +530,7 @@ Een correcte \textit{solver} geeft natuurlijk wel altijd goede oplossingen.
 Een $solver$ of oplosser is het object dat een \textit{packing} zoekt voor een gegeven probleem.
 Dit is dus het belangrijkste deel van de code, en hierin is de nieuwe heuristiek geïmplementeerd.
 De best-fit \textit{solver}, zoals beschreven in deze thesis, doet dit stap voor stap.
-In elke stap wordt er één cirkel geplaats op zijn finale positie, dit aan de hand van enkele keuzes die verder in dit hoofdstuk toegelicht zullen worden.
+In elke stap wordt er één cirkel geplaatst op zijn finale positie, dit aan de hand van enkele keuzes die verder in dit hoofdstuk toegelicht zullen worden.
 
 $Hole$ en $shell$ worden verder uitgelegd in respectievelijk \autoref{sec:holes} en \autoref{sec:shell}.
 
@@ -722,7 +725,7 @@ Het is ook mogelijk het andere intersectie punt te verkrijgen door de twee $loca
 \section{\textit{Holes}} \label{sec:holes}
 
 Het eerste van de twee belangrijkste concepten van de heuristiek is \textit{holes} of gaten.
-Dit zijn plaatsen tussen andere, reeds geplaatste, cirkels waar potentieel nog een cirkel kan tussenpassen.
+Dit zijn plaatsen tussen andere, reeds geplaatste, cirkels waar potentieel nog een cirkel kan tussen passen.
 De heuristiek zal telkens eerst deze \textit{holes} proberen op te vullen, alvorens cirkels op de \textit{shell} te plaatsen.
 Dit omdat het plaatsen van een cirkel in een \textit{hole} nooit de omschreven cirkel kan vergroten.
 
